@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-03T19:44:03+09:00",
+ "generated_at": "2026-11-03T21:08:09+09:00",
  "is_sample": false,
  "range": {
   "days": 3,
@@ -22,9 +22,9 @@
  "oldest_pending": null,
  "budget_per_run": 600,
  "last_run": {
-  "at": "2026-11-03T19:44:03+09:00",
+  "at": "2026-11-03T21:08:09+09:00",
   "ok": true,
-  "trigger": "local",
+  "trigger": "schedule",
   "error": null
  },
  "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",
