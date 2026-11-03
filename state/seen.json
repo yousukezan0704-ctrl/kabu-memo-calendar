@@ -9,8 +9,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563269.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288847": {
   "status": "done",
@@ -20,10 +20,10 @@
   "pubdate": "2026-11-02 19:00:00",
   "title": "（変更）「系統蓄電所向けの蓄電池の受注契約締結に関するお知らせ」の一部変更に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102563151.pdf",
-  "events": 4,
+  "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288848": {
   "status": "done",
@@ -35,8 +35,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562063.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288849": {
   "status": "done",
@@ -48,8 +48,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562065.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288850": {
   "status": "done",
@@ -59,10 +59,10 @@
   "pubdate": "2026-11-02 18:30:00",
   "title": "SSL/TLS サーバー証明書発行サービスのサービス再開に関する方針のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561837.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288851": {
   "status": "done",
@@ -72,10 +72,10 @@
   "pubdate": "2026-11-02 18:30:00",
   "title": "2026年９月期決算短信〔日本基準〕(連結)",
   "url": "https://www.release.tdnet.info/inbs/140120261102562860.pdf",
-  "events": 3,
+  "events": 1,
   "pages": 17,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288852": {
   "status": "done",
@@ -86,10 +86,10 @@
   "title": "中期経営計画策定に関するお知らせ Road to Next 2029",
   "url": "https://www.release.tdnet.info/inbs/140120261102562881.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 1,
   "pages": 40,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288853": {
   "status": "done",
@@ -101,8 +101,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563210.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288854": {
   "status": "done",
@@ -114,8 +114,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563212.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288855": {
   "status": "done",
@@ -127,8 +127,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562758.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288856": {
   "status": "done",
@@ -140,8 +140,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563148.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288857": {
   "status": "done",
@@ -153,8 +153,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563169.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288858": {
   "status": "done",
@@ -166,8 +166,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563136.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288859": {
   "status": "done",
@@ -178,10 +178,10 @@
   "title": "当社グループの業務システムへの不正アクセスによる個人情報漏えいに関するお知らせとお詫び",
   "url": "https://www.release.tdnet.info/inbs/140120261102563007.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 1,
   "pages": 2,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288860": {
   "status": "done",
@@ -193,8 +193,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563139.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288861": {
   "status": "done",
@@ -206,8 +206,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562540.pdf",
   "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288862": {
   "status": "done",
@@ -219,8 +219,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562245.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288863": {
   "status": "done",
@@ -232,8 +232,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563143.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288864": {
   "status": "done",
@@ -243,10 +243,10 @@
   "pubdate": "2026-11-02 17:15:00",
   "title": "（訂正）自己株式の取得状況に関するお知らせの一部訂正について",
   "url": "https://www.release.tdnet.info/inbs/140120261102563118.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288865": {
   "status": "done",
@@ -258,8 +258,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563116.pdf",
   "events": 0,
   "pages": 107,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288866": {
   "status": "done",
@@ -271,8 +271,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563096.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288867": {
   "status": "done",
@@ -282,10 +282,10 @@
   "pubdate": "2026-11-02 17:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102563071.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288868": {
   "status": "done",
@@ -297,8 +297,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563094.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288869": {
   "status": "done",
@@ -310,8 +310,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562110.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288870": {
   "status": "done",
@@ -323,8 +323,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563125.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288871": {
   "status": "failed",
@@ -348,8 +348,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562302.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288873": {
   "status": "skipped",
@@ -391,8 +391,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562795.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288877": {
   "status": "done",
@@ -404,8 +404,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562975.pdf",
   "events": 0,
   "pages": 40,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288878": {
   "status": "done",
@@ -417,8 +417,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562979.pdf",
   "events": 1,
   "pages": 26,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288879": {
   "status": "done",
@@ -430,8 +430,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563092.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288880": {
   "status": "done",
@@ -442,10 +442,10 @@
   "title": "2026年10月の月間売買実績・取引口座数等（速報値）のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562510.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288881": {
   "status": "done",
@@ -457,8 +457,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563009.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288882": {
   "status": "done",
@@ -470,8 +470,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562444.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288883": {
   "status": "done",
@@ -483,8 +483,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261018552573.pdf",
   "events": 0,
   "pages": 11,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288884": {
   "status": "done",
@@ -496,8 +496,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562379.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288885": {
   "status": "done",
@@ -509,8 +509,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562208.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288886": {
   "status": "done",
@@ -520,10 +520,10 @@
   "pubdate": "2026-11-02 16:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562727.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288887": {
   "status": "done",
@@ -535,8 +535,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562980.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288888": {
   "status": "done",
@@ -548,8 +548,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562976.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288889": {
   "status": "done",
@@ -561,8 +561,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562992.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288890": {
   "status": "done",
@@ -574,8 +574,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562986.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288891": {
   "status": "done",
@@ -587,8 +587,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562230.pdf",
   "events": 0,
   "pages": 24,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288892": {
   "status": "done",
@@ -598,10 +598,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "剰余金の配当に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562362.pdf",
-  "events": 0,
+  "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288893": {
   "status": "done",
@@ -613,8 +613,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562783.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288894": {
   "status": "done",
@@ -626,8 +626,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562641.pdf",
   "events": 2,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288895": {
   "status": "done",
@@ -637,10 +637,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562192.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288896": {
   "status": "done",
@@ -650,10 +650,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562803.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288897": {
   "status": "done",
@@ -663,10 +663,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "自己株式取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562565.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288898": {
   "status": "done",
@@ -678,8 +678,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562617.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288899": {
   "status": "done",
@@ -691,8 +691,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562667.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288900": {
   "status": "done",
@@ -704,8 +704,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562693.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288901": {
   "status": "done",
@@ -717,8 +717,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562531.pdf",
   "events": 2,
   "pages": 4,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288902": {
   "status": "done",
@@ -730,8 +730,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560656.pdf",
   "events": 1,
   "pages": 9,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288903": {
   "status": "done",
@@ -741,10 +741,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562501.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288904": {
   "status": "done",
@@ -756,8 +756,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562136.pdf",
   "events": 2,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288905": {
   "status": "done",
@@ -767,10 +767,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562557.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288906": {
   "status": "done",
@@ -782,8 +782,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562122.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288907": {
   "status": "done",
@@ -795,8 +795,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261027557122.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288908": {
   "status": "done",
@@ -806,10 +806,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "行使価額修正条項付新株予約権の月間行使状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561792.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288909": {
   "status": "done",
@@ -821,8 +821,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261027556865.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288910": {
   "status": "done",
@@ -834,8 +834,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261020553598.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288911": {
   "status": "done",
@@ -847,8 +847,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562137.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288912": {
   "status": "skipped",
@@ -870,8 +870,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562748.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288914": {
   "status": "done",
@@ -883,8 +883,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562486.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288915": {
   "status": "done",
@@ -896,8 +896,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562894.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288916": {
   "status": "done",
@@ -909,8 +909,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561763.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288917": {
   "status": "done",
@@ -921,10 +921,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562111.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288918": {
   "status": "done",
@@ -934,10 +934,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "（開示事項の経過） 東和グラビヤ印刷株式会社の株式取得（子会社化）完了のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562210.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288919": {
   "status": "done",
@@ -949,8 +949,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562430.pdf",
   "events": 0,
   "pages": 15,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288920": {
   "status": "done",
@@ -962,8 +962,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562435.pdf",
   "events": 2,
   "pages": 24,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288921": {
   "status": "done",
@@ -975,8 +975,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261020553781.pdf",
   "events": 2,
   "pages": 14,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288922": {
   "status": "done",
@@ -986,10 +986,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "2026年度第2四半期決算説明会資料",
   "url": "https://www.release.tdnet.info/inbs/140120261102562330.pdf",
-  "events": 8,
+  "events": 5,
   "pages": 53,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288923": {
   "status": "done",
@@ -1001,8 +1001,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562591.pdf",
   "events": 4,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288924": {
   "status": "done",
@@ -1014,8 +1014,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562114.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288925": {
   "status": "done",
@@ -1026,10 +1026,10 @@
   "title": "社員持株会向け譲渡制限付株式インセンティブとしての自己株式の処分の払込完了及び一部失権に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562149.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288926": {
   "status": "done",
@@ -1041,8 +1041,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562773.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288927": {
   "status": "done",
@@ -1054,8 +1054,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562053.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288928": {
   "status": "done",
@@ -1067,8 +1067,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563001.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288929": {
   "status": "done",
@@ -1080,8 +1080,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562936.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288930": {
   "status": "done",
@@ -1093,8 +1093,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562502.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288931": {
   "status": "done",
@@ -1105,10 +1105,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562610.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288932": {
   "status": "done",
@@ -1120,8 +1120,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561869.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288933": {
   "status": "done",
@@ -1133,8 +1133,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562130.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288934": {
   "status": "done",
@@ -1146,8 +1146,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562912.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288935": {
   "status": "done",
@@ -1159,8 +1159,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562373.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288936": {
   "status": "done",
@@ -1170,10 +1170,10 @@
   "pubdate": "2026-11-02 16:00:00",
   "title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261021554208.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288937": {
   "status": "skipped",
@@ -1195,8 +1195,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560963.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288939": {
   "status": "done",
@@ -1208,8 +1208,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561778.pdf",
   "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288940": {
   "status": "done",
@@ -1221,8 +1221,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562006.pdf",
   "events": 2,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288941": {
   "status": "done",
@@ -1234,8 +1234,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562008.pdf",
   "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288942": {
   "status": "done",
@@ -1245,10 +1245,10 @@
   "pubdate": "2026-11-02 15:40:00",
   "title": "決算説明会資料～2027年3月期 第2四半期～",
   "url": "https://www.release.tdnet.info/inbs/140120261101562011.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 32,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288943": {
   "status": "done",
@@ -1260,8 +1260,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562012.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288944": {
   "status": "done",
@@ -1273,8 +1273,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261020553581.pdf",
   "events": 0,
   "pages": 11,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288945": {
   "status": "done",
@@ -1286,8 +1286,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562213.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288946": {
   "status": "done",
@@ -1297,10 +1297,10 @@
   "pubdate": "2026-11-02 15:40:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562666.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288947": {
   "status": "done",
@@ -1311,10 +1311,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561830.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288948": {
   "status": "done",
@@ -1326,8 +1326,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261016552097.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288949": {
   "status": "done",
@@ -1339,8 +1339,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562414.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288950": {
   "status": "done",
@@ -1352,8 +1352,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562737.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288951": {
   "status": "done",
@@ -1365,8 +1365,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562949.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288952": {
   "status": "skipped",
@@ -1398,8 +1398,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562003.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288955": {
   "status": "done",
@@ -1411,8 +1411,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562858.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288956": {
   "status": "done",
@@ -1424,8 +1424,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562262.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288957": {
   "status": "done",
@@ -1435,10 +1435,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "（開示事項の経過）AIブレインパートナーズ株式会社の株式取得及び簡易株式交換による完全子会社化完了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562389.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288958": {
   "status": "done",
@@ -1450,8 +1450,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562784.pdf",
   "events": 0,
   "pages": 5,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288960": {
   "status": "done",
@@ -1463,8 +1463,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261028558053.pdf",
   "events": 1,
   "pages": 14,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288961": {
   "status": "done",
@@ -1474,10 +1474,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2026年度第２四半期決算実績ならびに2025-2027中期経営計画の進捗",
   "url": "https://www.release.tdnet.info/inbs/140120261028558085.pdf",
-  "events": 10,
+  "events": 7,
   "pages": 50,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288962": {
   "status": "done",
@@ -1489,8 +1489,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261028558102.pdf",
   "events": 0,
   "pages": 16,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288959": {
   "status": "done",
@@ -1502,8 +1502,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261028558059.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288963": {
   "status": "done",
@@ -1513,10 +1513,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562368.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288964": {
   "status": "skipped",
@@ -1538,8 +1538,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562351.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288966": {
   "status": "done",
@@ -1551,8 +1551,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562697.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288967": {
   "status": "done",
@@ -1564,8 +1564,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562661.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288968": {
   "status": "done",
@@ -1577,8 +1577,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562445.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288969": {
   "status": "done",
@@ -1590,8 +1590,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562895.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288970": {
   "status": "done",
@@ -1603,8 +1603,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562470.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288971": {
   "status": "done",
@@ -1616,8 +1616,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562275.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288972": {
   "status": "done",
@@ -1627,10 +1627,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "業績予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030560794.pdf",
-  "events": 7,
+  "events": 12,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288973": {
   "status": "done",
@@ -1640,10 +1640,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "連結子会社（ユタカフーズ株式会社）の業績予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562321.pdf",
-  "events": 7,
+  "events": 12,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288974": {
   "status": "done",
@@ -1655,8 +1655,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562365.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288975": {
   "status": "done",
@@ -1668,8 +1668,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561706.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288976": {
   "status": "done",
@@ -1679,10 +1679,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況（途中経過）に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561885.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288977": {
   "status": "done",
@@ -1692,10 +1692,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562193.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288978": {
   "status": "done",
@@ -1707,8 +1707,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561757.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288979": {
   "status": "done",
@@ -1720,8 +1720,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562471.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288980": {
   "status": "done",
@@ -1731,10 +1731,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "（開示事項の経過）株式の取得（子会社化）完了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562464.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288981": {
   "status": "done",
@@ -1746,8 +1746,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562175.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288982": {
   "status": "done",
@@ -1759,8 +1759,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562772.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288983": {
   "status": "done",
@@ -1772,8 +1772,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561825.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288984": {
   "status": "done",
@@ -1785,8 +1785,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562846.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288985": {
   "status": "done",
@@ -1798,8 +1798,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562849.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288986": {
   "status": "done",
@@ -1811,8 +1811,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562853.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288987": {
   "status": "done",
@@ -1824,8 +1824,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261021554165.pdf",
   "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288988": {
   "status": "done",
@@ -1835,10 +1835,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "株式の立会外分売に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261029559957.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288989": {
   "status": "done",
@@ -1850,8 +1850,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562739.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288990": {
   "status": "done",
@@ -1863,8 +1863,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561624.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288991": {
   "status": "done",
@@ -1876,8 +1876,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562169.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288992": {
   "status": "done",
@@ -1887,10 +1887,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562685.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288993": {
   "status": "done",
@@ -1901,10 +1901,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562873.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 2,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288994": {
   "status": "done",
@@ -1914,10 +1914,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "株主からの提訴請求について",
   "url": "https://www.release.tdnet.info/inbs/140120261102562921.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288995": {
   "status": "done",
@@ -1927,10 +1927,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562406.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288996": {
   "status": "done",
@@ -1942,8 +1942,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562056.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288997": {
   "status": "done",
@@ -1955,8 +1955,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561625.pdf",
   "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288998": {
   "status": "done",
@@ -1968,8 +1968,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562374.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288999": {
   "status": "done",
@@ -1981,8 +1981,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562920.pdf",
   "events": 1,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289000": {
   "status": "done",
@@ -1994,8 +1994,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562777.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289001": {
   "status": "done",
@@ -2007,8 +2007,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029559905.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289002": {
   "status": "done",
@@ -2020,8 +2020,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562743.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289003": {
   "status": "done",
@@ -2033,8 +2033,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560626.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289004": {
   "status": "done",
@@ -2045,10 +2045,10 @@
   "title": "2026年12月期 第3四半期 決算短信〔ＩＦＲＳ〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261030560518.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 2,
   "pages": 21,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289005": {
   "status": "done",
@@ -2059,10 +2059,10 @@
   "title": "決算短信 補足資料 －2026年12月期 第3四半期－",
   "url": "https://www.release.tdnet.info/inbs/140120261030560544.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 1,
   "pages": 10,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289006": {
   "status": "done",
@@ -2074,8 +2074,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562492.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289007": {
   "status": "done",
@@ -2085,10 +2085,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562442.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289008": {
   "status": "done",
@@ -2098,10 +2098,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況および取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562794.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289009": {
   "status": "skipped",
@@ -2121,10 +2121,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562768.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289011": {
   "status": "done",
@@ -2134,10 +2134,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "第22回新株予約権（行使価額修正条項付）の月間行使状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561902.pdf",
-  "events": 2,
+  "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289012": {
   "status": "done",
@@ -2149,8 +2149,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562517.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289013": {
   "status": "done",
@@ -2162,8 +2162,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562059.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289014": {
   "status": "done",
@@ -2175,8 +2175,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562786.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289015": {
   "status": "done",
@@ -2188,8 +2188,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562291.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289016": {
   "status": "done",
@@ -2201,8 +2201,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562281.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289017": {
   "status": "done",
@@ -2213,10 +2213,10 @@
   "title": "第三者割当により発行された第12回新株予約権（行使価額修正条項付）の月間行使状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562563.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 2,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289018": {
   "status": "done",
@@ -2228,8 +2228,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562571.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289019": {
   "status": "done",
@@ -2239,10 +2239,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得結果及び自己株式取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562575.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289020": {
   "status": "done",
@@ -2253,10 +2253,10 @@
   "title": "(開示事項の経過）株式会社トウペの株式取得（完全子会社化）完了のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030560719.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 3,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 1,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289021": {
   "status": "done",
@@ -2266,10 +2266,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261030561829.pdf",
-  "events": 2,
+  "events": 1,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289022": {
   "status": "done",
@@ -2279,10 +2279,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年3月期 第2四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261022554380.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289023": {
   "status": "done",
@@ -2294,8 +2294,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562385.pdf",
   "events": 0,
   "pages": 19,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289024": {
   "status": "done",
@@ -2307,8 +2307,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261020553642.pdf",
   "events": 2,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289025": {
   "status": "failed",
@@ -2332,8 +2332,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562770.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289027": {
   "status": "done",
@@ -2345,8 +2345,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562594.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289028": {
   "status": "done",
@@ -2358,8 +2358,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562014.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289029": {
   "status": "done",
@@ -2371,8 +2371,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561890.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289030": {
   "status": "done",
@@ -2384,8 +2384,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561284.pdf",
   "events": 1,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289031": {
   "status": "done",
@@ -2397,8 +2397,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561361.pdf",
   "events": 3,
   "pages": 17,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289032": {
   "status": "done",
@@ -2410,8 +2410,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029558885.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289033": {
   "status": "done",
@@ -2423,8 +2423,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562274.pdf",
   "events": 3,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289034": {
   "status": "done",
@@ -2436,8 +2436,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562360.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289035": {
   "status": "done",
@@ -2447,10 +2447,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年3月期 第2四半期決算短信〔日本基準〕（非連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261102562239.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289036": {
   "status": "done",
@@ -2460,10 +2460,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年３月期（第２Ｑ) 決算説明資料",
   "url": "https://www.release.tdnet.info/inbs/140120261102562108.pdf",
-  "events": 2,
+  "events": 1,
   "pages": 28,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289037": {
   "status": "done",
@@ -2475,8 +2475,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562855.pdf",
   "events": 0,
   "pages": 4,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289038": {
   "status": "done",
@@ -2488,8 +2488,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562516.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289039": {
   "status": "done",
@@ -2501,8 +2501,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562467.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289040": {
   "status": "done",
@@ -2514,8 +2514,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562876.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289041": {
   "status": "done",
@@ -2526,10 +2526,10 @@
   "title": "第三者割当により発行された行使価額修正条項付第１回新株予約権の月間行使状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562922.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 2,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289042": {
   "status": "skipped",
@@ -2551,8 +2551,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562614.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289044": {
   "status": "done",
@@ -2562,10 +2562,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年3月期 第2四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261030561494.pdf",
-  "events": 2,
+  "events": 1,
   "pages": 11,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289045": {
   "status": "done",
@@ -2577,8 +2577,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561499.pdf",
   "events": 3,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289046": {
   "status": "done",
@@ -2590,8 +2590,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562241.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289047": {
   "status": "skipped",
@@ -2613,8 +2613,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562480.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289049": {
   "status": "done",
@@ -2624,10 +2624,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "株式会社 IBJ（結婚相談所事業）2026年10月KPIについて",
   "url": "https://www.release.tdnet.info/inbs/140120261102562774.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289050": {
   "status": "done",
@@ -2639,8 +2639,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562606.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289051": {
   "status": "done",
@@ -2652,8 +2652,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562483.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289052": {
   "status": "skipped",
@@ -2675,8 +2675,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562135.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289054": {
   "status": "done",
@@ -2688,8 +2688,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562887.pdf",
   "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289055": {
   "status": "done",
@@ -2701,8 +2701,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562212.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289056": {
   "status": "done",
@@ -2714,8 +2714,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562635.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289057": {
   "status": "done",
@@ -2726,10 +2726,10 @@
   "title": "米国PCI Energy Solutionsの完全子会社化完了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562431.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 2,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289058": {
   "status": "done",
@@ -2739,10 +2739,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562935.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289059": {
   "status": "done",
@@ -2754,8 +2754,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562476.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289060": {
   "status": "done",
@@ -2767,8 +2767,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562686.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289061": {
   "status": "done",
@@ -2779,10 +2779,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562507.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289062": {
   "status": "skipped",
@@ -2803,10 +2803,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562882.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289064": {
   "status": "done",
@@ -2816,10 +2816,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562097.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289065": {
   "status": "done",
@@ -2831,8 +2831,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562424.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289066": {
   "status": "done",
@@ -2844,8 +2844,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562734.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289067": {
   "status": "done",
@@ -2857,8 +2857,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561548.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289068": {
   "status": "done",
@@ -2868,10 +2868,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562458.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289069": {
   "status": "done",
@@ -2883,8 +2883,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562676.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289070": {
   "status": "done",
@@ -2896,8 +2896,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562249.pdf",
   "events": 5,
   "pages": 14,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289071": {
   "status": "done",
@@ -2909,8 +2909,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562277.pdf",
   "events": 6,
   "pages": 36,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289072": {
   "status": "done",
@@ -2922,8 +2922,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562282.pdf",
   "events": 4,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289073": {
   "status": "done",
@@ -2933,10 +2933,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562098.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289074": {
   "status": "done",
@@ -2946,10 +2946,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年３月期第２四半期（中間期）決算短信〔日本基準〕(連結)",
   "url": "https://www.release.tdnet.info/inbs/140120261030561638.pdf",
-  "events": 2,
+  "events": 1,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289075": {
   "status": "done",
@@ -2961,8 +2961,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561644.pdf",
   "events": 5,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289076": {
   "status": "done",
@@ -2972,10 +2972,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年3月期10月度売上高推移速報についてのお知らせ （個別）",
   "url": "https://www.release.tdnet.info/inbs/140120261030561648.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289077": {
   "status": "done",
@@ -2987,8 +2987,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562715.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289078": {
   "status": "done",
@@ -3000,8 +3000,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562489.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289079": {
   "status": "done",
@@ -3013,8 +3013,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562706.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289080": {
   "status": "done",
@@ -3026,8 +3026,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562154.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289081": {
   "status": "done",
@@ -3039,8 +3039,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562174.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289082": {
   "status": "done",
@@ -3052,8 +3052,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029560104.pdf",
   "events": 0,
   "pages": 9,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289083": {
   "status": "done",
@@ -3065,8 +3065,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561316.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289084": {
   "status": "done",
@@ -3077,10 +3077,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562647.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289085": {
   "status": "done",
@@ -3090,10 +3090,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561945.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289086": {
   "status": "done",
@@ -3105,8 +3105,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562316.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289087": {
   "status": "done",
@@ -3118,8 +3118,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562723.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289088": {
   "status": "done",
@@ -3130,10 +3130,10 @@
   "title": "特定子会社の異動に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261027557099.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289089": {
   "status": "done",
@@ -3145,8 +3145,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561889.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289090": {
   "status": "done",
@@ -3158,8 +3158,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562753.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289091": {
   "status": "done",
@@ -3169,10 +3169,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562691.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289092": {
   "status": "done",
@@ -3184,8 +3184,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261031561974.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289093": {
   "status": "done",
@@ -3197,8 +3197,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562615.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289094": {
   "status": "done",
@@ -3210,8 +3210,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562834.pdf",
   "events": 2,
   "pages": 38,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289095": {
   "status": "done",
@@ -3223,8 +3223,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561719.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289096": {
   "status": "done",
@@ -3234,10 +3234,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況および取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562413.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289097": {
   "status": "done",
@@ -3249,8 +3249,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562107.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289098": {
   "status": "done",
@@ -3260,10 +3260,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況（途中経過）に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561861.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289099": {
   "status": "done",
@@ -3275,8 +3275,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562300.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289100": {
   "status": "done",
@@ -3287,10 +3287,10 @@
   "title": "自己投資口の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562304.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1289101": {
   "status": "done",
@@ -3302,8 +3302,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562220.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289102": {
   "status": "done",
@@ -3315,8 +3315,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561526.pdf",
   "events": 3,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289103": {
   "status": "done",
@@ -3328,8 +3328,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562859.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289104": {
   "status": "done",
@@ -3341,8 +3341,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562369.pdf",
   "events": 0,
   "pages": 4,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289105": {
   "status": "done",
@@ -3352,10 +3352,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "連結子会社における私募社債の発行及び当社による債務保証に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562941.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289106": {
   "status": "done",
@@ -3367,8 +3367,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562257.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289107": {
   "status": "done",
@@ -3380,8 +3380,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562695.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289108": {
   "status": "done",
@@ -3393,8 +3393,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562447.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289109": {
   "status": "done",
@@ -3406,8 +3406,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562020.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289110": {
   "status": "done",
@@ -3417,10 +3417,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562616.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289111": {
   "status": "done",
@@ -3430,10 +3430,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "業績予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562408.pdf",
-  "events": 3,
+  "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289112": {
   "status": "done",
@@ -3445,8 +3445,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561943.pdf",
   "events": 1,
   "pages": 17,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289113": {
   "status": "done",
@@ -3458,8 +3458,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561465.pdf",
   "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289114": {
   "status": "done",
@@ -3471,8 +3471,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560397.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289115": {
   "status": "done",
@@ -3484,8 +3484,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562554.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289116": {
   "status": "done",
@@ -3497,8 +3497,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261027556904.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289117": {
   "status": "done",
@@ -3508,10 +3508,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562463.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289118": {
   "status": "done",
@@ -3523,8 +3523,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562644.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289119": {
   "status": "done",
@@ -3536,8 +3536,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562530.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289120": {
   "status": "done",
@@ -3549,8 +3549,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562337.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289121": {
   "status": "done",
@@ -3560,10 +3560,10 @@
   "pubdate": "2026-11-02 15:30:00",
   "title": "2027年３月期　第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261102562148.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289122": {
   "status": "done",
@@ -3575,8 +3575,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560392.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1289123": {
   "status": "done",
@@ -3588,8 +3588,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561601.pdf",
   "events": 3,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288683": {
   "status": "done",
@@ -3601,8 +3601,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562865.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288684": {
   "status": "done",
@@ -3614,8 +3614,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561349.pdf",
   "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288685": {
   "status": "done",
@@ -3627,8 +3627,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561002.pdf",
   "events": 0,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288686": {
   "status": "done",
@@ -3640,8 +3640,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261031561968.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288687": {
   "status": "done",
@@ -3651,10 +3651,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "2027年３月期第２四半期（中間期） 決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261029559890.pdf",
-  "events": 4,
+  "events": 1,
   "pages": 16,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288688": {
   "status": "done",
@@ -3666,8 +3666,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029560284.pdf",
   "events": 2,
   "pages": 47,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288689": {
   "status": "done",
@@ -3679,8 +3679,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029560286.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288690": {
   "status": "done",
@@ -3690,10 +3690,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "2027年３月期通期連結業績予想の修正並びに剰余金の配当（中間配当）及び期末配当予想の修正（増配）に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261029560289.pdf",
-  "events": 4,
+  "events": 3,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288691": {
   "status": "done",
@@ -3705,8 +3705,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029560291.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288692": {
   "status": "done",
@@ -3718,8 +3718,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261027557113.pdf",
   "events": 1,
   "pages": 17,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288693": {
   "status": "done",
@@ -3729,10 +3729,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "2027年6月期　第1四半期決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261027557108.pdf",
-  "events": 3,
+  "events": 2,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288694": {
   "status": "done",
@@ -3744,8 +3744,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562800.pdf",
   "events": 2,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288695": {
   "status": "done",
@@ -3757,8 +3757,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562397.pdf",
   "events": 1,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288696": {
   "status": "done",
@@ -3770,8 +3770,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562401.pdf",
   "events": 4,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288697": {
   "status": "done",
@@ -3783,8 +3783,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562388.pdf",
   "events": 2,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288698": {
   "status": "done",
@@ -3796,8 +3796,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562219.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288699": {
   "status": "skipped",
@@ -3819,8 +3819,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562766.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288701": {
   "status": "done",
@@ -3830,10 +3830,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "第三者割当による新株式発行の払込完了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562375.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288702": {
   "status": "done",
@@ -3845,8 +3845,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562356.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288703": {
   "status": "done",
@@ -3858,8 +3858,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029559049.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288704": {
   "status": "done",
@@ -3871,8 +3871,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562034.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288705": {
   "status": "done",
@@ -3884,8 +3884,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562490.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288706": {
   "status": "done",
@@ -3895,10 +3895,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562878.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288707": {
   "status": "done",
@@ -3908,10 +3908,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "2027年３月期　第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261020553348.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288708": {
   "status": "done",
@@ -3923,8 +3923,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261022554641.pdf",
   "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288709": {
   "status": "done",
@@ -3936,8 +3936,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561807.pdf",
   "events": 0,
   "pages": 19,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288710": {
   "status": "done",
@@ -3947,10 +3947,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "2027年3月期 上期 決算説明会資料",
   "url": "https://www.release.tdnet.info/inbs/140120261030561818.pdf",
-  "events": 5,
+  "events": 2,
   "pages": 28,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288711": {
   "status": "done",
@@ -3962,8 +3962,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561826.pdf",
   "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288712": {
   "status": "done",
@@ -3975,8 +3975,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561948.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288713": {
   "status": "done",
@@ -3986,10 +3986,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562870.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288714": {
   "status": "done",
@@ -4001,8 +4001,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561810.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288715": {
   "status": "done",
@@ -4012,10 +4012,10 @@
   "pubdate": "2026-11-02 15:00:00",
   "title": "自己株式の取得状況（途中経過）に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562528.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288716": {
   "status": "done",
@@ -4027,8 +4027,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562700.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288717": {
   "status": "done",
@@ -4040,8 +4040,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562472.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288718": {
   "status": "done",
@@ -4053,8 +4053,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562459.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288719": {
   "status": "done",
@@ -4064,10 +4064,10 @@
   "pubdate": "2026-11-02 14:40:00",
   "title": "2027年３月期第２四半期（中間期）決算短信〔日本基準〕(非連結)",
   "url": "https://www.release.tdnet.info/inbs/140120261029559910.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 9,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288720": {
   "status": "done",
@@ -4079,8 +4079,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562646.pdf",
   "events": 4,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288721": {
   "status": "done",
@@ -4092,8 +4092,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562648.pdf",
   "events": 1,
   "pages": 11,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288722": {
   "status": "done",
@@ -4105,8 +4105,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562653.pdf",
   "events": 8,
   "pages": 78,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288723": {
   "status": "done",
@@ -4118,8 +4118,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562778.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288724": {
   "status": "done",
@@ -4131,8 +4131,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562491.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288725": {
   "status": "done",
@@ -4144,8 +4144,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562399.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288726": {
   "status": "done",
@@ -4157,8 +4157,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562823.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288727": {
   "status": "done",
@@ -4170,8 +4170,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560739.pdf",
   "events": 0,
   "pages": 11,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288728": {
   "status": "done",
@@ -4181,10 +4181,10 @@
   "pubdate": "2026-11-02 14:20:00",
   "title": "2027年３月期 第２四半期（中間期）決算説明資料",
   "url": "https://www.release.tdnet.info/inbs/140120261030560986.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 16,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288729": {
   "status": "done",
@@ -4194,10 +4194,10 @@
   "pubdate": "2026-11-02 14:00:00",
   "title": "2027年３月期第２四半期（中間期）連結業績予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561692.pdf",
-  "events": 3,
+  "events": 7,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288730": {
   "status": "done",
@@ -4209,8 +4209,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562572.pdf",
   "events": 3,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288731": {
   "status": "done",
@@ -4222,8 +4222,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562566.pdf",
   "events": 3,
   "pages": 16,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288732": {
   "status": "done",
@@ -4235,8 +4235,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562744.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288733": {
   "status": "done",
@@ -4248,8 +4248,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561240.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288734": {
   "status": "done",
@@ -4261,8 +4261,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562204.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288735": {
   "status": "done",
@@ -4274,8 +4274,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561372.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288736": {
   "status": "done",
@@ -4287,8 +4287,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562387.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288737": {
   "status": "done",
@@ -4300,8 +4300,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562297.pdf",
   "events": 2,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288738": {
   "status": "done",
@@ -4313,8 +4313,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562675.pdf",
   "events": 4,
   "pages": 35,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288739": {
   "status": "done",
@@ -4326,8 +4326,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562336.pdf",
   "events": 2,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288740": {
   "status": "done",
@@ -4339,8 +4339,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562724.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288741": {
   "status": "done",
@@ -4350,10 +4350,10 @@
   "pubdate": "2026-11-02 14:00:00",
   "title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261022554780.pdf",
-  "events": 3,
+  "events": 2,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288742": {
   "status": "done",
@@ -4365,8 +4365,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561717.pdf",
   "events": 1,
   "pages": 10,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288743": {
   "status": "done",
@@ -4378,8 +4378,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562303.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288744": {
   "status": "failed",
@@ -4401,10 +4401,10 @@
   "pubdate": "2026-11-02 14:00:00",
   "title": "2027年3月期 第2四半期（中間期）決算短信〔日本基準〕(連結)",
   "url": "https://www.release.tdnet.info/inbs/140120261016552520.pdf",
-  "events": 5,
+  "events": 4,
   "pages": 12,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288746": {
   "status": "done",
@@ -4416,8 +4416,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261016552522.pdf",
   "events": 0,
   "pages": 31,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288747": {
   "status": "done",
@@ -4429,8 +4429,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562719.pdf",
   "events": 0,
   "pages": 4,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288748": {
   "status": "done",
@@ -4441,10 +4441,10 @@
   "title": "（開示事項の経過）会社分割（簡易吸収分割）による 当社連結子会社（タカラバイオ株式会社）の事業承継に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261031561984.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 3,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288749": {
   "status": "done",
@@ -4456,8 +4456,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560852.pdf",
   "events": 8,
   "pages": 20,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288750": {
   "status": "done",
@@ -4469,8 +4469,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561117.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288751": {
   "status": "done",
@@ -4482,8 +4482,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561075.pdf",
   "events": 11,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288752": {
   "status": "done",
@@ -4495,8 +4495,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561937.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288753": {
   "status": "done",
@@ -4508,8 +4508,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562702.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288754": {
   "status": "done",
@@ -4521,8 +4521,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562446.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288755": {
   "status": "done",
@@ -4534,8 +4534,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562651.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288756": {
   "status": "done",
@@ -4547,8 +4547,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562405.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288757": {
   "status": "done",
@@ -4560,8 +4560,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562455.pdf",
   "events": 0,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288758": {
   "status": "done",
@@ -4573,8 +4573,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561508.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288759": {
   "status": "done",
@@ -4586,8 +4586,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562608.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288760": {
   "status": "done",
@@ -4599,8 +4599,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562296.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288761": {
   "status": "done",
@@ -4610,10 +4610,10 @@
   "pubdate": "2026-11-02 13:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562559.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288762": {
   "status": "done",
@@ -4625,8 +4625,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560482.pdf",
   "events": 0,
   "pages": 14,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288763": {
   "status": "done",
@@ -4638,8 +4638,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560521.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288764": {
   "status": "done",
@@ -4651,8 +4651,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560539.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288765": {
   "status": "done",
@@ -4664,8 +4664,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560553.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288766": {
   "status": "done",
@@ -4677,8 +4677,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562332.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288767": {
   "status": "done",
@@ -4688,10 +4688,10 @@
   "pubdate": "2026-11-02 13:00:00",
   "title": "株式会社オレンジページの株式取得完了及び 連結決算への移行に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261028558023.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288768": {
   "status": "done",
@@ -4701,10 +4701,10 @@
   "pubdate": "2026-11-02 13:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561870.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288769": {
   "status": "done",
@@ -4716,8 +4716,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561906.pdf",
   "events": 2,
   "pages": 15,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288770": {
   "status": "done",
@@ -4729,8 +4729,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561927.pdf",
   "events": 6,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288771": {
   "status": "done",
@@ -4740,10 +4740,10 @@
   "pubdate": "2026-11-02 13:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562076.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288772": {
   "status": "done",
@@ -4755,8 +4755,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261029558887.pdf",
   "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288773": {
   "status": "done",
@@ -4768,8 +4768,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261026556154.pdf",
   "events": 0,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288774": {
   "status": "done",
@@ -4781,8 +4781,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562562.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288775": {
   "status": "done",
@@ -4794,8 +4794,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562519.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288776": {
   "status": "done",
@@ -4807,8 +4807,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562497.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288777": {
   "status": "done",
@@ -4820,8 +4820,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562508.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288778": {
   "status": "done",
@@ -4833,8 +4833,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562266.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288779": {
   "status": "done",
@@ -4846,8 +4846,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261028558631.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288780": {
   "status": "done",
@@ -4857,10 +4857,10 @@
   "pubdate": "2026-11-02 12:00:00",
   "title": "（訂正）「自己株式取得に係る事項の決定に関するお知らせ」の一部訂正について",
   "url": "https://www.release.tdnet.info/inbs/140120261030560913.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288781": {
   "status": "done",
@@ -4872,8 +4872,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562552.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288782": {
   "status": "done",
@@ -4885,8 +4885,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562377.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288783": {
   "status": "done",
@@ -4898,8 +4898,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562380.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288784": {
   "status": "done",
@@ -4911,8 +4911,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562314.pdf",
   "events": 2,
   "pages": 22,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288785": {
   "status": "done",
@@ -4924,8 +4924,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562334.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288786": {
   "status": "done",
@@ -4936,10 +4936,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562040.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288787": {
   "status": "done",
@@ -4951,8 +4951,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562058.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288788": {
   "status": "done",
@@ -4964,8 +4964,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562319.pdf",
   "events": 0,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288789": {
   "status": "skipped",
@@ -4987,8 +4987,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562466.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288791": {
   "status": "skipped",
@@ -5010,8 +5010,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562333.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288793": {
   "status": "done",
@@ -5021,10 +5021,10 @@
   "pubdate": "2026-11-02 11:30:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261013549219.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288794": {
   "status": "done",
@@ -5036,8 +5036,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562080.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288795": {
   "status": "done",
@@ -5049,8 +5049,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562307.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288796": {
   "status": "done",
@@ -5062,8 +5062,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562358.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288797": {
   "status": "done",
@@ -5075,8 +5075,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562190.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288798": {
   "status": "done",
@@ -5088,8 +5088,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562222.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288799": {
   "status": "done",
@@ -5101,8 +5101,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562264.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288800": {
   "status": "done",
@@ -5114,8 +5114,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562289.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288801": {
   "status": "done",
@@ -5125,10 +5125,10 @@
   "pubdate": "2026-11-02 11:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562157.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288802": {
   "status": "done",
@@ -5138,10 +5138,10 @@
   "pubdate": "2026-11-02 11:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561919.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288803": {
   "status": "done",
@@ -5153,8 +5153,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562168.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288804": {
   "status": "done",
@@ -5164,10 +5164,10 @@
   "pubdate": "2026-11-02 11:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562195.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288805": {
   "status": "done",
@@ -5179,8 +5179,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561767.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288806": {
   "status": "done",
@@ -5192,8 +5192,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261028557776.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288807": {
   "status": "done",
@@ -5204,10 +5204,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562138.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288808": {
   "status": "done",
@@ -5219,8 +5219,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561782.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288809": {
   "status": "done",
@@ -5232,8 +5232,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562224.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288810": {
   "status": "done",
@@ -5245,8 +5245,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561832.pdf",
   "events": 1,
   "pages": 13,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288811": {
   "status": "done",
@@ -5256,10 +5256,10 @@
   "pubdate": "2026-11-02 10:10:00",
   "title": "剰余金の配当（中間配当）の決定及び期末配当予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562069.pdf",
-  "events": 1,
+  "events": 2,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288812": {
   "status": "done",
@@ -5271,8 +5271,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562126.pdf",
   "events": 0,
   "pages": 52,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288813": {
   "status": "done",
@@ -5284,8 +5284,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562125.pdf",
   "events": 0,
   "pages": 55,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288814": {
   "status": "done",
@@ -5295,10 +5295,10 @@
   "pubdate": "2026-11-02 10:00:00",
   "title": "自己株式立会外買付取引（ToSTNeT-3）による自己株式の取得結果及び取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562121.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288815": {
   "status": "done",
@@ -5310,8 +5310,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562090.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288816": {
   "status": "done",
@@ -5323,8 +5323,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562054.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288817": {
   "status": "done",
@@ -5334,10 +5334,10 @@
   "pubdate": "2026-11-02 10:00:00",
   "title": "自己株式立会外買付取引（ToSTNeT-3）による自己株式の取得結果及び取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561769.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288818": {
   "status": "done",
@@ -5347,10 +5347,10 @@
   "pubdate": "2026-11-02 10:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562139.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288819": {
   "status": "done",
@@ -5360,10 +5360,10 @@
   "pubdate": "2026-11-02 10:00:00",
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562087.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288820": {
   "status": "skipped",
@@ -5385,8 +5385,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561053.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288822": {
   "status": "done",
@@ -5398,8 +5398,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562189.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288823": {
   "status": "done",
@@ -5409,10 +5409,10 @@
   "pubdate": "2026-11-02 10:00:00",
   "title": "自己株式立会外買付取引（ToSTNeT－3）による自己株式の取得結果および自己株式の取得終了に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562113.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288824": {
   "status": "done",
@@ -5424,8 +5424,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261027556932.pdf",
   "events": 0,
   "pages": 27,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288825": {
   "status": "done",
@@ -5436,10 +5436,10 @@
   "title": "剰余金の配当（中間配当）に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562084.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
+  "checked_at": "2026-11-03T19:44:03+09:00",
   "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288826": {
   "status": "done",
@@ -5451,8 +5451,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561853.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288827": {
   "status": "done",
@@ -5464,8 +5464,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562057.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288828": {
   "status": "done",
@@ -5477,8 +5477,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562101.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288829": {
   "status": "done",
@@ -5490,8 +5490,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561827.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288830": {
   "status": "done",
@@ -5503,8 +5503,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562104.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288831": {
   "status": "done",
@@ -5516,8 +5516,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261031561993.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288832": {
   "status": "done",
@@ -5529,8 +5529,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562067.pdf",
   "events": 0,
   "pages": 6,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288833": {
   "status": "done",
@@ -5542,8 +5542,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030560680.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288834": {
   "status": "done",
@@ -5554,10 +5554,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562062.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288835": {
   "status": "done",
@@ -5568,10 +5568,10 @@
   "title": "自己株式の取得状況に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261102562019.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "events": 1,
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "events": 0,
   "pages": 1,
-  "ext": "rule-v5"
+  "ext": "rule-v6"
  },
  "1288836": {
   "status": "done",
@@ -5583,8 +5583,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261031561997.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288837": {
   "status": "done",
@@ -5594,10 +5594,10 @@
   "pubdate": "2026-11-02 08:40:00",
   "title": "（開示事項の経過）株式会社Elithとの合弁会社「株式会社ココナラエリス」の設立に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561928.pdf",
-  "events": 1,
+  "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288838": {
   "status": "done",
@@ -5609,8 +5609,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261101562000.pdf",
   "events": 1,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288839": {
   "status": "done",
@@ -5622,8 +5622,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562035.pdf",
   "events": 0,
   "pages": 7,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288840": {
   "status": "done",
@@ -5635,8 +5635,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562036.pdf",
   "events": 0,
   "pages": 15,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288841": {
   "status": "skipped",
@@ -5658,8 +5658,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561149.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288843": {
   "status": "done",
@@ -5669,10 +5669,10 @@
   "pubdate": "2026-11-02 08:00:00",
   "title": "東京証券取引所グロース市場への上場に伴う当社決算情報等のお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261030561660.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 15,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288844": {
   "status": "done",
@@ -5682,10 +5682,10 @@
   "pubdate": "2026-11-02 08:00:00",
   "title": "事業計画及び成長可能性に関する事項について",
   "url": "https://www.release.tdnet.info/inbs/140120261030561661.pdf",
-  "events": 2,
+  "events": 0,
   "pages": 46,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  },
  "1288845": {
   "status": "done",
@@ -5697,7 +5697,7 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561663.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T19:03:55+09:00",
-  "ext": "rule-v5"
+  "checked_at": "2026-11-03T19:44:03+09:00",
+  "ext": "rule-v6"
  }
 }

@@ -1,6 +1,7 @@
 """画面の動作テスト（Edge を自動操作）。python tools/ui_test.py
 一時フォルダの配信サーバー経由で docs を開くので、本物のデータや保存先には触れない。"""
 import http.server, threading, os, sys, json, tempfile, functools
+import datetime as dt
 from playwright.sync_api import sync_playwright
 
 DOCS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs")
@@ -39,6 +40,64 @@ with sync_playwright() as p:
         check(tag + "取得状況が出る", "取得状況" in t and "未処理" in t)
         check(tag + "未完了の警告", "完了していません" in t)
         check(tag + "根拠原文とページ", "該当ページ" in t and "最終確認" in t)
+        # 決算発表の予定（サンプル=架空データで確認）
+        pg.click("button:has-text('決算発表の予定')"); pg.wait_for_timeout(200)
+        t = pg.inner_text("main")
+        check(tag + "決算予定の一覧が出る", "決算発表の予定（今後）" in t and pg.locator("table.earn tbody tr").count() >= 3, t[:200])
+        check(tag + "時刻なしは未公表", "未公表" in pg.inner_text("table.earn") and "15:00" in pg.inner_text("table.earn"))
+        check(tag + "決算予定がサンプルと明記", "サンプル" in pg.inner_text("table.earn"))
+        dates = pg.eval_on_selector_all("table.earn tbody tr td:first-child b", "els => els.map(e => e.textContent)")
+        check(tag + "決算予定は日付順", len(dates) >= 3 and dates == sorted(dates, key=lambda x: (int(x.split('月')[0]), int(x.split('月')[1].split('日')[0]))), dates)
+        # 予想の前回→今回
+        pg.click("button:has-text('予想の前回→今回')"); pg.wait_for_timeout(200)
+        t = pg.inner_text("main")
+        check(tag + "予想比較の表", pg.locator("table.cmp").count() >= 1 and "前回予想" in pg.text_content("table.cmp") and "今回予想" in pg.text_content("table.cmp"), t[:200])
+        check(tag + "未確認行は原文で確認", pg.locator("table.cmp tr.unver").count() >= 1 and "原文で確認" in t)
+        check(tag + "差の表示(増減)", pg.locator("table.cmp .up").count() >= 1 and pg.locator("table.cmp .down").count() >= 1)
+        check(tag + "実データの予想比較も出る", pg.locator("table.cmp tbody tr").count() > 6)
+        check(tag + "予想比較で横スクロールなし", pg.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"))
+        if vp["width"] < 500:
+            hs = pg.evaluate("[...document.querySelectorAll('.irsub button, .tab, main button')].filter(b=>b.offsetParent).map(b=>b.getBoundingClientRect().height)")
+            check(tag + "ボタンの高さ44px以上", min(hs) >= 43.5, min(hs))
+            check(tag + "本文の文字16px以上", pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 16)
+        # 新フィールド(note/verify_basis/section/diff_text/impact_period)の表示
+        pg.evaluate("""() => { var s = KMC.data.sample.events;
+          s.push(Object.assign({}, s.filter(e => e.kind === 'forecast_item')[0], {id: 'sample-nf', item: '幅テスト項目', prev: '10〜12', new: '11〜13', diff: null,
+            diff_text: '＋1（下限・上限とも）', verified: false, note: '注記テスト文', verify_basis: '列の見出しによる', section: '連結業績予想', impact_period: '通期'}));
+          s.push(Object.assign({}, s.filter(e => e.kind === 'forecast_item')[0], {id: 'sample-nf2', item: '根拠テスト', verified: true, verify_basis: '列の見出しによる'}));
+          KMC.render(); }""")
+        pg.wait_for_timeout(200)
+        ct = pg.text_content("main")
+        check(tag + "注記(note)表示", "注記テスト文" in ct)
+        check(tag + "diff_text表示", "＋1（下限・上限とも）" in ct)
+        check(tag + "対象期間・見出し・確認の根拠", "対象期間: 通期" in ct and "見出し: 連結業績予想" in ct and "確認の根拠: 列の見出しによる" in ct)
+        check(tag + "根拠の区別", "列の見出しで確認" in ct and "差額が一致" in ct)
+        pg.click("button:has-text('すべて')"); pg.wait_for_timeout(200)
+        t = pg.inner_text("main")
+        check(tag + "種類ごとの注意書き", "種類ごとの注意" in t and "誤りが残る可能性" in t and "自社株買い" in t)
+        pg.fill("#f-text", "サンプル"); pg.wait_for_timeout(200)
+        check(tag + "カードに自動抽出・要確認バッジ", pg.locator("article .badge:has-text('自動抽出・要確認')").count() >= 1)
+        pg.fill("#f-text", "")
+        pg.reload(); pg.wait_for_selector(".tab"); pg.click(".tab:has-text('重要IR')")
+        # 自動更新の失敗・停止の表示（画面内の状態だけ差し替える。実データは変えない）
+        real = json.load(open(os.path.join(DOCS, "data", "status.json"), encoding="utf-8"))
+        def with_status(st):
+            pg.evaluate("st => { KMC.data.status = st; KMC.render(); }", st); pg.wait_for_timeout(200)
+        now = dt.datetime.now(dt.timezone.utc).astimezone().isoformat(timespec="seconds")
+        bad = dict(real, generated_at=now, last_run={"at": now, "ok": False, "trigger": "schedule", "error": "テスト用の失敗"})
+        with_status(bad)
+        check(tag + "失敗の表示", "自動取得は失敗しました" in pg.inner_text("main") and "テスト用の失敗" in pg.inner_text("main"))
+        old = dict(real, generated_at=(dt.datetime.now() - dt.timedelta(days=9)).isoformat(timespec="seconds"), last_run={"at": now, "ok": True, "trigger": "schedule", "error": None})
+        with_status(old)
+        check(tag + "停止の表示", "止まっている可能性" in pg.inner_text("main"))
+        pg.click(".tab:has-text('カレンダー')")
+        check(tag + "カレンダー側にも警告", "止まっている可能性" in pg.inner_text("main"))
+        pg.click(".tab:has-text('重要IR')")
+        with_status(dict(real, generated_at=now, last_run=None))
+        pg.click("button:has-text('すべて')")
+        check(tag + "last_runなしでも壊れない", "取得状況" in pg.inner_text("main") and "表示でエラー" not in pg.inner_text("main") and "止まっている可能性" not in pg.inner_text("main"))
+        pg.evaluate("KMC.loadData().then(() => KMC.render())"); pg.wait_for_timeout(300)
+        pg.click("button:has-text('すべて')")
         # メモ作成・自動保存・再確認日
         pg.click(".tab:has-text('メモ')"); pg.click("button:has-text('新しいメモ')")
         pg.fill("[data-f=name]", "テスト会社"); pg.fill("[data-f=reason]", "理由テスト")

@@ -29,6 +29,7 @@
     var h = '<article class="card' + (it.confirmed ? "" : " unconf") + (it.done ? " isdone" : "") + '" style="--c:' + K.kindOf(it.kind).color + '">';
     h += '<div class="row wrap">' + K.chip(it.kind) + " " + K.originBadge(it.origin) + " " + K.certainty(it);
     if (it.sample) h += ' <span class="badge b-sample">サンプル</span>';
+    if (it.src === "ir" && K.RISKY_KINDS[it.kind]) h += ' <span class="badge b-warn">自動抽出・要確認</span>';
     if (it.checkedByMe) h += ' <span class="badge b-ok">確認済み</span>';
     h += "</div>";
     h += '<div class="ttl">' + (it.code ? '<a href="#" data-act="stock" data-code="' + E(it.code) + '">' + E(it.name || "") + " (" + E(it.code) + ")</a>" : E(it.name || "")) + "</div>";
@@ -158,7 +159,7 @@
 
   K.renderCal = function () {
     var all = K.applyFilter(K.buildItems());
-    var h = K.homeBanner ? K.homeBanner() : "";
+    var h = (K.statusAlert ? K.statusAlert() : "") + (K.homeBanner ? K.homeBanner() : "");
     h += K.filterBar();
     h += '<div class="seg">' + [["month", "月"], ["week", "週"], ["list", "一覧"]].map(function (v) {
       return '<button class="' + (K.ui.view === v[0] ? "on" : "") + '" data-act="view" data-v="' + v[0] + '">' + v[1] + "</button>";

@@ -86,6 +86,8 @@
       if (!/^[0-9A-Z]{4}$/.test(c)) { K.toast("コードは英数字4桁です（例 7203）", true); return; }
       K.sUi.code = c; render();
     },
+    irsub: function (t) { K.irUi.sub = t.dataset.v; render(); },
+    "more-cmp": function () { K.irUi.cmpLimit = (K.irUi.cmpLimit || 20) + 20; render(); },
     "more-ir": function () { K.irUi.limit += 60; render(); },
     addevent: addEventDialog,
     deluser: function (t) {

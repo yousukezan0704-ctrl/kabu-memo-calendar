@@ -75,3 +75,31 @@ dialog{max-width:520px;width:calc(100% - 24px);border:1px solid var(--line);bord
 .errbox{background:#fde4e2;color:#7a1511;padding:8px 12px;border-radius:6px;border:1px solid #b3261e;margin:8px 0;font-weight:700}
 .cmp{margin:4px 0;font-size:15px}
 @media (prefers-color-scheme:dark){.errbox{background:#4a1c19;color:#ffb4ac}}
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}
+.tbl th{text-align:left;color:var(--mut);font-size:13px;border-bottom:2px solid var(--line);padding:4px 6px}
+.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl tr.unver{background:var(--warnbg)}
+.tbl tr.unver td:last-child{font-weight:700}
+.up{color:var(--ok);font-weight:700}.down{color:var(--ng);font-weight:700}
+.irsub button{flex:1 1 auto}
+@media (max-width:520px){
+  body{font-size:17px}
+  button,.btnlike{min-height:44px;padding:10px 14px}
+  .tab{min-height:48px;font-size:14px;padding:12px 2px}
+  .kbtn{min-height:44px;padding:4px 12px}
+  input,select,textarea{font-size:16px;min-height:44px}
+  input[type=checkbox]{min-height:0;width:22px;height:22px}
+  .chk{min-height:44px;font-size:16px}
+  .muted{font-size:15px}.kv{font-size:16px}blockquote{font-size:15px}
+  .tbl thead{display:none}
+  .tbl,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr{border:1px solid var(--line);border-radius:8px;margin:8px 0;padding:4px 8px;background:var(--card)}
+  .tbl tr.unver{border-color:var(--warn);border-width:2px;background:var(--warnbg)}
+  .tbl td{border:0;padding:4px 0;display:flex;justify-content:space-between;gap:10px;text-align:right}
+  .tbl td::before{content:attr(data-l);color:var(--mut);font-size:14px;text-align:left;flex:none}
+}
+.kindnote{background:var(--warnbg);color:var(--warn);border-radius:6px;padding:8px 10px;font-size:15px;margin:8px 0}
+.note{font-size:14px;margin-top:4px;font-weight:400}
+.basis{font-size:12px}

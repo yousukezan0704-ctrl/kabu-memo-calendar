@@ -44,17 +44,34 @@ def _wareki(m):
 
 
 def parse_time(text):
-    """会社が書いた時刻だけを返す。無ければ None。"""
+    """会社が書いた時刻だけを返す。無ければ None。
+    対応: 15時30分 / 15:30 / 15時 / 午後3時30分 / 10時半。「3時間」「15時点」は時刻ではない。
+    複数あるときは文中で最も前にあるもの。"""
     t = norm(text)
-    m = re.search(r"(\d{1,2})時(\d{1,2})分", t) or re.search(r"(\d{1,2}):(\d{2})", t)
+    best = None
+    for m in re.finditer(r"(午前|午後)?\s*(\d{1,2})\s*時\s*(?:(\d{1,2})\s*分|(半))?(?![間点])", t):
+        h = int(m.group(2))
+        mi = 30 if m.group(4) else int(m.group(3) or 0)
+        if m.group(1) == "午後" and h < 12:
+            h += 12
+        if 0 <= h <= 24 and 0 <= mi < 60:
+            best = (m.start(), h, mi)
+            break
+    m = re.search(r"(?<![\d:])(\d{1,2}):(\d{2})(?!\d)", t)
     if m:
         h, mi = int(m.group(1)), int(m.group(2))
-        if 0 <= h <= 24 and 0 <= mi < 60:
-            return "%02d:%02d" % (h, mi)
-    m = re.search(r"(\d{1,2})時(?!間)", t)
-    if m and 0 <= int(m.group(1)) <= 24:
-        return "%02d:00" % int(m.group(1))
-    return None
+        if 0 <= h <= 24 and 0 <= mi < 60 and (best is None or m.start() < best[0]):
+            best = (m.start(), h, mi)
+    return None if best is None else "%02d:%02d" % (best[1], best[2])
+
+
+def _time_after(t, pos):
+    """日付の直後(30字以内)にある時刻だけを返す。次の日付や文の終わりを越えては探さない。"""
+    seg = t[pos:pos + 30]
+    cut = re.search(r"\d{1,4}年\d|\d{1,2}月\d{1,2}日|。", seg)
+    if cut:
+        seg = seg[:cut.start()]
+    return parse_time(seg)
 
 
 def parse_target(text, base, fy_end_month=None):
@@ -67,7 +84,7 @@ def parse_target(text, base, fy_end_month=None):
         y = _wareki(m.group(2)) if m.group(1) else int(m.group(2))
         try:
             d = dt.date(y, int(m.group(3)), int(m.group(4)))
-            return _res(m.group(0), d, d, "day", time=parse_time(t[m.end():m.end() + 30]))
+            return _res(m.group(0), d, d, "day", time=_time_after(t, m.end()))
         except ValueError:
             return _res(m.group(0), None, None, "unknown", True, "存在しない日付")
 
@@ -83,7 +100,7 @@ def parse_target(text, base, fy_end_month=None):
         if (base - d).days > 180:
             d = dt.date(base.year + 1, mo, da)
         return _res(m.group(0), d, d, "day", False, "", year_inferred=True,
-                    time=parse_time(t[m.end():m.end() + 30]))
+                    time=_time_after(t, m.end()))
 
     # 3) 「2027年3月期」= 決算期
     m = re.search(r"(令和)?(\d{4}|\d{1,2})年(\d{1,2})月期", t)

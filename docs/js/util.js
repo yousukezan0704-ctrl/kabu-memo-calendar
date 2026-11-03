@@ -66,6 +66,8 @@ window.KMC = window.KMC || {};
     mine:          { label: "自分の確認", color: "#c2410c" },
     other:         { label: "その他",     color: "#555555" }
   };
+  /* 自動抽出の誤りが残りやすい種類（検証結果による） */
+  K.RISKY_KINDS = { launch: 1, production: 1, fx: 1, delay: 1, alliance: 1, buyback: 1 };
   K.kindOf = function (k) { return K.KINDS[k] || K.KINDS.other; };
   K.ORIGIN = {
     official:  { label: "会社公表", cls: "o-official" },
