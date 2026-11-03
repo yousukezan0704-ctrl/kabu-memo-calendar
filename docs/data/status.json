@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-03T17:44:03+09:00",
+ "generated_at": "2026-11-03T18:42:07+09:00",
  "is_sample": false,
  "range": {
   "days": 3,
@@ -21,7 +21,7 @@
  },
  "oldest_pending": null,
  "budget_per_run": 600,
- "source_terms": "未確認（非公式APIで利用規約の明記なし。個人利用・低頻度で運用）",
+ "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",
  "source": "TDnet(非公式API: webapi.yanoshin.jp)＋release.tdnet.info の公開PDF",
  "errors": []
 }
