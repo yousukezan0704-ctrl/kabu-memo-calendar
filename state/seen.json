@@ -1,6 +1,6 @@
 {
  "1288846": {
-  "status": "pending",
+  "status": "done",
   "id": "1288846",
   "code": "4445",
   "name": "Ｇ－リビンＴ",
@@ -9,10 +9,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563269.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288847": {
-  "status": "pending",
+  "status": "done",
   "id": "1288847",
   "code": "3070",
   "name": "Ｇ－ジェリービーンズ",
@@ -21,10 +22,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563151.pdf",
   "events": 4,
   "pages": 2,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288848": {
-  "status": "pending",
+  "status": "done",
   "id": "1288848",
   "code": "9449",
   "name": "ＧＭＯ",
@@ -33,10 +35,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562063.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288849": {
-  "status": "pending",
+  "status": "done",
   "id": "1288849",
   "code": "9449",
   "name": "ＧＭＯ",
@@ -45,10 +48,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562065.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288850": {
-  "status": "pending",
+  "status": "done",
   "id": "1288850",
   "code": "4498",
   "name": "Ｇ－サイバートラスト",
@@ -57,10 +61,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261030561837.pdf",
   "events": 1,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288851": {
-  "status": "pending",
+  "status": "done",
   "id": "1288851",
   "code": "6200",
   "name": "インソース",
@@ -69,10 +74,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562860.pdf",
   "events": 3,
   "pages": 17,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288852": {
-  "status": "pending",
+  "status": "done",
   "id": "1288852",
   "code": "6200",
   "name": "インソース",
@@ -80,12 +86,13 @@
   "title": "中期経営計画策定に関するお知らせ Road to Next 2029",
   "url": "https://www.release.tdnet.info/inbs/140120261102562881.pdf",
   "note": "DependencyError: cryptography>=3.1 is required for AES algorithm",
-  "checked_at": "2026-11-03T17:44:03+09:00",
+  "checked_at": "2026-11-03T18:43:37+09:00",
   "events": 1,
-  "pages": 40
+  "pages": 40,
+  "ext": "rule-v4"
  },
  "1288853": {
-  "status": "pending",
+  "status": "done",
   "id": "1288853",
   "code": "6890",
   "name": "フェローテック",
@@ -94,10 +101,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563210.pdf",
   "events": 0,
   "pages": 3,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288854": {
-  "status": "pending",
+  "status": "done",
   "id": "1288854",
   "code": "9069",
   "name": "センコーグループＨＤ",
@@ -106,10 +114,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563212.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288855": {
-  "status": "pending",
+  "status": "done",
   "id": "1288855",
   "code": "2776",
   "name": "新都ＨＤ",
@@ -118,10 +127,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102562758.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288856": {
-  "status": "pending",
+  "status": "done",
   "id": "1288856",
   "code": "3931",
   "name": "Ｇ－バリューゴルフ",
@@ -130,10 +140,11 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563148.pdf",
   "events": 0,
   "pages": 2,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288857": {
-  "status": "pending",
+  "status": "done",
   "id": "1288857",
   "code": "7643",
   "name": "ダイイチ",
@@ -142,7 +153,8 @@
   "url": "https://www.release.tdnet.info/inbs/140120261102563169.pdf",
   "events": 0,
   "pages": 1,
-  "checked_at": "2026-11-03T17:44:03+09:00"
+  "checked_at": "2026-11-03T18:43:37+09:00",
+  "ext": "rule-v4"
  },
  "1288858": {
   "status": "done",
