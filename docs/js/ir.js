@@ -10,6 +10,10 @@
       if (K.data.loadErrors.length) h += '<p class="muted">' + E(K.data.loadErrors.join(" / ")) + "</p>";
       return h + "</section>";
     }
+    var lr = s.last_run || null, age = (Date.now() - new Date(s.generated_at).getTime()) / 86400000;
+    if (lr && !lr.ok) h += '<p class="errbox">⚠ 直近の自動取得は失敗しました（' + E(lr.at.replace("T", " ").slice(0, 16)) + "）。原因: " + E(lr.error || "不明") + "</p>";
+    else if (age > 4) h += '<p class="errbox">⚠ データの最終更新が' + Math.floor(age) + "日前です。自動更新が止まっている可能性があります（GitHubのActionsタブで確認）。</p>";
+    if (lr) h += '<p class="muted">直近の自動取得: ' + E(lr.at.replace("T", " ").slice(0, 16)) + "（" + (lr.trigger === "schedule" ? "定時実行" : lr.trigger === "workflow_dispatch" ? "手動実行" : E(lr.trigger)) + "）／ " + (lr.ok ? "成功" : "失敗") + "</p>";
     var mine = Object.keys(K.state.checked).filter(function (k) { return K.state.checked[k]; }).length;
     h += s.complete
       ? '<p class="ok">対象期間の一覧をすべて取得し、全文精査も完了しています。</p>'
@@ -33,7 +37,11 @@
   function extra(it) {
     var e = it.ev, h = "";
     if (!e) return h;
-    if (e.values) h += '<div class="muted">抽出した数値: ' + E(e.item) + " … " + E(e.values.join(" / ")) + "（列の意味は原文で確認）</div>";
+    if (e.prev != null) {
+      h += '<div class="cmp"><b>' + E(e.item) + "</b>: 前回予想 " + E(e.prev) + " → 今回 " + E(e.new) +
+        (e.diff != null ? "（差 " + (e.diff > 0 ? "+" : "") + E(e.diff.toLocaleString()) + "）" : "") +
+        (e.verified ? ' <span class="badge b-ok">資料内の差額と一致</span>' : ' <span class="badge b-warn">列の対応は原文で確認</span>') + "</div>";
+    } else if (e.values) h += '<div class="muted">抽出した数値: ' + E(e.item) + " … " + E(e.values.join(" / ")) + "（列の意味は原文で確認）</div>";
     if (e.correction) h += '<div class="warn">訂正・差し替えの資料から抽出されています</div>';
     if (e.history && e.history.length) {
       h += "<details><summary>変更履歴 (" + e.history.length + ")</summary>" + e.history.map(function (x) {

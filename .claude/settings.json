@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(python collector/*)",
+      "PowerShell(python -m unittest*)",
+      "PowerShell(python tools/*)",
+      "PowerShell(python -I *)",
+      "PowerShell(python -X utf8 *)",
+      "PowerShell(pip install -r requirements.txt)",
+      "PowerShell(git status*)",
+      "PowerShell(git diff*)",
+      "PowerShell(git log*)",
+      "PowerShell(git add*)",
+      "PowerShell(git commit*)",
+      "PowerShell(git pull --rebase*)",
+      "Bash(python collector/*)",
+      "Bash(python tools/*)",
+      "Bash(python -m unittest*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "PowerShell(*gh-portable*gh.exe* run list*)",
+      "PowerShell(*gh-portable*gh.exe* run view*)",
+      "PowerShell(*gh-portable*gh.exe* workflow run collect.yml*)",
+      "PowerShell(*gh-portable*gh.exe* auth status*)",
+      "Edit(/株カレンダー/**)",
+      "Write(/株カレンダー/**)"
+    ],
+    "deny": [
+      "PowerShell(*gh-portable*gh.exe* repo delete*)",
+      "PowerShell(*gh-portable*gh.exe* api -X DELETE*)",
+      "PowerShell(git push --force*)",
+      "Bash(git push --force*)"
+    ]
+  }
+}

@@ -37,7 +37,7 @@
       h += '<dl class="kv">';
       h += "<dt>発表</dt><dd>" + E((it.announced_at || "").slice(0, 16)) + "</dd>";
       h += "<dt>対象時期</dt><dd>" + E(it.raw || "記載なし") + (it.date ? " → " + E(K.fmtDay(it.date)) : (it.bucket && it.bucket.start ? " → " + E(it.bucket.label) : "")) + "</dd>";
-      h += "<dt>時刻</dt><dd>" + (it.time ? "会社公表 " + E(it.time) : "記載なし") + "</dd>";
+      h += "<dt>時刻</dt><dd>" + E(K.timeText(it)) + "</dd>";
       if (/^(revision|forecast|fx)/.test(it.kind)) h += "<dt>業績影響時期</dt><dd>" + E(it.impact || "記載なし") + "</dd>";
       h += "</dl>";
       if (it.reason) h += '<div class="warn">確認理由: ' + E(it.reason) + "</div>";
@@ -47,7 +47,7 @@
     } else if (it.note) {
       h += '<div class="muted">' + E(it.note) + "</div>";
     }
-    if (it.time && it.src !== "ir") h += '<div class="muted">時刻: ' + E(it.time) + "</div>";
+    if (it.src !== "ir" && (it.time || it.kind === "earnings")) h += '<div class="muted">時刻: ' + E(K.timeText(it)) + "</div>";
     if (!opt.noActions) {
       h += '<div class="row wrap acts">';
       if (it.src === "ir") {
@@ -60,6 +60,12 @@
       h += "</div>";
     }
     return h + "</article>";
+  };
+
+  /* 会社が公表した時刻だけを出す。決算発表で時刻が見つからないときは「未公表」 */
+  K.timeText = function (it) {
+    if (it.time) return "会社公表 " + it.time;
+    return it.kind === "earnings" ? "未公表（会社の公表資料に時刻の記載なし）" : "記載なし";
   };
 
   /* ---------- 絞り込み欄 ---------- */

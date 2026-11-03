@@ -9,7 +9,7 @@ import datetime as dt
 from dates_jp import parse_target, parse_time, norm
 
 NONE = "記載なし"
-EXT_VERSION = "rule-v4"
+EXT_VERSION = "rule-v5"
 
 # (kind, 表示名, トリガー正規表現)  上から順に判定。1文が複数に当てはまってもよい。
 RULES = [
@@ -133,34 +133,78 @@ def extract_page(page_text, page_no, ctx):
     return events
 
 
+ITEM_RE = re.compile(r"売上高|売上収益|営業収益|営業利益|経常利益|親会社株主に帰属する当期純利益|親会社の所有者に帰属する当期利益|当期純利益|当期利益|1株当たり当期純利益|基本的1株当たり当期利益|1株当たり配当金|年間配当金")
+NUM_RE = re.compile(r"[△▲\-]?\d[\d,]*(?:\.\d+)?")
+PREV_LABEL = re.compile(r"^前回(?:発表)?予想")
+NEW_LABEL = re.compile(r"^(?:今回(?:修正)?予想|修正後(?:予想)?|今回発表予想|修正予想)")
+
+
+def _val(tok):
+    t = tok.replace(",", "").replace("△", "-").replace("▲", "-")
+    try:
+        return float(t)
+    except ValueError:
+        return None
+
+
+def _row(ctx, page_no, item, prev, new, line, verified):
+    pv, nv = _val(prev), _val(new)
+    diff = None if pv is None or nv is None else nv - pv
+    return {
+        "kind": "forecast_item", "kind_label": KIND_LABEL["forecast_item"],
+        "code": ctx["code"], "name": ctx["name"], "announced_at": ctx["pubdate"],
+        "target": None, "target_text": NONE, "time_text": None, "impact_period": NONE,
+        "summary": "%s: 前回 %s → 今回 %s%s" % (item, prev, new, "" if diff is None else "（差 %+g）" % diff),
+        "item": item, "prev": prev, "new": new, "diff": diff, "values": [prev, new],
+        "verified": verified,
+        "quote": _quote(line), "page": page_no, "url": ctx["url"], "title": ctx["title"],
+        "checked_at": ctx["checked_at"], "origin": "official", "extractor": EXT_VERSION,
+        "confirmed": False, "needs_review": not verified,
+        "id": event_key(ctx["code"], "forecast_item", item + prev + new + ctx["pubdate"][:10]),
+    }
+
+
 def extract_forecast_rows(page_text, page_no, ctx):
-    """「前回発表予想」を含むページから、項目名+数値の行を拾う（差分の素材）。"""
+    """前回予想と今回予想を並べた表から、項目ごとの「前回→今回」を取り出す。
+    表の向きは2通りに対応: (A)項目が行 (B)「前回予想」「今回予想」が行で項目が列。
+    文書内の差額欄と計算が合ったものだけ verified とし、合わないものは「要確認」のままにする。"""
     t = norm(page_text)
     if not re.search(r"前回(?:発表)?予想|修正後|今回修正", t):
         return []
+    # 日本語の文字どうしの間の空白だけ除く（数字の区切りの空白は残す）
+    lines = [re.sub(r"(?<=[^\sA-Za-z0-9]) (?=[^\sA-Za-z0-9])", "", re.sub(r"[ 　\t]+", " ", l).strip())
+             for l in t.split("\n") if l.strip()]
     rows = []
-    for line in t.split("\n"):
-        line = line.strip()
-        if re.search(r"公表|基準日|決議|決定額|につき|となります|見込み", line):
+    # (B) 前回行・今回行と、その直前までに現れた項目名の並び
+    for i, l in enumerate(lines):
+        if not PREV_LABEL.match(l):
             continue
-        if not any(re.match(r"^[\d\s.()（）※注]*" + re.escape(it), line) for it in FORECAST_ITEMS):
+        prev_nums = NUM_RE.findall(re.sub(r"^前回(?:発表)?予想[（(]?[A-Za-zＡ-Ｚ]?[）)]?", "", re.sub(r"[（(]\d{4}年\d{1,2}月\d{1,2}日公表[）)]", "", l)))
+        nxt = next((x for x in lines[i + 1:i + 3] if NEW_LABEL.match(x)), None)
+        if not nxt or len(prev_nums) < 1:
             continue
-        nums = re.findall(r"[△▲\-]?\d[\d,]*(?:\.\d+)?", line.split(next(i for i in FORECAST_ITEMS if i in line), 1)[1])
+        new_nums = NUM_RE.findall(re.sub(r"^(?:今回(?:修正)?予想|修正後(?:予想)?|今回発表予想|修正予想)[（(]?[A-Za-zＡ-Ｚ]?[）)]?", "", nxt))
+        header = " ".join(lines[max(0, i - 4):i])
+        items = ITEM_RE.findall(header)
+        n = min(len(prev_nums), len(new_nums))
+        if n < 1 or len(items) < n:
+            continue
+        items = items[-n:]
+        for it, pv, nv in zip(items, prev_nums[:n], new_nums[:n]):
+            rows.append(_row(ctx, page_no, it, pv, nv, l + " / " + nxt, False))
+    # (A) 項目名で始まる行: 項目 前回 今回 [差額] [増減率]
+    for l in lines:
+        if re.search(r"公表|基準日|決議|決定額|につき|となります|見込み|前期|前年", l):
+            continue
+        m = re.match(r"^[\d.()（）※注]*(" + ITEM_RE.pattern + ")", l)
+        if not m:
+            continue
+        nums = NUM_RE.findall(l[m.end():])
         if len(nums) >= 2:
-            item = next(i for i in FORECAST_ITEMS if i in line)
-            rows.append({
-                "kind": "forecast_item", "kind_label": KIND_LABEL["forecast_item"],
-                "code": ctx["code"], "name": ctx["name"], "announced_at": ctx["pubdate"],
-                "target": None, "target_text": NONE, "time_text": None,
-                "impact_period": _impact(t[:600]),
-                "summary": "%s: %s" % (item, " → ".join(nums[:3])),
-                "values": nums[:4], "item": item,
-                "quote": _quote(line), "page": page_no, "url": ctx["url"], "title": ctx["title"],
-                "checked_at": ctx["checked_at"], "origin": "official", "extractor": EXT_VERSION,
-                "confirmed": False, "needs_review": True,   # 列の意味(前回/今回)は人の目で確認
-                "id": event_key(ctx["code"], "forecast_item", line + ctx["pubdate"][:10]),
-            })
-    return rows
+            pv, nv = _val(nums[0]), _val(nums[1])
+            ok = len(nums) >= 3 and pv is not None and nv is not None and _val(nums[2]) is not None and abs((nv - pv) - _val(nums[2])) < 1e-6
+            rows.append(_row(ctx, page_no, m.group(1), nums[0], nums[1], l, ok))
+    return rows[:20]
 
 
 def extract_document(pages, ctx):
@@ -199,3 +243,18 @@ def merge_events(existing, new):
         else:
             old["checked_at"] = ev["checked_at"]
     return list(by_id.values()), added, updated
+
+
+def keep_event(e, cutoff, today):
+    """古いIRの整理で残す項目。cutoff より新しい発表、またはこれからの時期を指す予定は消さない。
+    時期が確定していない（要確認）予定も、発表から1年は残す。"""
+    if (e.get("announced_at") or "")[:10] >= cutoff:
+        return True
+    t = e.get("target")
+    if not t or e["kind"] in ("forecast", "forecast_item", "revision_up", "revision_down", "fx"):
+        return False
+    end = t.get("end") or t.get("start")
+    if end:
+        return end >= today
+    one_year_ago = (dt.date.fromisoformat(today) - dt.timedelta(days=365)).isoformat()
+    return (e.get("announced_at") or "")[:10] >= one_year_ago

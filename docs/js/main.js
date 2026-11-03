@@ -41,7 +41,8 @@
       '<label>日付の確かさ<select id="ae-prec"><option value="day">日付が決まっている</option><option value="month">月だけ</option><option value="season">季節（春など）</option><option value="fy">年度内・期など</option><option value="unknown">時期不明</option></select></label>' +
       '<label>日付（月・季節のときは目安の日でも空でも可）<input id="ae-date" type="date"></label>' +
       '<label>原文の言い回し（例: 来春）<input id="ae-raw"></label>' +
-      '<label>会社公表の時刻（書いてある場合のみ）<input id="ae-time" placeholder="例 15:00"></label>' +
+      '<label>会社公表の時刻（書いてある場合のみ。空欄なら「未公表」と表示）<input id="ae-time" placeholder="例 15:00"></label>' +
+      '<p class="muted">決算発表予定日は、会社のIR日程ページや、東証の<a href="https://www.jpx.co.jp/listing/event-schedules/financial-announcement/index.html" target="_blank" rel="noopener">決算発表予定日一覧</a>（東証の規約上、データの転載はできないため、見て自分で入力してください）で確認できます。</p>' +
       '<label>元資料URL（https）<input id="ae-url"></label><label>メモ<textarea id="ae-note" rows="2"></textarea></label>' +
       '<div class="row"><button value="ok" id="ae-ok">追加</button><button value="cancel">やめる</button></div></form>';
     d.showModal();

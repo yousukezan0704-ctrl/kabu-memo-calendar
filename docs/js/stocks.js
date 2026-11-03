@@ -97,6 +97,13 @@
     if (st.rows.length) h += '<button data-act="delprices" data-code="' + E(code) + '">この銘柄の株価データを削除</button>';
     h += "</section>";
 
+    /* 決算発表の予定（日付があるものだけ。時刻が無ければ未公表） */
+    var er = items.filter(function (i) { return i.kind === "earnings" && i.date && i.date >= K.today(); }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    h += '<section class="panel"><h3>決算発表の予定</h3>';
+    if (!er.length) h += '<p class="empty">この銘柄の決算発表予定日は、取得済みの資料・入力済みの予定にありません（未確認）。自分で入力する場合は「カレンダー」→「＋予定を追加」。</p>';
+    er.forEach(function (i) { h += '<div class="plan">' + K.chip("earnings") + " " + E(K.fmtDay(i.date)) + " ／ 時刻: " + E(K.timeText(i)) + " " + K.originBadge(i.origin) + "</div>"; });
+    h += "</section>";
+
     /* 計画の進捗 */
     var plans = irs.filter(function (i) { return /^(launch|development|production|alliance|delay)$/.test(i.kind); })
       .sort(function (a, b) { return a.announced_at < b.announced_at ? -1 : 1; });

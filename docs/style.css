@@ -72,3 +72,6 @@ a{color:var(--acc)}
 dialog{max-width:520px;width:calc(100% - 24px);border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg)}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90%}
 .toast.show{opacity:1}.toast.bad{background:var(--ng)}
+.errbox{background:#fde4e2;color:#7a1511;padding:8px 12px;border-radius:6px;border:1px solid #b3261e;margin:8px 0;font-weight:700}
+.cmp{margin:4px 0;font-size:15px}
+@media (prefers-color-scheme:dark){.errbox{background:#4a1c19;color:#ffb4ac}}

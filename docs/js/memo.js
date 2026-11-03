@@ -6,6 +6,8 @@
   K.homeBanner = function () {
     var due = K.dueMemos(), t = K.today();
     var h = '<section class="home">';
+    var st = K.data.status;
+    if (st && st.last_run && !st.last_run.ok) h += '<div class="errbox">⚠ 直近の自動取得が失敗しています。「重要IR」の取得状況に原因を表示しています。</div>';
     if (!K.hasRealData()) h += '<div class="warn">実データは未取得です。表示中のものにサンプル(架空)が含まれる場合は「サンプル」と書いてあります。</div>';
     if (!due.length) return h + '<div class="okbox">今日までに確認する予定のメモはありません。</div></section>';
     h += "<h3>⏰ 自分が調べる日が来ています（" + due.length + "件）</h3>";

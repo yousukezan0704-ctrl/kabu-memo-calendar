@@ -5,7 +5,7 @@ import datetime as dt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from dates_jp import parse_target, parse_time  # noqa: E402
-from extract import extract_document, merge_events, extract_page  # noqa: E402
+from extract import extract_document, merge_events, extract_page, keep_event  # noqa: E402
 
 D = dt.date
 
@@ -159,12 +159,53 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(upd, 1)
         self.assertEqual(len(merged[0]["history"]), 1)
 
+    def test_forecast_compare_item_rows_verified(self):
+        txt = "前回発表予想（A） 修正後（B）\n売上高 100,000 110,000 10,000 10.0%\n営業利益 5,000 6,500 1,400 28.0%"
+        rows = [e for e in extract_document([txt], CTX) if e["kind"] == "forecast_item"]
+        by = {r["item"]: r for r in rows}
+        self.assertEqual((by["売上高"]["prev"], by["売上高"]["new"], by["売上高"]["diff"]), ("100,000", "110,000", 10000.0))
+        self.assertTrue(by["売上高"]["verified"])
+        self.assertFalse(by["営業利益"]["verified"])      # 差額が計算と合わない → 要確認のまま
+        self.assertTrue(by["営業利益"]["needs_review"])
+
+    def test_forecast_compare_column_layout(self):
+        txt = "2．業績予想の修正\n売上高 営業利益 経常利益\n前回発表予想（A） 500,000 40,000 41,000\n今回修正予想（B） 520,000 45,000 46,000\n"
+        rows = [e for e in extract_document([txt], CTX) if e["kind"] == "forecast_item"]
+        got = {r["item"]: (r["prev"], r["new"]) for r in rows}
+        self.assertEqual(got.get("営業利益"), ("40,000", "45,000"))
+        self.assertEqual(got.get("売上高"), ("500,000", "520,000"))
+
     def test_forecast_rows(self):
         txt = "前回発表予想（A） 修正後（B）\n売上高 100,000 110,000\n営業利益 5,000 6,500"
         ev = extract_document([txt], CTX)
         rows = [e for e in ev if e["kind"] == "forecast_item"]
         self.assertEqual(len(rows), 2)
         self.assertTrue(all(r["needs_review"] for r in rows))
+
+
+class TestRetention(unittest.TestCase):
+    cutoff, today = "2026-09-04", "2026-11-03"
+
+    def ev(self, kind, ann, target):
+        return {"kind": kind, "announced_at": ann + " 15:00:00", "target": target}
+
+    def test_recent_kept(self):
+        self.assertTrue(keep_event(self.ev("forecast", "2026-10-30", None), self.cutoff, self.today))
+
+    def test_old_without_future_dropped(self):
+        self.assertFalse(keep_event(self.ev("launch", "2026-05-01", None), self.cutoff, self.today))
+        past = {"start": "2026-06-01", "end": "2026-06-01"}
+        self.assertFalse(keep_event(self.ev("launch", "2026-05-01", past), self.cutoff, self.today))
+
+    def test_old_future_plan_kept(self):
+        fut = {"start": "2027-03-01", "end": "2027-05-31", "precision": "season"}
+        self.assertTrue(keep_event(self.ev("launch", "2026-05-01", fut), self.cutoff, self.today))
+        self.assertTrue(keep_event(self.ev("production", "2026-01-10", {"start": "2026-12-01", "end": "2026-12-01"}), self.cutoff, self.today))
+
+    def test_unresolved_period_kept_one_year(self):
+        un = {"start": None, "end": None, "needs_review": True}
+        self.assertTrue(keep_event(self.ev("development", "2026-02-01", un), self.cutoff, self.today))
+        self.assertFalse(keep_event(self.ev("development", "2025-09-01", un), self.cutoff, self.today))
 
 
 if __name__ == "__main__":

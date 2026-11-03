@@ -18,7 +18,7 @@ import urllib.error
 import datetime as dt
 
 sys.path.insert(0, os.path.dirname(__file__))
-from extract import extract_document, merge_events, is_correction, EXT_VERSION  # noqa: E402
+from extract import extract_document, merge_events, is_correction, keep_event, EXT_VERSION  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "docs", "data")
@@ -99,7 +99,7 @@ def pdf_pages(data):
     return [(p.extract_text() or "") for p in r.pages]
 
 
-def main():
+def run():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=3)
     ap.add_argument("--budget", type=int, default=150)
@@ -129,10 +129,13 @@ def main():
         time.sleep(1)
 
     # 抽出ルールが新しくなったら、読み終えた資料も当て直す（古いルールの項目は捨てる）
-    events = [e for e in events if e.get('extractor') == EXT_VERSION]
+    # 元資料がまだ手元にあるものだけ捨てて取り直す。元資料が既に消えている項目（未来の予定など）は残す
+    redo = set()
     for v in seen.values():
         if v['status'] == 'done' and v.get('ext') != EXT_VERSION:
             v['status'] = 'pending'
+            redo.add(v['url'])
+    events = [e for e in events if not (e.get('extractor') != EXT_VERSION and e.get('url') in redo)]
     # 失敗は最大3回まで再挑戦する（一時的な通信エラーや、読み取り部品の不足を直した後に拾えるように）
     for v in seen.values():
         if v["status"] == "failed" and v.get("tries", 1) < 3:
@@ -184,7 +187,8 @@ def main():
     # 3) 古いものを整理して保存
     cutoff = (now - dt.timedelta(days=a.retention_days)).strftime("%Y-%m-%d")
     seen = {k: v for k, v in seen.items() if v["pubdate"][:10] >= cutoff}
-    events = [e for e in events if e["announced_at"][:10] >= cutoff or e.get("target", None)]
+    # 古いIRを整理しても、これからの予定（発売・量産など）と、根拠(原文・URL)つきの項目は消さない
+    events = [e for e in events if keep_event(e, cutoff, now.strftime("%Y-%m-%d"))]
     cnt = {"pending": 0, "done": 0, "failed": 0, "skipped": 0}
     for v in seen.values():
         cnt[v["status"]] = cnt.get(v["status"], 0) + 1
@@ -201,6 +205,8 @@ def main():
                    "to": max((v["pubdate"][:10] for v in seen.values()), default=None)},
         "oldest_pending": min((v["pubdate"][:10] for v in seen.values() if v["status"] == "pending"), default=None),
         "budget_per_run": a.budget,
+        "last_run": {"at": checked_at, "ok": len(index_ok_days) > 0, "trigger": os.environ.get("GITHUB_EVENT_NAME", "local"),
+                     "error": None if index_ok_days else "一覧を1日分も取得できませんでした: " + "; ".join(errors[:3])},
         "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",
         "source": "TDnet(非公式API: webapi.yanoshin.jp)＋release.tdnet.info の公開PDF",
         "errors": errors[:30],
@@ -213,6 +219,21 @@ def main():
     save(os.path.join(DATA, "ir_index.json"), {"generated_at": checked_at, "items": index_items[:3000]})
     save(os.path.join(DATA, "status.json"), status)
     print(json.dumps({k: status[k] for k in ("listed", "done", "pending", "failed", "skipped", "complete")}, ensure_ascii=False))
+    if not index_ok_days:
+        raise SystemExit("一覧を1日分も取得できませんでした（取得元の停止・通信失敗の可能性）")
+
+
+def main():
+    try:
+        run()
+    except SystemExit:
+        raise
+    except Exception as e:  # 想定外の失敗も、公開画面で原因が分かるように記録してから失敗終了する
+        st = load(os.path.join(DATA, "status.json"), {})
+        st["last_run"] = {"at": dt.datetime.now(JST).strftime("%Y-%m-%dT%H:%M:%S+09:00"), "ok": False,
+                          "trigger": os.environ.get("GITHUB_EVENT_NAME", "local"), "error": "%s: %s" % (type(e).__name__, str(e)[:300])}
+        save(os.path.join(DATA, "status.json"), st)
+        raise
 
 
 if __name__ == "__main__":
