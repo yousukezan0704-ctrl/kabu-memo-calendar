@@ -218,13 +218,15 @@
         var basis = e.verify_basis ? '<br><small class="muted basis">確認の根拠: ' + E(e.verify_basis) + "</small>" : "";
         var sec = e.section ? '<br><small class="muted">見出し: ' + E(e.section) + "</small>" : "";
         var per = e.impact_period && e.impact_period !== "記載なし" ? '<br><small class="muted">対象期間: ' + E(e.impact_period) + "</small>" : "";
-        var diffCell = e.diff_text ? E(e.diff_text) : fmtDiff(e.diff);
+        var un = e.unit ? '<small class="unit">' + E(e.unit) + "</small>" : "";
+        var diffCell = e.diff_text ? E(e.diff_text) : fmtDiff(e.diff) + (e.diff != null ? un : "");
+        var noteHtml = e.note ? '<div class="note">' + E(e.note) + "</div>" : "";
         h += '<tr class="' + (ok ? "" : "unver") + '"><td data-l="項目"><b>' + E(e.item || "") + "</b>" + per + sec + "</td>" +
-          '<td data-l="前回予想" class="num">' + E(e.prev) + "</td>" +
-          '<td data-l="今回予想" class="num">' + E(e.new) + "</td>" +
+          '<td data-l="前回予想" class="num">' + E(e.prev) + un + "</td>" +
+          '<td data-l="今回予想" class="num">' + E(e.new) + un + "</td>" +
           '<td data-l="差" class="num">' + diffCell + "</td>" +
-          '<td data-l="確認">' + (ok ? '<span class="badge b-ok">' + (e.verify_basis && e.verify_basis.indexOf("差額") < 0 ? "列の見出しで確認" : "差額が一致") + "</span>" + basis :
-            '<span class="badge b-ng">原文で確認</span>' + (e.note ? '<div class="note">' + E(e.note) + "</div>" : "") + basis + (u ? ' <a href="' + E(u) + '" target="_blank" rel="noopener">原文を開く</a>' : "")) + "</td></tr>";
+          '<td data-l="確認">' + (ok ? '<span class="badge b-ok">' + (e.verify_basis && e.verify_basis.indexOf("差額") < 0 ? "列の見出しで確認" : "差額が一致") + "</span>" + basis + noteHtml :
+            '<span class="badge b-ng">原文で確認</span>' + noteHtml + basis + (u ? ' <a href="' + E(u) + '" target="_blank" rel="noopener">原文を開く</a>' : "")) + "</td></tr>";
       });
       h += "</tbody></table></div>";
       if (u) h += '<a class="link" href="' + E(u) + '" target="_blank" rel="noopener">元のIR資料を開く</a>';

@@ -30,6 +30,7 @@
     h += '<div class="row wrap">' + K.chip(it.kind) + " " + K.originBadge(it.origin) + " " + K.certainty(it);
     if (it.sample) h += ' <span class="badge b-sample">サンプル</span>';
     if (it.src === "ir" && K.RISKY_KINDS[it.kind]) h += ' <span class="badge b-warn">自動抽出・要確認</span>';
+    if (it.src === "ir" && /^revision/.test(it.kind) && String(it.refId).indexOf("table") >= 0 && it.ev && it.ev.note) h += ' <span class="badge b-warn">表の数値から判定</span>';
     if (it.checkedByMe) h += ' <span class="badge b-ok">確認済み</span>';
     h += "</div>";
     h += '<div class="ttl">' + (it.code ? '<a href="#" data-act="stock" data-code="' + E(it.code) + '">' + E(it.name || "") + " (" + E(it.code) + ")</a>" : E(it.name || "")) + "</div>";
@@ -41,6 +42,7 @@
       h += "<dt>時刻</dt><dd>" + E(K.timeText(it)) + "</dd>";
       if (/^(revision|forecast|fx)/.test(it.kind)) h += "<dt>業績影響時期</dt><dd>" + E(it.impact || "記載なし") + "</dd>";
       h += "</dl>";
+      if (it.ev && it.ev.note && it.kind !== "forecast_item") h += '<div class="note">注記: ' + E(it.ev.note) + "</div>";
       if (it.reason) h += '<div class="warn">確認理由: ' + E(it.reason) + "</div>";
       h += '<blockquote>「' + E(it.quote) + "」<br><small>該当ページ: " + E(it.page) + " ／ 最終確認: " + E((it.checked_at || "").replace("T", " ").slice(0, 16)) + "</small></blockquote>";
       var u = K.safeUrl(it.url);

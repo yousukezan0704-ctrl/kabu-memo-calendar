@@ -266,9 +266,13 @@ class TestForecastTables(unittest.TestCase):
         txt = "前回予想 修正後\n売上高 77,511 100 82,268 100 4,757 6.1 168,000 100\n営業利益 5,393 7.0 5,576 6.8 183 3.4 11,900 7.1\n"
         self.assertEqual(_items(txt), {})
 
-    def test_unchanged_with_dash_is_verified_4005(self):
-        r = _items("前回発表予想 修正後\n売上収益 60,000 60,000 -\n")["売上収益"]
-        self.assertTrue(r["verified"])
+    def test_unchanged_rows_not_registered(self):
+        # 前回と今回が同じ値は「修正」ではないので登録しない(住友化学4005の「60,000 60,000 -」、南海9044の営業利益)
+        self.assertEqual(_items("前回発表予想 修正後\n売上収益 60,000 60,000 -\n"), {})
+        txt = ("営 業 収 益 営 業 利 益 経 常 利 益 親会社株主に帰属す る 当 期 純 利 益\n"
+               "前回発表予想（Ａ） 百万円287,500 百万円40,000 百万円35,900 百万円23,800\n"
+               "今回発表予想（Ｂ） 288,800 40,000 35,400 23,800\n増   減   額（Ｂ－Ａ） 1,300 0 △500 0\n")
+        self.assertEqual(sorted(_items(txt)), ["営業収益", "経常利益"])
 
     def test_same_item_many_rows_not_verified_4005(self):
         txt = ("前回発表予想 修正後\nアグロ＆ライフ\n売上収益 560,000 570,000 10,000\n"
@@ -369,6 +373,128 @@ class TestFalsePositivesV6(unittest.TestCase):
     def test_title_quote_reference_not_alliance(self):
         s = "2025年10月8日付当社プレスリリース「SBI証券との業務提携を通じた投資事業への参入」をご参照ください。"
         self.assertEqual([e for e in extract_page(s, 1, CTX) if e["kind"] == "alliance"], [])
+
+
+class TestV7(unittest.TestCase):
+    """rule-v7: 検証レポート(rule-v6 再検証)の指摘。実際の原文で確認。"""
+
+    def test_fullwidth_dot_dividend_2551(self):
+        txt = ("１．配当の内容\n 決定額 直近の配当予想 （2025 年11 月４日） 前期実績 （2025 年９月期） \n"
+               "基 準 日 2026 年９月20 日 2026 年９月20 日  2025 年９月20 日 \n"
+               "１株当たり配当金   円  銭 ４０．００  円  銭 ３０．００  円   銭  ５０．００ \n配 当 金 総 額 89 百万円 ― 112 百万円 \n")
+        r = _items(txt)["1株当たり配当金"]
+        self.assertEqual((r["prev"], r["new"], r["diff"]), ("30円00銭", "40円00銭", 10.0))
+
+    def test_period_and_unit_kept(self):
+        txt = ("2027 年3 月期第 2 四半期(中間期)業績予想数値の修正（2026 年 4 月 1 日～2026 年 9 月 30 日）\n"
+               " 売 上 高 営業利益 経常利益 中間純利益 １株当たり 中間純利益 \n"
+               "前 回 発 表 予 想 （Ａ） 百万円 8,000 百万円 65 百万円 130 百万円 120 円 銭 17.27 \n"
+               "今 回 修 正 予 想 （Ｂ） 8,313 △67 24 45 6.48 \n増 減 額 （Ｂ－Ａ） 313 △132 △105 △75 \n"
+               "2027 年3 月期 通期業績予想数値の修正（2026 年 4 月 1 日～2027 年 3 月31 日）\n"
+               " 売 上 高 営業利益 経常利益 当期純利益 １株当たり 当期純利益 \n"
+               "前 回 発 表 予 想 （Ａ） 百万円 15,900 百万円 10 百万円 111 百万円 107 円 銭 15.40 \n"
+               "今 回 修 正 予 想 （Ｂ） 15,957 △304 △177 △160 △23.03 \n増 減 額 （Ｂ－Ａ） 57 △314 △288 △267 \n")
+        rows = [e for e in extract_document([txt], CTX) if e["kind"] == "forecast_item" and e["item"] == "売上高"]
+        self.assertEqual([(r["impact_period"].split()[-1], r["unit"], r["verified"]) for r in rows],
+                         [("中間期", "百万円", True), ("通期", "百万円", True)])
+        self.assertIn("[中間期]", rows[0]["summary"])
+        self.assertIn("8,000百万円", rows[0]["summary"])
+
+    def test_same_item_same_period_twice_not_verified(self):
+        t = ("2027年3月期通期業績予想数値の修正\n売上高 営業利益\n前回発表予想（Ａ） 百万円100 百万円10\n今回修正予想（Ｂ） 110 12\n増減額（Ｂ－Ａ） 10 2\n")
+        rows = [e for e in extract_document([t + t], dict(CTX)) if e["kind"] == "forecast_item"]
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(not r["verified"] for r in rows))
+
+    def test_table_derived_revision_up_6467(self):
+        txt = ("３．2027年３月期通期連結業績予想数値の修正（2026年４月１日～2027年３月31日）\n（単位：百万円）\n"
+               "売上高 営業利益 経常利益\n親会社株主\nに帰属する\n当期純利益\n１株当たり\n当期純利益\n"
+               "前回発表予想（Ａ） 11,650 150 63 10 １円11銭\n今回修正予想（Ｂ） 12,600 454 417 402 44円43銭\n"
+               "増減額（Ｂ－Ａ） 950 304 354 392\n増減率（％） 8.2 202.7 561.9 ―\n")
+        ctx = dict(CTX, title="業績予想及び配当予想の修正に関するお知らせ")
+        ev = extract_document([txt], ctx)
+        g = {e["item"]: e for e in ev if e["kind"] == "forecast_item"}
+        self.assertEqual((g["営業利益"]["prev"], g["営業利益"]["new"]), ("150", "454"))
+        self.assertEqual(g["1株当たり当期純利益"]["new"], "44円43銭")
+        up = [e for e in ev if e["kind"] == "revision_up"]
+        self.assertEqual(len(up), 1)
+        self.assertIn("表の数値", up[0]["summary"])
+
+    def test_table_derived_revision_down_two_periods_2806(self):
+        txt = ("2027 年3 月期第 2 四半期(中間期)業績予想数値の修正（2026 年 4 月 1 日～2026 年 9 月 30 日）\n"
+               " 売 上 高 営業利益 経常利益 中間純利益 １株当たり 中間純利益 \n"
+               "前 回 発 表 予 想 （Ａ） 百万円 8,000 百万円 65 百万円 130 百万円 120 円 銭 17.27 \n"
+               "今 回 修 正 予 想 （Ｂ） 8,313 △67 24 45 6.48 \n増 減 額 （Ｂ－Ａ） 313 △132 △105 △75 \n"
+               "2027 年3 月期 通期業績予想数値の修正（2026 年 4 月 1 日～2027 年 3 月31 日）\n"
+               " 売 上 高 営業利益 経常利益 当期純利益 １株当たり 当期純利益 \n"
+               "前 回 発 表 予 想 （Ａ） 百万円 15,900 百万円 10 百万円 111 百万円 107 円 銭 15.40 \n"
+               "今 回 修 正 予 想 （Ｂ） 15,957 △304 △177 △160 △23.03 \n増 減 額 （Ｂ－Ａ） 57 △314 △288 △267 \n")
+        ctx = dict(CTX, title="業績予想の修正に関するお知らせ")
+        down = [e for e in extract_document([txt], ctx) if e["kind"] == "revision_down"]
+        self.assertEqual(sorted(e["impact_period"].split()[-1] for e in down), ["中間期", "通期"])
+
+    def test_mixed_direction_gives_no_table_revision(self):
+        txt = ("売上高 営業利益 経常利益\n前回発表予想（Ａ） 百万円100 百万円10 百万円10\n今回修正予想（Ｂ） 110 12 8\n増減額（Ｂ－Ａ） 10 2 △2\n")
+        ctx = dict(CTX, title="業績予想の修正に関するお知らせ")
+        self.assertEqual([e for e in extract_document([txt], ctx) if e["kind"] in ("revision_up", "revision_down")], [])
+
+    def test_unit_oku_8053(self):
+        txt = "前回発表予想 修正後\n親会社の所有者に帰属する当期利益 6,300億円 6,700億円 400億円 6.3％\n"
+        r = _items(txt)["親会社の所有者に帰属する当期利益"]
+        self.assertEqual((r["unit"], r["verified"]), ("億円", True))
+        self.assertIn("6,300億円", r["summary"])
+
+    def test_adjustment_table_is_not_revision_7162(self):
+        s = ("営業収益が1,268百万円押し下げられている点を考慮（当該金額を加算）すると、其々1,268百万円上方修正"
+             "営業収益が69百万円押し下げられている点を考慮（当該金額を加算）すると、其々69百万円上方修正")
+        self.assertEqual([e for e in extract_page(s, 1, dict(CTX, title="決算説明資料")) if e["kind"] == "revision_up"], [])
+        s = "取引による一時的な影響を考慮した実質ベースでは、営業収益及びセグメント損益はそれぞれ1,268百万円上方修正され、114百万円のセグメント損失"
+        self.assertEqual([e for e in extract_page(s, 1, dict(CTX, title="決算説明資料")) if e["kind"] == "revision_up"], [])
+
+    def test_already_launched_is_not_plan_5187(self):
+        s = "上期で新製品2品目の発売をしており、従来品の拡販とあわせて販売を強化する計画"
+        self.assertEqual([e for e in extract_page(s, 8, dict(CTX, title="決算説明資料")) if e["kind"] == "launch"], [])
+
+    def test_facility_opening_is_not_mass_production_7366(self):
+        s = "海外事業は当面ネブラスカ州で強度行動障害者向けサービス拡大・ラインナップ強化を進める、新規施設の稼働開始•新規事業開発も積極的に実施予定"
+        self.assertEqual([e for e in extract_page(s, 25, dict(CTX, title="決算説明資料")) if e["kind"] == "production"], [])
+
+    def test_completed_subsidiary_not_alliance_3580(self):
+        s = "当社は2026年8月に株式会社ユニフの全株式を取得し子会社化し、連結の範囲に含めております。"
+        self.assertEqual([e for e in extract_page(s, 4, CTX) if e["kind"] == "alliance"], [])
+
+    def test_kyocera_production_after_completed_event_6971(self):
+        # 実際のページ(2026-10-30)。同じ文に「竣工」(完了済み)と「2027年春より本格的に生産を開始」(予定)が並ぶ
+        s = ("決算ハイライト｜最近のトピック2026年9月長崎諫早工場第1工場竣工資源調達リスクと環境負荷低減への取り組み名称京セラ株式会社長崎諫早工場"
+             "投資金額2028.3期までに約680億円投資予定主要製品半導体製造装置用ファインセラミック部品生産計画順次生産設備を導入しており、"
+             "2027年春より本格的に生産を開始2031.3期以降250億円／年")
+        ev = [e for e in extract_page(s, 4, dict(CTX, title="2027年3月期 上期 決算説明会資料")) if e["kind"] == "production"]
+        self.assertEqual(len(ev), 1)
+        self.assertEqual(ev[0]["target"]["start"], "2027-03-01")
+        self.assertNotIn("竣工", ev[0]["quote"][:20])
+
+    def test_launch_goal_year_653A(self):
+        ev = extract_page("中長期的には2030年頃の上市を目指します。", 37, dict(CTX, title="東京証券取引所グロース市場への上場に伴う当社決算情報等のお知らせ"))
+        e = [x for x in ev if x["kind"] == "launch"][0]
+        self.assertEqual(e["target"]["start"], "2030-01-01")
+        self.assertTrue(e["needs_review"])   # 年のみ → 要確認のまま
+        # 同じ資料の定型リスク文は拾わない
+        self.assertEqual(extract_page("医薬品の上市までには開発の失敗や遅延のリスクを伴います。", 40, CTX), [])
+
+    def test_delay_new_date_3070(self):
+        ctx = dict(CTX, title="（変更）「系統蓄電所向けの蓄電池の受注契約締結に関するお知らせ」の一部変更に関するお知らせ", pubdate="2026-11-02 15:00:00")
+        s = ("静岡県藤枝市の完工時期については令和９年 10月頃を見込んでおり、現在、送配電事業者の再接続検討の回答を待っている段階であります。")
+        ev = [e for e in extract_page(s, 1, ctx) if e["kind"] == "delay"]
+        self.assertEqual(len(ev), 1)
+        self.assertEqual((ev[0]["target"]["start"], ev[0]["target"]["end"]), ("2027-10-01", "2027-10-31"))
+        # 題名が変更・延期でない資料の「時期は○年」は延期にしない
+        self.assertEqual([e for e in extract_page("発売時期は2027年6月を見込んでおります。", 1, CTX) if e["kind"] == "delay"], [])
+
+    def test_applied_fx_rate_7236(self):
+        s = "※業績予想における適用為替レート USD: 158.5, THB: 4.95, CNY: 22.99, CZK: 7.52, IDR: 0.0094, VND: 0.0061, EUR: 183.49"
+        self.assertIn("fx", [e["kind"] for e in extract_page(s, 5, dict(CTX, title="2026年度第2四半期決算説明会資料"))])
+        # 実績の為替レート表は拾わない
+        self.assertEqual([e for e in extract_page("USD/円 144.82 162.45 157.33 THB/円 4.43 4.87 4.7", 5, CTX) if e["kind"] == "fx"], [])
 
 
 class TestRetention(unittest.TestCase):

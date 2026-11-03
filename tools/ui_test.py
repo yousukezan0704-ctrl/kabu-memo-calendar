@@ -79,6 +79,21 @@ with sync_playwright() as p:
         check(tag + "カードに自動抽出・要確認バッジ", pg.locator("article .badge:has-text('自動抽出・要確認')").count() >= 1)
         pg.fill("#f-text", "")
         pg.reload(); pg.wait_for_selector(".tab"); pg.click(".tab:has-text('重要IR')")
+        # unit・表由来の修正イベント・note
+        pg.evaluate("""() => { var s = KMC.data.sample.events;
+          s.push(Object.assign({}, s.filter(e => e.kind === 'forecast_item')[0], {id: 'sample-un', item: '単位テスト[通期]', prev: '123', new: '456', diff: 333, unit: '億円', verified: true, note: null}));
+          s.push(Object.assign({}, s.filter(e => e.kind === 'revision_up')[0], {id: 'sample-table-r', note: '表の数値から機械的に判定テスト', name: '表由来テスト社'}));
+          s.push(Object.assign({}, s.filter(e => e.kind === 'earnings')[0], {id: 'sample-tn', note: '短信注記テスト', name: '短信注記社'}));
+          KMC.render(); }""")
+        pg.wait_for_timeout(200)
+        pg.click("button:has-text('予想の前回→今回')"); pg.wait_for_timeout(200)
+        check(tag + "unit表示", "456億円" in "".join(pg.text_content("main").split()))
+        pg.click("button:has-text('すべて')"); pg.fill("#f-text", "表由来テスト"); pg.wait_for_timeout(200)
+        t = pg.inner_text("main")
+        check(tag + "表の数値から判定バッジ+note", "表の数値から判定" in t and "表の数値から機械的に判定テスト" in t, t[-300:])
+        pg.fill("#f-text", "短信注記"); pg.wait_for_timeout(200)
+        check(tag + "カードのnote表示", "短信注記テスト" in pg.inner_text("main"))
+        pg.fill("#f-text", "")
         # 自動更新の失敗・停止の表示（画面内の状態だけ差し替える。実データは変えない）
         real = json.load(open(os.path.join(DOCS, "data", "status.json"), encoding="utf-8"))
         def with_status(st):

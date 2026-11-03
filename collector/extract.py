@@ -9,7 +9,7 @@ import datetime as dt
 from dates_jp import parse_target, parse_time, norm
 
 NONE = "記載なし"
-EXT_VERSION = "rule-v6"
+EXT_VERSION = "rule-v7"
 
 # (kind, 表示名, トリガー正規表現)  上から順に判定。1文が複数に当てはまってもよい。
 RULES = [
@@ -17,29 +17,32 @@ RULES = [
     ("revision_up", "上方修正", r"上方修正"),
     ("revision_down", "下方修正", r"下方修正"),
     ("forecast", "業績予想の変更", r"業績予想(?:の)?(?:修正|変更)|予想(?:値)?を(?:修正|変更)|配当予想(?:の)?(?:修正|変更)"),
-    ("launch", "発売・販売開始", r"発売|販売を?開始|販売開始|サービス(?:を)?開始|提供を?開始"),
+    ("launch", "発売・販売開始", r"発売|販売を?開始|販売開始|サービス(?:を)?開始|提供を?開始|上市(?=[^。]{0,6}(?:目指|予定|計画|見込))"),
     ("development", "開発・試験・承認", r"承認申請|承認(?:を)?取得|承認(?:を)?受け|治験|臨床試験|開発(?:を)?開始|試作|実証実験|認証取得"),
     ("production", "工場・設備・量産", r"量産|工場(?:の)?(?:稼働|新設|建設|竣工)|稼働(?:を)?開始|(?<!需要)(?<!の)設備投資(?!需要)(?:を|の実施)|生産(?:能力|を)?(?:開始|増強)"),
     ("alliance", "提携・受注・海外", r"業務提携|資本提携|提携(?:契約|を|します|いたし)|受注(?:しました|いたしました|決定|内定|契約|獲得|のお知らせ)|を受注|海外(?:進出|展開|拠点)|子会社(?:の)?(?:設立|化)"),
     ("buyback", "自社株買い", r"自己株式(?:の)?取得に係る事項|自己株式取得枠|取得(?:する)?株式の総数|自己株式(?:の)?取得(?:を)?(?:決議|決定)|自社株買い(?:を)?(?:実施|決議|発表)"),
-    ("delay", "延期・中止・条件変更", r"延期|中止(?!する場合|日|及び|事業)|撤回|(?:スケジュール|予定|条件)(?:の)?(?:変更|見直し)|遅れる|遅延"),
+    ("delay", "延期・中止・条件変更", r"延期|中止(?!する場合|日|及び|事業)|撤回|(?:スケジュール|予定|条件)(?:の)?(?:変更|見直し)|遅れる|遅延|時期(?:については|は)(?=[^。]{0,12}(?:令和\d+年|\d{4}年))"),
 ]
 # 発売・開発・量産は「これからの予定」の書き方のときだけ拾う（過去の実績・景況の説明を除く）
 FUTURE_RE = re.compile(r"予定|見込み|見込まれ|計画|目指|開始(?:します|いたします|する)|(?:発売|申請|稼働|量産)(?:します|いたします|する)|する方針|方針です|(?:より|から)本格")
 PAST_NARR_RE = re.compile(r"以来|好調|推移|ました。|発売後|前期に|前年同期|をはじめ|するなど|してまいりました|してきました")
 # すでに終わった事実・時期が決まっていない文は「予定」にしない
-PAST_DONE_RE = re.compile(r"竣工|完成し|開始(?:した|しました|いたしました)|発売(?:した|しました|いたしました)|稼働(?:した|しました)|決定次第|未定|検討中|検討して|\d{4}/\d{1,2}/\d{1,2}")
-PROD_CTX_RE = re.compile(r"工場|生産|量産|製造|プラント|ライン")
+PAST_DONE_RE = re.compile(r"竣工|完成し|開始(?:した|しました|いたしました)|発売(?:した|しました|いたしました)|稼働(?:した|しました)|(?:発売|開始)(?:を)?し(?:て|た)(?:おり|いる|き|い)|決定次第|未定|検討中|検討して|\d{4}/\d{1,2}/\d{1,2}")
+PROD_CTX_RE = re.compile(r"工場|生産|量産|製造|プラント|ライン(?!ナップ)")
+FACILITY_RE = re.compile(r"施設|店舗|事業所")
+ADJUST_RE = re.compile(r"考慮|調整|実質ベース|押し下げ|押し上げ|影響を除|比較")
 DELAY_NOISE_RE = re.compile(r"開示が|損害金|リスク|可能性|場合|おそれ|恐れ|不確実|警戒|懸念|下回|上回|影響|事業環境|予測|動向|研究開発")
 DELAY_CTX_RE = re.compile(r"時期|予定|スケジュール|計画|発売|完工|稼働|開始|開発|工期|上市|竣工|成立日|期日")
 # 資料の種類で除く（月次の速報・リスク情報・事業計画及び成長可能性の資料）
-NOISE_TITLE_RE = re.compile(r"速報|月次|\d+月度|KPI|リスク|事業計画及び成長可能性")
+NOISE_TITLE_RE = re.compile(r"速報|月次|\d+月度|KPI")
+RISK_TITLE_RE = re.compile(r"リスク|事業計画及び成長可能性")   # 延期・決算の判定には使わない(定型のリスク文が多い)
 END_BUYBACK_TITLE_RE = re.compile(r"取得状況|取得結果|取得終了|取得完了")
 SUBSIDIARY_TITLE_RE = re.compile(r"連結子会社.*業績予想|子会社の業績予想")
 # 想定為替は「想定・前提・影響」と数字がそろうものだけ。ETFの換算レート等は除く
-FX_CORE = re.compile(r"想定(?:為替)?レート|為替(?:レート)?(?:の)?前提|前提(?:為替)?レート")
+FX_CORE = re.compile(r"想定(?:為替)?レート|為替(?:レート)?(?:の)?前提|前提(?:為替)?レート|適用為替レート")
 FX_AVG_RE = re.compile(r"平均為替|期中平均|実績レート|実績平均")
-FX_NUM_RE = re.compile(r"\d+(?:\.\d+)?\s*円|\$\s*\d|ドル")
+FX_NUM_RE = re.compile(r"\d+(?:\.\d+)?\s*円|\$\s*\d|ドル|(?:USD|EUR|JPY|CNY|THB)\s*[:：]?\s*\d")
 KIND_LABEL = {k: n for k, n, _ in RULES}
 KIND_LABEL.update({"fx": "想定為替・為替影響", "forecast_item": "予想数値の変更"})
 
@@ -102,8 +105,14 @@ def extract_page(page_text, page_no, ctx):
         for k, n, rx in RULES:
             if noise_doc and k not in ("revision_up", "revision_down", "forecast"):
                 continue
-            ms = list(re.finditer(rx, sm)) if k == "earnings" else [re.search(rx, sm)]
-            for m in ms[:3]:
+            if k in ("delay", "earnings") and RISK_TITLE_RE.search(title):
+                continue
+            ms = list(re.finditer(rx, sm))[:4]
+            last_pos = -999
+            for m in ms:
+                if m.start() - last_pos < 60 and k != "earnings":
+                    continue   # すぐ近くの同じ種類の一致は同じ話
+                last_pos = m.start()
                 # 「…の修正に関するお知らせ」のような題名の行は、中身ではないので除く
                 if m and not re.match(r"(?:に関する|についての|の)?お知らせ", sm[m.end():m.end() + 12]) \
                    and not re.match(r"に関する", sm[m.end():m.end() + 4]):
@@ -145,14 +154,19 @@ def extract_page(page_text, page_no, ctx):
                     continue
                 if not FUTURE_RE.search(near) or (PAST_NARR_RE.search(near) and tgt is None):
                     continue
-            if k == "production" and not PROD_CTX_RE.search(near):
+            if k == "production" and (not PROD_CTX_RE.search(near) or (FACILITY_RE.search(near) and not re.search(r"工場|生産|量産", near))):
                 continue
             if k == "delay" and (DELAY_NOISE_RE.search(near) or not DELAY_CTX_RE.search(near)):
                 continue
             if k == "buyback" and (END_BUYBACK_TITLE_RE.search(title) or re.search(r"取得を終了|終了いたしました", near)):
                 continue
-            if k == "alliance" and re.search(r"ご参照|プレスリリース|開示事項の経過", s_win + title):
+            if k == "alliance" and (re.search(r"ご参照|プレスリリース|開示事項の経過", s_win + title)
+                                    or re.search(r"(?:子会社化|設立|取得|提携)(?:し|いたし)(?:た|ました|て)|完了", near)):
                 continue
+            if k == "delay" and re.search(r"時期(?:については|は)", near) and not re.search(r"変更|延期|遅", title + s):
+                continue   # 「時期は○年」だけでは、変更後の日程かどうか分からない
+            if k in ("revision_up", "revision_down") and ADJUST_RE.search(s_win):
+                continue   # 前年比較などの調整表の説明で、業績予想の修正ではない
             if k in ("revision_up", "revision_down") and re.search(r"業界|市場", s_win) \
                and not re.search(r"業績予想|当社|連結", s_win):
                 continue   # 業界・市場の見通しの話で、当社の業績予想ではない
@@ -255,22 +269,38 @@ def _period_above(lines, i):
     return NONE
 
 
-def _row(ctx, page_no, item, prev, new, line, verified, basis=None, period=NONE, diff_text=None, note=None):
+UNIT_RE = re.compile(r"億円|百万円|千円|万円")
+
+
+def _unit_of(*texts):
+    """見出しや行に書かれた金額の単位。書かれていなければ None（補わない）。"""
+    for t in texts:
+        m = UNIT_RE.search(t or "")
+        if m:
+            return m.group(0)
+    return None
+
+
+def _row(ctx, page_no, item, prev, new, line, verified, basis=None, period=NONE, diff_text=None, note=None, unit=None):
     """prev/new は表示用の文字列。数値化できるときだけ差を計算する。"""
     pv, nv = _num_of(prev), _num_of(new)
     diff = None if pv is None or nv is None else round(nv - pv, 6)
+    if item.startswith("1株当たり") or prev.endswith(("円", "銭")):
+        unit = None
+    u = unit or ""
     if diff is not None:
-        dtxt = "（差 %+g）" % diff
+        dtxt = "（差 %+g%s）" % (diff, u)
     elif diff_text:
-        dtxt = "（差 %s）" % diff_text
+        dtxt = "（差 %s%s）" % (diff_text, u)
     else:
         dtxt = ""
     return {
         "kind": "forecast_item", "kind_label": KIND_LABEL["forecast_item"],
         "code": ctx["code"], "name": ctx["name"], "announced_at": ctx["pubdate"],
         "target": None, "target_text": NONE, "time_text": None, "impact_period": period,
-        "summary": "%s: 前回 %s → 今回 %s%s" % (item, prev, new, dtxt),
-        "item": item, "prev": prev, "new": new, "diff": diff, "diff_text": diff_text, "values": [prev, new],
+        "summary": "%s%s: 前回 %s%s → 今回 %s%s%s" % (
+            item, "" if period == NONE else "[%s]" % period, prev, u, new, u, dtxt),
+        "item": item, "unit": unit, "prev": prev, "new": new, "diff": diff, "diff_text": diff_text, "values": [prev, new],
         "verified": verified, "verify_basis": basis if verified else None, "note": note,
         "quote": _quote(line), "page": page_no, "url": ctx["url"], "title": ctx["title"],
         "checked_at": ctx["checked_at"], "origin": "official", "extractor": EXT_VERSION,
@@ -325,6 +355,9 @@ def extract_forecast_rows(page_text, page_no, ctx):
     # 日本語の文字どうしの間の空白だけ除く（数字の区切りの空白は残す）
     lines = [re.sub(r"(?<=[^\sA-Za-z0-9]) (?=[^\sA-Za-z0-9])", "", re.sub(r"[ 　\t]+", " ", l).strip())
              for l in t.split("\n") if l.strip()]
+    # 配当の「円銭 40．00」(全角ドット・円銭が値の前に付く書き方)は「40円00銭」にそろえる
+    lines = [re.sub(r"円\s*銭\s*(\d[\d,]*)[.．](\d{2})", r"\1円\2銭", l) if re.match(r"^[\d.()（）※注]*(?:1株当たり)?配当金", l) else l
+             for l in lines]
     if not re.search(r"前回(?:発表)?予想|修正後|今回修正|直近の配当予想|直近予想", " ".join(lines)):
         return []
     rows = []
@@ -341,11 +374,11 @@ def extract_forecast_rows(page_text, page_no, ctx):
         nt = _tokens(re.sub(r"^(?:今回(?:修正)?予想|修正後(?:予想)?|今回発表予想|修正予想)[（(]?[A-Za-zＡ-Ｚ]?[）)]?", "", nxt))
         # 見出し(項目名の行)は、直前4行まで。別の表の終わりに来たら止める
         hl = []
-        for j in range(i - 1, max(-1, i - 5), -1):
-            if re.match(r"^(?:増減|\(?（?ご参考|前期実績|今回)", lines[j]):
+        for j in range(i - 1, max(-1, i - 9), -1):
+            if re.match(r"^(?:増減|\(?（?ご参考|前期実績|今回|前回|実績値)", lines[j]):
                 break
             hl.insert(0, lines[j])
-        header = " ".join(hl)
+        header = "".join(hl)   # 「親会社株主」「に帰属する」「当期純利益」のように行が分かれる見出しをつなぐ
         period = _period_above(lines, i)
         n = min(len(pt), len(nt))
         if n < 1:
@@ -369,7 +402,8 @@ def extract_forecast_rows(page_text, page_no, ctx):
             dtk = dts[k] if k < len(dts) else None
             ok = _check_diff(a, b, dtk)
             rows.append(_row(ctx, page_no, it, a[0], b[0], l + " / " + nxt, ok, "増減額の欄と計算が一致", period,
-                             diff_text=(dtk[0] if dtk and dtk[0] != "-" else None)))
+                             diff_text=(dtk[0] if dtk and dtk[0] != "-" else None),
+                             unit=_unit_of(l, nxt, header)))
     # (A) 項目名で始まる行: 項目 前回 今回 [差額] [増減率]
     arows = []
     for i, l in enumerate(lines):
@@ -406,18 +440,23 @@ def extract_forecast_rows(page_text, page_no, ctx):
             ok, basis = True, "増減額が「-」で前回と今回が同じ"
         prevl = lines[i - 1] if i else ""
         sect = prevl if (prevl and not re.search(r"\d", prevl) and len(prevl) <= 30 and not ITEM_RE.search(prevl)) else None
-        r = _row(ctx, page_no, m.group(1), a[0], b[0], l, ok, basis, _period_above(lines, i))
+        r = _row(ctx, page_no, m.group(1), a[0], b[0], l, ok, basis, _period_above(lines, i),
+                 unit=_unit_of(rest, *[lines[j] for j in range(i - 1, max(-1, i - 7), -1)]))
         r["section"] = sect
         arows.append(r)
-    # 同じ項目名の行が複数ある表は、事業別(セグメント)と連結が混ざっている可能性がある → 要確認に落とす
-    cnt = {}
-    for r in arows:
-        cnt[r["item"]] = cnt.get(r["item"], 0) + 1
-    for r in arows:
-        if cnt[r["item"]] > 1:
-            r["verified"], r["verify_basis"], r["needs_review"] = False, None, True
-            r["note"] = "同じ項目名の行が複数あり、事業別と連結の区別が確認できない"
     rows += arows
+    # 同じ項目名・同じ期間の行が複数ある表は、事業別(セグメント)と連結、または中間期と通期が混ざっている可能性がある
+    # → 区別できないので要確認に落とす（期間が違えば別の行として扱う）
+    cnt = {}
+    for r in rows:
+        k = (r["item"], r["impact_period"])
+        cnt[k] = cnt.get(k, 0) + 1
+    for r in rows:
+        if cnt[(r["item"], r["impact_period"])] > 1:
+            r["verified"], r["verify_basis"], r["needs_review"] = False, None, True
+            r["note"] = "同じ項目名・期間の行が複数あり、事業別/連結や中間期/通期の区別が確認できない"
+    # 前回と今回が同じ値の行は、修正ではないので登録しない
+    rows = [r for r in rows if r["diff"] != 0]
     return rows[:20]
 
 
@@ -436,6 +475,30 @@ def extract_document(pages, ctx):
                 if ev["kind"] == "forecast_item":
                     ev["verified"], ev["verify_basis"] = False, None
             out.append(ev)
+    # 表の数値(前回予想→今回予想)から、利益の上方・下方修正を機械的に判定して追加する。
+    # 文章に「上方修正」と書かれていなくても、修正のお知らせ表で利益項目の差が全部同じ向きの場合だけ。
+    if not sub and re.search(r"予想.*修正|修正.*予想", ctx.get("title", "")):
+        groups = {}
+        for ev in out:
+            if ev["kind"] == "forecast_item" and ev["verified"] and ev.get("diff")                and re.search(r"営業利益|経常利益|純利益|当期利益|中間利益|四半期利益", ev["item"])                and not ev["item"].startswith(("1株当たり", "基本的1株当たり")):
+                groups.setdefault((ev["page"], ev["impact_period"]), []).append(ev)
+        for (page, per), evs in groups.items():
+            signs = {1 if e["diff"] > 0 else -1 for e in evs}
+            if len(signs) != 1:
+                continue
+            kind = "revision_up" if 1 in signs else "revision_down"
+            if any(e["kind"] == kind and e["page"] == page and "table" not in e["id"] and not e.get("note") for e in out):
+                continue   # 同じページの文章から既に拾っている
+            q = _quote("; ".join("%s %s→%s" % (e["item"], e["prev"], e["new"]) for e in evs))
+            out.append({
+                "kind": kind, "kind_label": KIND_LABEL[kind], "code": ctx["code"], "name": ctx["name"],
+                "announced_at": ctx["pubdate"], "target": None, "target_text": NONE, "time_text": None,
+                "impact_period": per, "summary": "表の数値から判定: " + q, "quote": q, "page": page,
+                "url": ctx["url"], "title": ctx["title"], "checked_at": ctx["checked_at"], "origin": "official",
+                "extractor": EXT_VERSION, "confirmed": False, "needs_review": False,
+                "note": "文章ではなく、前回予想・今回予想の表の差(増減額欄と一致)から機械的に判定",
+                "id": event_key(ctx["code"], kind, "table%s%s%s" % (page, per, q)),
+            })
     return out[:40]  # 1資料あたりの上限（異常な量を避ける）
 
 

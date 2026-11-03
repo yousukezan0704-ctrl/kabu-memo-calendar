@@ -103,3 +103,4 @@ dialog{max-width:520px;width:calc(100% - 24px);border:1px solid var(--line);bord
 .kindnote{background:var(--warnbg);color:var(--warn);border-radius:6px;padding:8px 10px;font-size:15px;margin:8px 0}
 .note{font-size:14px;margin-top:4px;font-weight:400}
 .basis{font-size:12px}
+.unit{margin-left:2px;color:var(--mut)}
