@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>株メモカレンダー</title>
+<meta name="theme-color" content="#1a56db">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="株メモ">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>株メモカレンダー</h1>
+  <div id="savestate" class="savestate idle" role="status" aria-live="polite">読み込み中…</div>
+</header>
+<nav id="tabs" class="tabs" aria-label="主要画面"></nav>
+<main id="main" class="wrap-main"><noscript>JavaScriptを有効にしてください。</noscript></main>
+<footer class="foot">個人用の記録アプリです。投資判断の助言ではありません。IRの抽出は自動処理のため、必ず元資料で確認してください。</footer>
+<dialog id="dlg"></dialog>
+<div id="toast" class="toast" role="status"></div>
+<script src="js/util.js"></script>
+<script src="js/store.js"></script>
+<script src="js/data.js"></script>
+<script src="js/prices.js"></script>
+<script src="js/cal.js"></script>
+<script src="js/ir.js"></script>
+<script src="js/stocks.js"></script>
+<script src="js/memo.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

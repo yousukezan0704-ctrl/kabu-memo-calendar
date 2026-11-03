@@ -1,0 +1,29 @@
+{
+ "themes": [
+  {
+   "id": "jishin",
+   "name": "地震",
+   "stocks": []
+  },
+  {
+   "id": "bousai",
+   "name": "防災",
+   "stocks": []
+  },
+  {
+   "id": "denryoku",
+   "name": "電力",
+   "stocks": []
+  },
+  {
+   "id": "handotai",
+   "name": "半導体",
+   "stocks": []
+  },
+  {
+   "id": "zenkotai",
+   "name": "全固体電池",
+   "stocks": []
+  }
+ ]
+}

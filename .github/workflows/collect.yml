@@ -1,0 +1,31 @@
+name: collect
+on:
+  schedule:
+    - cron: "30 8 * * 1-5"   # ?? 17:30 JST???????????????
+    - cron: "30 11 * * 1-5"  # ?? 20:30 JST?????????
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: collect
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - run: python -m unittest discover -s collector/tests -p "test_*.py"
+        working-directory: .
+        env: { PYTHONPATH: collector }
+      - run: python collector/collect.py --days 3 --budget 600
+      - name: commit data
+        run: |
+          git config user.name "kabu-memo-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add docs/data state
+          git diff --cached --quiet || git commit -m "data update"
+          git push

@@ -1,0 +1,168 @@
+{
+ "is_sample": true,
+ "note": "これは架空のデータです。実際の会社・IRではありません。",
+ "events": [
+  {
+   "id": "sample1",
+   "kind": "earnings",
+   "kind_label": "決算発表",
+   "code": "0000",
+   "name": "サンプル工業(架空)",
+   "announced_at": "2026-10-31 15:00:00",
+   "target": {
+    "raw": "2026-11-13 15時00分",
+    "start": "2026-11-13",
+    "end": "2026-11-13",
+    "precision": "day",
+    "needs_review": false,
+    "reason": "",
+    "time": null
+   },
+   "target_text": "2026-11-13 15時00分",
+   "time_text": "15:00",
+   "impact_period": "記載なし",
+   "summary": "第2四半期決算を発表予定",
+   "quote": "当社は第2四半期決算を2026-11-13に発表する予定です。",
+   "page": 1,
+   "url": "",
+   "title": "（架空）サンプルのIR",
+   "checked_at": "2026-11-03T09:05:20+09:00",
+   "origin": "official",
+   "extractor": "sample",
+   "confirmed": true,
+   "needs_review": false
+  },
+  {
+   "id": "sample2",
+   "kind": "launch",
+   "kind_label": "発売・販売開始",
+   "code": "0000",
+   "name": "サンプル工業(架空)",
+   "announced_at": "2026-10-31 15:00:00",
+   "target": {
+    "raw": "来春",
+    "start": "2027-03-01",
+    "end": "2027-05-31",
+    "precision": "season",
+    "needs_review": false,
+    "reason": ""
+   },
+   "target_text": "来春",
+   "time_text": null,
+   "impact_period": "記載なし",
+   "summary": "新製品Aを来春に発売予定",
+   "quote": "新製品Aを来春に発売する予定です。",
+   "page": 1,
+   "url": "",
+   "title": "（架空）サンプルのIR",
+   "checked_at": "2026-11-03T09:05:20+09:00",
+   "origin": "official",
+   "extractor": "sample",
+   "confirmed": false,
+   "needs_review": false
+  },
+  {
+   "id": "sample3",
+   "kind": "development",
+   "kind_label": "開発・試験・承認",
+   "code": "0000",
+   "name": "サンプル工業(架空)",
+   "announced_at": "2026-10-31 15:00:00",
+   "target": {
+    "raw": "年度内",
+    "start": null,
+    "end": null,
+    "precision": "fy",
+    "needs_review": true,
+    "reason": "会社の決算期が文中にないため期間を確定できない"
+   },
+   "target_text": "年度内",
+   "time_text": null,
+   "impact_period": "記載なし",
+   "summary": "承認申請を年度内に行う予定",
+   "quote": "年度内に承認申請を行う予定です。",
+   "page": 1,
+   "url": "",
+   "title": "（架空）サンプルのIR",
+   "checked_at": "2026-11-03T09:05:20+09:00",
+   "origin": "official",
+   "extractor": "sample",
+   "confirmed": false,
+   "needs_review": true
+  },
+  {
+   "id": "sample4",
+   "kind": "revision_up",
+   "kind_label": "上方修正",
+   "code": "0000",
+   "name": "サンプル工業(架空)",
+   "announced_at": "2026-10-31 15:00:00",
+   "target": null,
+   "target_text": "記載なし",
+   "time_text": null,
+   "impact_period": "通期",
+   "summary": "通期予想を上方修正",
+   "quote": "通期の営業利益予想を上方修正いたします。",
+   "page": 1,
+   "url": "",
+   "title": "（架空）サンプルのIR",
+   "checked_at": "2026-11-03T09:05:20+09:00",
+   "origin": "official",
+   "extractor": "sample",
+   "confirmed": false,
+   "needs_review": false
+  },
+  {
+   "id": "sample5",
+   "kind": "production",
+   "kind_label": "工場・設備・量産",
+   "code": "0000",
+   "name": "サンプル工業(架空)",
+   "announced_at": "2026-10-31 15:00:00",
+   "target": {
+    "raw": "2026-12-18",
+    "start": "2026-12-18",
+    "end": "2026-12-18",
+    "precision": "day",
+    "needs_review": false,
+    "reason": "",
+    "time": null
+   },
+   "target_text": "2026-12-18",
+   "time_text": null,
+   "impact_period": "記載なし",
+   "summary": "新工場の稼働開始予定",
+   "quote": "新工場の稼働を2026-12-18に開始する予定です。",
+   "page": 1,
+   "url": "",
+   "title": "（架空）サンプルのIR",
+   "checked_at": "2026-11-03T09:05:20+09:00",
+   "origin": "official",
+   "extractor": "sample",
+   "confirmed": false,
+   "needs_review": false
+  }
+ ],
+ "themes": [
+  {
+   "id": "handotai",
+   "name": "半導体",
+   "stocks": [
+    {
+     "code": "0000",
+     "name": "サンプル工業(架空)",
+     "relation": "business",
+     "evidence": "（架空）半導体製造装置の部品を製造と記載",
+     "confirmed_at": "2026-11-02"
+    },
+    {
+     "code": "0001",
+     "name": "サンプル商事(架空)",
+     "relation": "price",
+     "evidence": "（架空）過去に株価が連動して動いただけ。事業上の関係は確認できていない",
+     "confirmed_at": "2026-11-02"
+    }
+   ]
+  }
+ ]
+}
