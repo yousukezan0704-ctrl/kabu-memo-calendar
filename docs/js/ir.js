@@ -1,23 +1,31 @@
-/* 重要IR画面: 取得状況（どこまで読めたか）と、抽出した項目の一覧 */
 (function (K) {
   var E = K.esc;
-  K.irUi = K.irUi || { limit: 60, reviewOnly: false, showFailed: false };
+  K.irUi = K.irUi || { limit: 20, reviewOnly: false, showFailed: false };
 
+  /* "2026-11-03T21:01:55+09:00" -> "21:01"（今日でなければ "11/2 21:01"） */
+  function hm(v) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}:\d{2})/.exec(v || "");
+    if (!m) return "不明";
+    return (m[1] + "-" + m[2] + "-" + m[3] === K.today() ? "" : (+m[2]) + "/" + (+m[3]) + " ") + m[4];
+  }
+
+  /* 取得状況: 1行の要約＋詳細は折りたたみ。赤い警告(失敗・停止)は常に上に出す */
   function coverage() {
-    var s = K.data.status, h = '<section class="panel cov"><h3>取得状況</h3>';
+    var s = K.data.status, h = K.statusAlert() + '<section class="panel cov"><h3>取得状況</h3>';
     if (!s) {
       h += '<p class="warn">実データはまだ取得されていません（収集処理が未実行、または data/status.json が読めません）。下の「サンプル」は架空のデータです。</p>';
       if (K.data.loadErrors.length) h += '<p class="muted">' + E(K.data.loadErrors.join(" / ")) + "</p>";
       return h + "</section>";
     }
     var lr = s.last_run || null;
-    h += K.statusAlert();
-    if (lr) h += '<p class="muted">直近の自動取得: ' + E((lr.at || "不明").replace("T", " ").slice(0, 16)) + "（" + (lr.trigger === "schedule" ? "定時実行" : lr.trigger === "workflow_dispatch" ? "手動実行" : E(lr.trigger || "不明")) + "）／ <b>" + (lr.ok ? "成功" : "失敗") + "</b></p>";
+    h += '<p class="sumline">' + E(s.listed) + "件中<b>" + E(s.done) + "</b>件読了・未処理" + E(s.pending) + "・失敗" + E(s.failed) +
+      "・最終更新 " + E(hm(s.generated_at)) + (lr ? "・自動取得 <b>" + (lr.ok ? "成功" : "失敗") + "</b>" : "") + "</p>";
+    h += s.complete ? '<p class="ok">全件の全文精査まで完了しています。</p>'
+      : '<p class="warn">⚠ 全件の全文精査は完了していません（「完了」とは扱いません）。</p>';
     var mine = Object.keys(K.state.checked).filter(function (k) { return K.state.checked[k]; }).length;
-    h += s.complete
-      ? '<p class="ok">対象期間の一覧をすべて取得し、全文精査も完了しています。</p>'
-      : '<p class="warn">⚠ 全件の全文精査は完了していません。未処理・失敗がある間は「完了」とは扱いません。</p>';
-    h += '<dl class="kv big">' +
+    var d = "";
+    if (lr) d += '<p class="muted">直近の自動取得: ' + E((lr.at || "不明").replace("T", " ").slice(0, 16)) + "（" + (lr.trigger === "schedule" ? "定時実行" : lr.trigger === "workflow_dispatch" ? "手動実行" : E(lr.trigger || "不明")) + "）／ <b>" + (lr.ok ? "成功" : "失敗") + "</b></p>";
+    d += '<dl class="kv big">' +
       "<dt>対象範囲</dt><dd>直近" + E(s.range.days) + "日分の適時開示（一覧取得できた日: " + E((s.range.index_ok_days || []).join(", ") || "なし") + "）</dd>" +
       "<dt>一覧に載った件数</dt><dd>" + E(s.listed) + "件</dd>" +
       "<dt>本文を読んだ（取得済み）</dt><dd>" + E(s.done) + "件</dd>" +
@@ -28,30 +36,32 @@
       "<dt>最終更新</dt><dd>" + E((s.generated_at || "").replace("T", " ").slice(0, 16)) + "</dd>" +
       "<dt>取得元</dt><dd>" + E(s.source) + "</dd>" +
       "<dt>取得元の利用条件</dt><dd>" + E(s.source_terms || "未確認") + "</dd></dl>";
-    h += '<p class="muted">抽出はルールによる自動処理です。見落とし・取り違えがあり得るため、必ず元資料で確認してください。</p>';
-    if (s.errors && s.errors.length) h += "<details><summary>エラー詳細 (" + s.errors.length + ")</summary><ul>" + s.errors.map(function (x) { return "<li>" + E(x) + "</li>"; }).join("") + "</ul></details>";
+    d += '<p class="muted">抽出はルールによる自動処理です。見落とし・取り違えがあり得るため、必ず元資料で確認してください。</p>';
+    if (s.errors && s.errors.length) d += "<details><summary>エラー詳細 (" + s.errors.length + ")</summary><ul>" + s.errors.map(function (x) { return "<li>" + E(x) + "</li>"; }).join("") + "</ul></details>";
+    h += K.det("cov-detail", "取得状況の詳しい内容", d, false, "sub");
     return h + "</section>";
   }
 
+  /* IRカード用の追加表示。pre=常に見せる / fold=「根拠を見る」の中 */
   function extra(it) {
-    var e = it.ev, h = "";
-    if (!e) return h;
+    var e = it.ev, pre = "", fold = "";
+    if (!e) return { pre: pre, fold: fold };
     if (e.prev != null) {
-      h += '<div class="cmp"><b>' + E(e.item) + "</b>: 前回予想 " + E(e.prev) + " → 今回 " + E(e.new) +
+      pre += '<div class="cmp"><b>' + E(e.item) + "</b>: 前回予想 " + E(e.prev) + " → 今回 " + E(e.new) +
         (e.diff != null ? "（差 " + (e.diff > 0 ? "+" : "") + E(e.diff.toLocaleString()) + "）" : "") +
         (e.verified ? ' <span class="badge b-ok">資料内の差額と一致</span>' : ' <span class="badge b-warn">列の対応は原文で確認</span>') + "</div>";
-    } else if (e.values) h += '<div class="muted">抽出した数値: ' + E(e.item) + " … " + E(e.values.join(" / ")) + "（列の意味は原文で確認）</div>";
-    if (e.correction) h += '<div class="warn">訂正・差し替えの資料から抽出されています</div>';
+    } else if (e.values) pre += '<div class="muted">抽出した数値: ' + E(e.item) + " … " + E(e.values.join(" / ")) + "（列の意味は原文で確認）</div>";
+    if (e.correction) pre += '<div class="warn">訂正・差し替えの資料から抽出されています</div>';
     if (e.history && e.history.length) {
-      h += "<details><summary>変更履歴 (" + e.history.length + ")</summary>" + e.history.map(function (x) {
+      fold += "<details><summary>変更履歴 (" + e.history.length + ")</summary>" + e.history.map(function (x) {
         return '<div class="hist">' + E((x.checked_at || "").slice(0, 16)) + " 時点: 対象時期「" + E(x.target_text) + "」 時刻「" + E(x.time_text || "記載なし") + "」 p." + E(x.page) + "</div>";
       }).join("") + "</details>";
     }
     var prev = K.items.filter(function (o) {
       return o.src === "ir" && o.code === it.code && o.kind === it.kind && o.announced_at < it.announced_at && o.refId !== it.refId;
     }).sort(function (a, b) { return a.announced_at < b.announced_at ? 1 : -1; })[0];
-    if (prev) h += '<div class="muted">前回の同種資料(' + E(prev.announced_at.slice(0, 10)) + "): 対象時期「" + E(prev.raw || "記載なし") + "」→ 今回「" + E(it.raw || "記載なし") + "」" + (prev.raw === it.raw ? "（同じ）" : "（違う: 要確認）") + "</div>";
-    return h;
+    if (prev) fold += '<div class="muted">前回の同種資料(' + E(prev.announced_at.slice(0, 10)) + "): 対象時期「" + E(prev.raw || "記載なし") + "」→ 今回「" + E(it.raw || "記載なし") + "」" + (prev.raw === it.raw ? "（同じ）" : "（違う: 要確認）") + "</div>";
+    return { pre: pre, fold: fold };
   }
 
   K.renderIR = function () {
@@ -61,23 +71,22 @@
     var items = K.buildItems().filter(function (it) { return it.src === "ir"; });
     items = K.applyFilter(items);
     if (K.irUi.reviewOnly) items = items.filter(function (it) { return it.review && !it.checkedByMe; });
-    items.sort(function (a, b) { return a.announced_at < b.announced_at ? 1 : -1; });
+    items.sort(function (a, b) { return (a.sample ? 1 : 0) - (b.sample ? 1 : 0) || (a.announced_at < b.announced_at ? 1 : -1); });
     var h = K.irSubnav() + coverage() + K.filterBar() + K.kindNotice();
     h += '<label class="chk"><input id="ir-review" type="checkbox"' + (K.irUi.reviewOnly ? " checked" : "") + "> 「要確認」だけ表示</label>";
     h += "<p class=\"muted\">" + items.length + "件が該当します。</p>";
     if (!items.length) h += '<p class="empty">表示できるIR項目がありません。</p>';
     items.slice(0, K.irUi.limit).forEach(function (it) {
-      var card = K.itemCard(it).replace(/<\/article>$/, extra(it) + "</article>");
-      h += card;
+      h += K.itemCard(it, extra(it));
     });
     if (items.length > K.irUi.limit) h += '<button data-act="more-ir">さらに表示（残り ' + (items.length - K.irUi.limit) + "件）</button>";
     var failed = K.data.index.filter(function (x) { return x.status === "failed"; });
     if (failed.length) {
-      h += '<section class="panel"><h3>取得に失敗した資料（' + failed.length + "件）</h3><p class=\"muted\">本文を読めていません。元資料を直接開いて確認してください。</p>";
+      var fb = '<p class="muted">本文を読めていません。元資料を直接開いて確認してください。</p>';
       failed.slice(0, 40).forEach(function (x) {
-        h += '<div class="mline">' + E(x.name) + "(" + E(x.code) + ") " + E(x.title) + " — " + E(x.note || "") + (K.safeUrl(x.url) ? ' <a href="' + E(x.url) + '" target="_blank" rel="noopener">開く</a>' : "") + "</div>";
+        fb += '<div class="mline">' + E(x.name) + "(" + E(x.code) + ") " + E(x.title) + " — " + E(x.note || "") + (K.safeUrl(x.url) ? ' <a href="' + E(x.url) + '" target="_blank" rel="noopener">開く</a>' : "") + "</div>";
       });
-      h += "</section>";
+      h += K.det("failed", "取得に失敗した資料（" + failed.length + "件）", fb, false, "pf");
     }
     return h;
   };
@@ -238,13 +247,13 @@
 
   K.kindNotice = function () {
     var risky = Object.keys(K.RISKY_KINDS).map(function (k) { return E(K.KINDS[k].label); }).join("・");
-    return '<div class="kindnote"><b>種類ごとの注意</b><br>' +
-      "上方・下方修正と予想の比較: 比較的正確ですが、原文での確認をおすすめします。<br>" +
-      E("") + risky + ': <span class="badge b-warn">試験的・誤りが残る可能性。必ず原文で確認</span></div>';
+    var b = "<p>上方・下方修正と予想の比較: 比較的正確ですが、原文での確認をおすすめします。</p>" +
+      "<p>" + risky + ': <span class="badge b-warn">試験的・誤りが残る可能性。必ず原文で確認</span></p>';
+    return K.det("kindnote", "⚠ 種類ごとの注意（自動抽出の精度）", b, false, "sub kindnote");
   };
   K.irSubnav = function () {
     var sub = K.irUi.sub || "all";
-    return '<div class="seg irsub">' + [["all", "すべて"], ["earn", "決算発表の予定"], ["cmp", "予想の前回→今回"]].map(function (v) {
+    return '<div class="subtabs irsub">' + [["all", "すべて"], ["earn", "決算発表の予定"], ["cmp", "予想の比較"]].map(function (v) {
       return '<button class="' + (sub === v[0] ? "on" : "") + '" data-act="irsub" data-v="' + v[0] + '">' + v[1] + "</button>";
     }).join("") + "</div>";
   };

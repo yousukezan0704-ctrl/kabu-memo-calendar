@@ -4,6 +4,8 @@
   var TABS = [["cal", "カレンダー"], ["ir", "重要IR"], ["stocks", "銘柄・テーマ"], ["memo", "メモ"]];
 
   function render(keepFocusId) {
+    /* 描き直す前に、いま開いている折りたたみを記録する（toggleイベントの遅れで閉じてしまうのを防ぐ） */
+    Array.prototype.forEach.call($("main").querySelectorAll("details[data-key]"), function (d) { K.openState[d.dataset.key] = d.open; });
     var nav = TABS.map(function (t) {
       return '<button class="tab' + (K.ui.tab === t[0] ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '">' + t[1] + "</button>";
     }).join("");
@@ -88,7 +90,9 @@
     },
     irsub: function (t) { K.irUi.sub = t.dataset.v; render(); },
     "more-cmp": function () { K.irUi.cmpLimit = (K.irUi.cmpLimit || 20) + 20; render(); },
-    "more-ir": function () { K.irUi.limit += 60; render(); },
+    "more-ir": function () { K.irUi.limit += 20; render(); },
+    "more-list": function () { K.ui.listLimit += 40; render(); },
+    "more-bucket": function () { K.ui.bucketLimit = (K.ui.bucketLimit || 20) + 20; render(); },
     addevent: addEventDialog,
     deluser: function (t) {
       if (!confirm("この予定を削除しますか？")) return;
@@ -169,6 +173,12 @@
     if (t.tagName === "A") ev.preventDefault();
     fn(t, ev);
   });
+
+  /* 折りたたみ(<details>)の開閉を覚える。toggle は泡立たないので capture で受ける */
+  document.addEventListener("toggle", function (ev) {
+    var t = ev.target;
+    if (t && t.tagName === "DETAILS" && t.dataset && t.dataset.key) K.openState[t.dataset.key] = t.open;
+  }, true);
 
   document.addEventListener("input", function (ev) {
     var t = ev.target;

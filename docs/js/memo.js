@@ -7,9 +7,8 @@
     var due = K.dueMemos(), t = K.today();
     var h = '<section class="home">';
     var st = K.data.status;
-    if (st && st.last_run && !st.last_run.ok) h += '<div class="errbox">⚠ 直近の自動取得が失敗しています。「重要IR」の取得状況に原因を表示しています。</div>';
     if (!K.hasRealData()) h += '<div class="warn">実データは未取得です。表示中のものにサンプル(架空)が含まれる場合は「サンプル」と書いてあります。</div>';
-    if (!due.length) return h + '<div class="okbox">今日までに確認する予定のメモはありません。</div></section>';
+    if (!due.length) return h + "</section>";
     h += "<h3>⏰ 自分が調べる日が来ています（" + due.length + "件）</h3>";
     due.slice(0, 6).forEach(function (m) {
       var over = m.reviewDate < t;
@@ -33,9 +32,9 @@
     var L = K.state.memos.filter(function (m) { return f === "all" || (f === "open" ? m.status === "open" : m.status !== "open"); });
     L.sort(function (a, b) { return (a.reviewDate || "9999") < (b.reviewDate || "9999") ? -1 : 1; });
     var h = K.homeBanner();
-    h += '<div class="seg">' + [["open", "追跡中"], ["closed", "終了"], ["all", "すべて"]].map(function (v) {
+    h += '<div class="subtabs">' + [["open", "追跡中"], ["closed", "終了"], ["all", "すべて"]].map(function (v) {
       return '<button class="' + (f === v[0] ? "on" : "") + '" data-act="mfilter" data-v="' + v[0] + '">' + v[1] + "</button>";
-    }).join("") + '<button data-act="newmemo" data-code="">＋ 新しいメモ</button></div>';
+    }).join("") + "</div>" + '<button class="wide" data-act="newmemo" data-code="">＋ 新しいメモ</button>';
     if (!L.length) h += '<p class="empty">メモがありません。「＋ 新しいメモ」で作れます。</p>';
     L.forEach(function (m) {
       var t = K.today(), st = m.status === "open" ? (m.reviewDate && m.reviewDate < t ? "期限超過" : m.reviewDate === t ? "今日" : "追跡中") : m.status === "done" ? "確認済み" : "見送り";
@@ -83,19 +82,18 @@
   /* ---------- 通知・バックアップ ---------- */
   function tools() {
     var s = K.state.settings;
-    var h = '<section class="panel"><h3>通知（再確認日のお知らせ）</h3>' +
-      '<p class="warn">iPhoneでこのアプリを閉じていても届くかは、実機での確認が必要です。まだ確認していません（下の記録は自己申告です）。</p>' +
+    var h = K.det("tool-notif", "通知（再確認日のお知らせ）", '<p class="warn">iPhoneでこのアプリを閉じていても届くかは、実機での確認が必要です。まだ確認していません（下の記録は自己申告です）。</p>' +
       "<ol><li><b>おすすめ: iPhoneの標準カレンダーに取り込む</b>（.ics）。取り込んだ予定の通知はiPhone本体が出すため、このアプリを閉じていても届く見込みです。前日18:00と当日7:30にお知らせを付けます。</li>" +
       "<li>アプリを開いている間だけ出る通知（ブラウザ通知）。ホーム画面に追加したアプリでのみ動く場合があります。</li>" +
       "<li>どちらも使えなくても、期限が来たメモは画面の上部に「期限到来／期限超過」として出ます。</li></ol>" +
       '<div class="row wrap"><button data-act="ics">再確認日を .ics で書き出す</button><button data-act="notiftest">通知のテスト</button></div>' +
       '<label>実機での確認結果（自分で記録）<select id="n-ck">' + ["未確認", "確認OK（アプリを閉じても届いた）", "確認NG（届かなかった）"].map(function (o) {
         return '<option' + (s.notifyChecked === o ? " selected" : "") + ">" + o + "</option>";
-      }).join("") + '</select></label><input id="n-note" placeholder="メモ（機種・iOSのバージョンなど）" value="' + E(s.notifyNote) + '"></section>';
-    h += '<section class="panel"><h3>バックアップと復元</h3><p class="muted">データはこの端末のブラウザの中にだけあります。端末の故障や設定削除に備えて、ときどき書き出してください。最後の書き出し: ' + E(s.lastBackup || "まだありません") + "</p>" +
+      }).join("") + '</select></label><input id="n-note" placeholder="メモ（機種・iOSのバージョンなど）" value="' + E(s.notifyNote) + '">', false, "pf");
+    h += K.det("tool-backup", "バックアップと復元", '<p class="muted">データはこの端末のブラウザの中にだけあります。端末の故障や設定削除に備えて、ときどき書き出してください。最後の書き出し: ' + E(s.lastBackup || "まだありません") + "</p>" +
       '<div class="row wrap"><button data-act="backup">バックアップを書き出す</button><label class="btnlike">バックアップから復元<input id="restore-file" type="file" accept=".json,application/json" hidden></label>' +
-      '<button data-act="undorestore">復元を取り消す</button></div></section>';
-    h += '<section class="panel"><h3>表示設定</h3><label class="chk"><input id="set-sample" type="checkbox"' + (s.showSample ? " checked" : "") + "> サンプル（架空のデータ）を表示する</label></section>";
+      '<button data-act="undorestore">復元を取り消す</button></div>', false, "pf");
+    h += K.det("tool-set", "表示設定", '<label class="chk"><input id="set-sample" type="checkbox"' + (s.showSample ? " checked" : "") + "> サンプル（架空のデータ）を表示する</label>", false, "pf");
     return h;
   }
 

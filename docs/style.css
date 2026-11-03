@@ -104,3 +104,69 @@ dialog{max-width:520px;width:calc(100% - 24px);border:1px solid var(--line);bord
 .note{font-size:14px;margin-top:4px;font-weight:400}
 .basis{font-size:12px}
 .unit{margin-left:2px;color:var(--mut)}
+
+/* ---- すっきり整理（折りたたみ・コンパクトなカード・大きめの文字と余白） ---- */
+body{font-size:17px;line-height:1.7}
+button,.btnlike{min-height:44px;padding:10px 14px}
+button.mini{min-height:44px;padding:6px 12px}
+.wrap-main{padding:14px 16px 48px}
+.panel{margin:18px 0;padding:14px 16px}
+.panel h3{font-size:21px;margin:4px 0 10px}
+h4{font-size:18px;margin:16px 0 6px}
+.tab{min-height:48px;font-size:16px}
+.fold{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.fold>summary{list-style:none;cursor:pointer;min-height:48px;padding:12px 14px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;border-radius:10px}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:"▸";color:var(--mut);flex:none;width:1em}
+.fold[open]>summary::before{content:"▾"}
+.fold[open]>summary{border-bottom:1px solid var(--line);border-radius:10px 10px 0 0}
+.foldbody{padding:6px 14px 14px}
+.fold.pf>summary{font-size:19px}
+.fold.sub{border:0;background:none;margin:6px 0}
+.fold.sub>summary{min-height:44px;padding:8px 0;color:var(--acc);font-size:16px;font-weight:600}
+.fold.sub[open]>summary{border:0}
+.fold.sub>.foldbody{padding:0 0 6px}
+.fold.morefold{display:inline-block;margin:0;border:0;background:none}
+.fold.morefold>summary{min-height:44px;min-width:44px;padding:8px 14px;border:1px solid var(--line);border-radius:8px;justify-content:center;background:var(--card)}
+.fold.morefold>summary::before{content:""}
+.fold.morefold[open]>summary{border-radius:8px}
+.fold.morefold>.foldbody{padding:8px 0}
+.fold.grp{background:var(--bg)}
+.fold.grp>summary{font-size:17px}
+.fold.grp>.foldbody{padding:0 8px 8px}
+.fold.filterfold>summary{font-weight:600}
+.fold.kindnote{border:1px solid var(--warn);background:var(--warnbg)}
+.fold.kindnote>summary{color:var(--warn)}
+.cn{font-weight:700}
+.subtabs{display:flex;border-bottom:2px solid var(--line);margin:10px 0 14px}
+.subtabs button{flex:1 1 0;border:0;border-bottom:4px solid transparent;border-radius:0;background:none;min-height:48px;padding:8px 4px;font-size:16px;margin-bottom:-2px}
+.subtabs button.on{border-color:var(--acc);color:var(--acc);font-weight:700;background:none}
+button.wide{width:100%;margin-bottom:12px}
+.seg button{flex:1 1 auto}
+.card{padding:12px 14px;margin:12px 0}
+.card .l1{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.card .ttl{margin:0;font-weight:700}
+.card .body{margin:4px 0 2px;font-size:17px}
+.card .l3{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:14px}
+.card .l3 .muted{font-size:14px}
+.note{background:var(--warnbg);color:var(--warn);padding:6px 10px;border-radius:6px;font-size:15px;margin:6px 0}
+.acts{margin-top:8px;gap:8px}
+.acts>button{font-size:15px;padding:8px 12px}
+.badge{font-size:13px;padding:1px 8px}
+.sumline{font-size:17px;margin:4px 0}
+.cell{min-height:60px;padding:3px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.dots{display:flex;gap:3px;min-height:9px}
+.dots i{display:block;width:9px;height:9px;border-radius:50%;background:var(--c)}
+.cnt{font-size:13px;font-weight:700;color:var(--fg);line-height:1}
+.dn{font-size:14px}
+.dh{font-size:18px}
+.daypanel{padding:12px}
+@media (max-width:520px){
+  .wrap-main{padding:12px 14px 48px}
+  .grid{gap:3px}
+  .cell{min-height:58px}
+  .tab{font-size:14px}
+  .mhead strong{font-size:18px}
+}
+.fold.morefold>summary{padding:8px 18px}
+.card .body{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}

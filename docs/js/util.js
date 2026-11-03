@@ -68,6 +68,13 @@ window.KMC = window.KMC || {};
   };
   /* 自動抽出の誤りが残りやすい種類（検証結果による） */
   K.RISKY_KINDS = { launch: 1, production: 1, fx: 1, delay: 1, alliance: 1, buyback: 1 };
+  /* 折りたたみ(<details>)。開閉は K.openState に覚え、画面を描き直しても閉じない。
+     sum は HTML（呼び出し側で esc 済みのこと）。def は初期状態(true=開く) */
+  K.openState = {};
+  K.det = function (key, sum, body, def, cls) {
+    var o = Object.prototype.hasOwnProperty.call(K.openState, key) ? K.openState[key] : !!def;
+    return '<details class="fold' + (cls ? " " + cls : "") + '" data-key="' + K.esc(key) + '"' + (o ? " open" : "") + "><summary>" + sum + '</summary><div class="foldbody">' + body + "</div></details>";
+  };
   K.kindOf = function (k) { return K.KINDS[k] || K.KINDS.other; };
   K.ORIGIN = {
     official:  { label: "会社公表", cls: "o-official" },
