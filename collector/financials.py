@@ -377,8 +377,15 @@ def merge_period(doc, rec, code, name, now=None):
     if rec is None:
         return out
     periods = out["periods"]
-    if any(p.get("id") == rec.get("id") for p in periods):
-        return out  # 同じ書類は2回入れない
+    for i, p in enumerate(periods):
+        if p.get("id") == rec.get("id"):
+            # 同じ書類は2回入れない。ただしパーサー改良後の再解析は、解析結果だけ新しくする(訂正の履歴は引き継ぐ)
+            new = copy.deepcopy(rec)
+            for k in ("supersedes", "superseded_by"):
+                if p.get(k) is not None:
+                    new[k] = p[k]
+            periods[i] = new
+            return out
     new = copy.deepcopy(rec)
     same = [p for p in periods
             if p.get("fiscal_year_end") == new.get("fiscal_year_end")

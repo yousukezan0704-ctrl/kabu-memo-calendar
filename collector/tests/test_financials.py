@@ -189,8 +189,17 @@ class TestMerge(unittest.TestCase):
         before = copy.deepcopy(d)
         d2 = F.merge_period(d, self.rec(1, sales=999), "1", "a")
         self.assertEqual(len(d2["periods"]), 1)
-        self.assertEqual(d2["periods"][0]["results"]["sales"], 100)  # 既存を上書きしない
+        self.assertEqual(d2["periods"][0]["results"]["sales"], 999)  # 同じ書類の再解析は解析結果を新しくする
         self.assertEqual(d, before)  # 引数は書き換えない
+
+    def test_reparse_keeps_correction_links(self):
+        d = F.merge_period(None, self.rec(1), "1", "a")
+        d = F.merge_period(d, self.rec(2, pub="2026-05-20 15:00:00", sales=105), "1", "a")
+        d = F.merge_period(d, self.rec(2, pub="2026-05-20 15:00:00", sales=106), "1", "a")
+        by = {p["id"]: p for p in d["periods"]}
+        self.assertEqual(len(d["periods"]), 2)
+        self.assertEqual(by[2]["supersedes"], 1)  # 訂正の履歴を引き継ぐ
+        self.assertEqual(by[2]["results"]["sales"], 106)
 
     def test_correction_keeps_history(self):
         d = F.merge_period(None, self.rec(1), "1", "a")
