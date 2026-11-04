@@ -33,6 +33,8 @@ _OPINC = ("OperatingIncome", "OperatingProfit", "OperatingProfitLoss", "Operatin
 _ORDINC = ("OrdinaryIncome", "OrdinaryProfit", "OrdinaryIncomeLoss")
 _NETINC = ("ProfitAttributableToOwnersOfParent", "ProfitLossAttributableToOwnersOfParent",
            "NetIncomeAttributableToOwnersOfParent")  # 少数株主分を含む「当期利益」は推測で代用しない
+# 非連結の短信では「四半期(当期)純利益」が NetIncome で出る。連結書類では使わない(少数株主分を含みうるため)
+_NETINC_SOLO = ("NetIncome", "NetIncomeLoss", "ProfitLoss")
 _EPS = ("NetIncomePerShare", "BasicEarningsPerShare", "BasicNetIncomePerShare")
 
 
@@ -173,11 +175,15 @@ class _Ctx:
     def __init__(self, facts):
         self.facts = facts
 
-    def get(self, names, base, scope, members=(), mode="money"):
+    def has_member(self, member):
+        """書類内のどこかの contextRef に、そのメンバー(完全一致)が付いているか。"""
+        return any(member in _ctx_parts(cid)[1] for (_n, cid) in self.facts)
+
+    def get(self, names, base, scope, members=(), mode="money", prefs=("ConsolidatedMember", "NonConsolidatedMember", None)):
         """names: 項目名の候補 / base: 'CurrentYearDuration' など / scope: 'Result'|'Forecast'
         members: 追加で必要なメンバー(例 'AnnualMember')。連結を優先、なければ個別、なければ区分なし。"""
         want = {scope + "Member", *members}
-        for pref in ("ConsolidatedMember", "NonConsolidatedMember", None):
+        for pref in prefs:
             for name in names:
                 for (n, cid), v in self.facts.items():
                     if n != name or v is None:
@@ -258,16 +264,40 @@ def parse_summary_zip(zip_bytes, meta):
     fdur = "NextYearDuration" if q is None else "CurrentYearDuration"
 
     c = _Ctx(facts)
+    # 基準・連結/非連結の判定。連結の印(ConsolidatedMember)が書類のどこにも無く、非連結の印だけがある書類を「非連結書類」とする
+    is_solo = c.has_member("NonConsolidatedMember") and not c.has_member("ConsolidatedMember")
+    is_ifrs = bool(re.search(r'name="[^"]*:\w+IFRS"', htm))
+    basis = "非連結" if is_solo else ("連結" if c.has_member("ConsolidatedMember") else None)
+    solo_prefs = ("NonConsolidatedMember", None)
+    used_solo_net = []
+
+    def solo_net(base, scope, names, mode="money"):
+        """非連結書類のときだけ NetIncome 系を拾う(連結書類では None のまま)。"""
+        if not is_solo:
+            return None
+        v = c.get(names, base, scope, mode=mode, prefs=solo_prefs)
+        if v is not None:
+            used_solo_net.append(scope)
+        return v
+
     results = {k: c.get(v, dur, "Result") for k, v in _RESULT_TAGS.items()}
+    if results["net_income"] is None:
+        results["net_income"] = solo_net(dur, "Result", _NETINC_SOLO)
     results["eps"] = c.get(_EPS, dur, "Result", mode="raw")
     yoy = {k: c.get(v, dur, "Result", mode="pct") for k, v in _CHANGE_TAGS.items()}
+    if yoy["net_income"] is None:
+        yoy["net_income"] = solo_net(dur, "Result", _alias(_NETINC_SOLO, "ChangeIn"), mode="pct")
 
     fc = {"period": "通期"}
     for k, v in _RESULT_TAGS.items():
         fc[k] = c.get(v, fdur, "Forecast")
+    if fc["net_income"] is None:
+        fc["net_income"] = solo_net(fdur, "Forecast", _NETINC_SOLO)
     fc["eps"] = c.get(_EPS, fdur, "Forecast", mode="raw")
     fc["dps"] = c.get(("DividendPerShare",), fdur, "Forecast", members=("AnnualMember",), mode="raw")
     fc["yoy_pct"] = {k: c.get(v, fdur, "Forecast", mode="pct") for k, v in _CHANGE_TAGS.items()}
+    if fc["yoy_pct"]["net_income"] is None:
+        fc["yoy_pct"]["net_income"] = solo_net(fdur, "Forecast", _alias(_NETINC_SOLO, "ChangeIn"), mode="pct")
 
     dividend = {
         "annual_actual": c.get(("DividendPerShare",), dur, "Result", members=("AnnualMember",), mode="raw"),
@@ -296,7 +326,7 @@ def parse_summary_zip(zip_bytes, meta):
     if fye is None and q is None:
         fye = period_end
 
-    return {
+    rec = {
         "id": meta.get("id"),
         "announced_at": meta.get("pubdate"),
         "period_type": ptype,
@@ -311,7 +341,22 @@ def parse_summary_zip(zip_bytes, meta):
         "dividend": dividend,
         "balance": balance,
         "source": SOURCE,
+        "basis": basis,
     }
+    if used_solo_net:
+        rec["results_note"] = "非連結の書類のため、純利益は「四半期(当期)純利益」(NetIncome)の値。親会社株主帰属ではない"
+    # 無い項目をNoneのまま保つ理由(推測で埋めない)
+    reasons = {}
+    if is_ifrs:
+        if results["ordinary_income"] is None:
+            reasons["ordinary_income"] = "IFRSには経常利益の項目が無いため(税引前利益などで代用しない)"
+        if results["operating_income"] is None:
+            reasons["operating_income"] = "IFRSの短信に営業利益のタグが無いため(税引前利益などで代用しない)"
+    if results["net_income"] is None and not is_solo:
+        reasons["net_income"] = "親会社株主に帰属する利益のタグが無い(少数株主分を含む利益では代用しない)"
+    if reasons:
+        rec["missing_reason"] = reasons
+    return rec
 
 
 # ===================== 会社ごとの履歴ファイルへのマージ =====================

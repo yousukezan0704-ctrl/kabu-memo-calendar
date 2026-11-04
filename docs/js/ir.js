@@ -142,8 +142,11 @@
   function stamp(v) { return v ? String(v).replace("T", " ").slice(0, 16) : "不明"; }
   K.statusAlert = function () {
     var s = K.data.status;
+    if (K.srcState && K.srcState.auth) return '<p class="errbox">⚠ ' + E(K.AUTH_MSG) + "（「メモ」→「非公開データの接続」）</p>";
     if (!s) {
-      return K.data.loadErrors.length ? '<p class="errbox">⚠ 自動取得の状況ファイルを読めませんでした。表示中の情報が古い可能性があります。</p>' : "";
+      if (!K.data.loadErrors.length) return "";
+      return K.srcGet() ? '<p class="errbox">⚠ 自動取得の状況ファイルを読めませんでした（' + E(K.data.loadErrors[0].replace(/^[^:]*: /, "")) + "）。「メモ」→「非公開データの接続」で接続テストをしてください。</p>"
+        : '<p class="errbox">⚠ IRの収集データは非公開リポジトリにあります。「メモ」→「非公開データの接続」で設定すると表示されます（PCで open_app.bat から開いている場合は設定不要）。</p>';
     }
     var lr = s.last_run || null, h = "";
     var ms = s.generated_at ? new Date(s.generated_at).getTime() : NaN, age = (Date.now() - ms) / 86400000;

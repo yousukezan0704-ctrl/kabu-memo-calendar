@@ -3,24 +3,52 @@
 (function (K) {
   K.data = { status: null, events: [], index: [], themes: [], sample: null, loadErrors: [] };
 
-  function getJson(path) {
-    return fetch(path + "?t=" + Date.now(), { cache: "no-store" }).then(function (r) {
-      if (!r.ok) throw new Error(path + " " + r.status);
-      return r.json();
-    });
-  }
+  /* ---------------------------------------------------------------------
+     データ取得の窓口（ここ1箇所）。取得元を切り替える:
+       ・「非公開リポジトリ接続」が設定済み → GitHub API で private リポジトリの data/<パス> を取得
+       ・未設定 → 従来どおり相対パス data/<パス>
+     sample.json と themes.json は常に相対パス。
+     トークンは store.js の別キー(kmc.src)にだけ置く。ここでもエラー文・URLに出さない。
+     --------------------------------------------------------------------- */
+  var LOCAL_ONLY = { "sample.json": 1, "themes.json": 1 };
+  var AUTH_MSG = "トークンが無効か期限切れ。メモ画面で再設定してください";
+  K.AUTH_MSG = AUTH_MSG;
+  K.srcState = { auth: false };   // 直近の取得で 401/403 だったか
+  K.fetchData = function (path) {
+    var cfg = K.srcGet && K.srcGet(), remote = !LOCAL_ONLY[path] && cfg && cfg.token && cfg.repo;
+    var url, opt = { cache: "no-store" };
+    if (remote) {
+      url = "https://api.github.com/repos/" + cfg.repo + "/contents/data/" + path;
+      opt.headers = { "Authorization": "Bearer " + cfg.token, "Accept": "application/vnd.github.raw+json", "X-GitHub-Api-Version": "2022-11-28" };
+    } else url = "data/" + path + "?t=" + Date.now();
+    function fail(kind, msg) { var e = new Error(msg); e.kind = kind; return e; }
+    return fetch(url, opt).then(function (r) {
+      if (r.status === 404) throw fail("none", "未取得（404）");
+      if (remote && (r.status === 401 || r.status === 403)) { K.srcState.auth = true; throw fail("auth", AUTH_MSG); }
+      if (!r.ok) throw fail("http", "取得できません（HTTP " + r.status + "）");
+      if (remote) K.srcState.auth = false;
+      return r.json().catch(function () { throw fail("http", "データの形が正しくありません"); });
+    }, function () { throw fail("net", "通信できません（ネットワークを確認してください）"); });
+  };
+  function getJson(path) { return K.fetchData(path); }
 
   K.loadData = function () {
     var D = K.data;
     D.loadErrors = [];
     var tasks = [
-      getJson("data/status.json").then(function (j) { D.status = j; }).catch(function (e) { D.loadErrors.push("取得状況: " + e.message); }),
-      getJson("data/events.json").then(function (j) { D.events = j.events || []; D.eventsAt = j.generated_at; }).catch(function (e) { D.loadErrors.push("IR予定: " + e.message); }),
-      getJson("data/ir_index.json").then(function (j) { D.index = j.items || []; }).catch(function (e) { D.loadErrors.push("IR一覧: " + e.message); }),
-      getJson("data/themes.json").then(function (j) { D.themes = j.themes || []; }).catch(function (e) { D.loadErrors.push("テーマ: " + e.message); }),
-      getJson("data/sample.json").then(function (j) { D.sample = j; }).catch(function () { /* サンプルが無くても動く */ })
+      getJson("status.json").then(function (j) { D.status = j; }).catch(function (e) { D.loadErrors.push("取得状況: " + e.message); }),
+      getJson("events.json").then(function (j) { D.events = j.events || []; D.eventsAt = j.generated_at; }).catch(function (e) { D.loadErrors.push("IR予定: " + e.message); }),
+      getJson("ir_index.json").then(function (j) { D.index = j.items || []; }).catch(function (e) { D.loadErrors.push("IR一覧: " + e.message); }),
+      getJson("themes.json").then(function (j) { D.themes = j.themes || []; }).catch(function (e) { D.loadErrors.push("テーマ: " + e.message); }),
+      getJson("sample.json").then(function (j) { D.sample = j; }).catch(function () { /* サンプルが無くても動く */ })
     ];
     return Promise.all(tasks);
+  };
+  /* 接続設定を変えたあと: 読み込み済みのデータを捨てて取り直す */
+  K.reloadAll = function () {
+    var D = K.data;
+    D.status = null; D.events = []; D.index = []; K.fin = {}; K.hist = {}; K.srcState.auth = false;
+    return K.loadData().then(function () { K.render(); });
   };
 
   /* 収集側がつけた資料の分類(cat: 決算短信/業績修正/配当修正/自社株/決算説明資料/その他)。URLで ir_index.json と突き合わせる */
@@ -193,14 +221,10 @@
     var c = K.fin[code];
     if (c && (c.st !== "err" || Date.now() - c.at < 30000)) return c;
     c = K.fin[code] = { st: "loading", at: Date.now() };
-    fetch("data/financials/" + code + ".json?t=" + Date.now(), { cache: "no-store" }).then(function (r) {
-      if (r.status === 404) { c.st = "none"; return; }
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json().then(function (j) {
-        var v = K.finValidate(j, code);
-        if (v.ok) { c.st = "ok"; c.data = v.data; } else { c.st = "err"; c.msg = v.msg; }
-      });
-    }).catch(function (e) { c.st = "err"; c.msg = e.message; })
+    K.fetchData("financials/" + code + ".json").then(function (j) {
+      var v = K.finValidate(j, code);
+      if (v.ok) { c.st = "ok"; c.data = v.data; } else { c.st = "err"; c.msg = v.msg; }
+    }).catch(function (e) { if (e.kind === "none") c.st = "none"; else { c.st = "err"; c.msg = e.message; } })
       .then(function () { c.at = Date.now(); if (K.onFinLoaded) K.onFinLoaded(code); });
     return c;
   };
@@ -322,16 +346,12 @@
     var c = K.hist[code];
     if (c && (c.st !== "err" || Date.now() - c.at < 30000)) return c;
     c = K.hist[code] = { st: "loading", at: Date.now(), items: [] };
-    fetch("data/history/" + code + ".json?t=" + Date.now(), { cache: "no-store" }).then(function (r) {
-      if (r.status === 404) { c.st = "none"; return; }
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json().then(function (j) {
-        if (!j || !Array.isArray(j.items)) { c.st = "err"; c.msg = "形が正しくありません"; return; }
-        c.items = j.items.filter(function (x) { return x && /^\d{4}-\d{2}-\d{2}/.test(x.pubdate || ""); })
-          .sort(function (a, b) { return a.pubdate < b.pubdate ? 1 : -1; });
-        c.st = "ok";
-      });
-    }).catch(function (e) { c.st = "err"; c.msg = e.message; })
+    K.fetchData("history/" + code + ".json").then(function (j) {
+      if (!j || !Array.isArray(j.items)) { c.st = "err"; c.msg = "形が正しくありません"; return; }
+      c.items = j.items.filter(function (x) { return x && /^\d{4}-\d{2}-\d{2}/.test(x.pubdate || ""); })
+        .sort(function (a, b) { return a.pubdate < b.pubdate ? 1 : -1; });
+      c.st = "ok";
+    }).catch(function (e) { if (e.kind === "none") c.st = "none"; else { c.st = "err"; c.msg = e.message; } })
       .then(function () { c.at = Date.now(); if (K.onHistLoaded) K.onHistLoaded(code); });
     return c;
   };

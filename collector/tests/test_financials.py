@@ -103,6 +103,50 @@ class TestParse(unittest.TestCase):
         self.assertEqual(r["yoy_pct"]["operating_income"], 67.8)
         self.assertTrue(all(r["forecast"][k] is None for k in ("sales", "operating_income", "net_income", "eps", "dps")))
 
+    def test_nonconsolidated_uses_net_income_with_note(self):
+        # 非連結の会社(実物の短信から抜粋): 純利益は NetIncome。注記が付く
+        r = F.parse_summary_zip(fixture_zip("q2_nonconsol_jgaap"),
+                                meta("2027年3月期 第2四半期（中間期）決算短信〔日本基準〕（非連結）"))
+        self.assertEqual(r["period_type"], "第2四半期")
+        self.assertEqual(r["basis"], "非連結")
+        self.assertEqual(r["results"], {"sales": 3618, "operating_income": 255, "ordinary_income": 272,
+                                        "net_income": 184, "eps": 64.96})
+        self.assertEqual(r["yoy_pct"]["net_income"], -23.1)  # 元タグは sign="-" の 23.1
+        self.assertEqual(r["forecast"]["net_income"], 690)
+        self.assertEqual(r["forecast"]["yoy_pct"]["net_income"], 10.4)
+        self.assertEqual(r["forecast"]["eps"], 242.35)
+        self.assertIn("非連結", r["results_note"])
+        self.assertNotIn("net_income", r.get("missing_reason", {}))
+
+    def test_consolidated_does_not_fall_back_to_profit(self):
+        # 連結書類では NetIncome(少数株主分を含みうる)や個別の値を親会社帰属の代わりにしない
+        ctx = "CurrentYearDuration_ConsolidatedMember_ResultMember"
+        sol = "CurrentYearDuration_NonConsolidatedMember_ResultMember"
+        def ctxdef(c):
+            return ('<xbrli:context id="%s"><xbrli:period><xbrli:startDate>2025-04-01</xbrli:startDate>'
+                    '<xbrli:endDate>2026-03-31</xbrli:endDate></xbrli:period></xbrli:context>' % c)
+        def fact(c, n, v):
+            return '<ix:nonFraction name="tse-ed-t:%s" contextRef="%s" scale="6" format="ixt:numdotdecimal">%s</ix:nonFraction>' % (n, c, v)
+        htm = ctxdef(ctx) + ctxdef(sol) + fact(ctx, "NetSales", "100") + fact(ctx, "NetIncome", "9") + fact(sol, "NetIncome", "7")
+        r = F.parse_summary_zip(make_zip(htm), meta("2026年3月期 決算短信〔日本基準〕(連結)"))
+        self.assertEqual(r["basis"], "連結")
+        self.assertIsNone(r["results"]["net_income"])
+        self.assertNotIn("results_note", r)
+        self.assertIn("net_income", r["missing_reason"])
+
+    def test_normal_records_have_basis_and_no_note(self):
+        r = F.parse_summary_zip(fixture_zip("annual_jgaap"), meta("2026年９月期 決算短信〔日本基準〕(連結)"))
+        self.assertEqual(r["basis"], "連結")
+        self.assertNotIn("results_note", r)
+        self.assertNotIn("missing_reason", r)
+
+    def test_ifrs_missing_reason(self):
+        r = F.parse_summary_zip(fixture_zip("q3_ifrs"), meta("2026年12月期 第3四半期 決算短信〔ＩＦＲＳ〕（連結）"))
+        self.assertIn("ordinary_income", r["missing_reason"])
+        self.assertIn("IFRS", r["missing_reason"]["ordinary_income"])
+        self.assertIn("operating_income", r["missing_reason"])
+        self.assertNotIn("net_income", r["missing_reason"])
+
     def test_not_earnings_returns_none(self):
         z = fixture_zip("annual_jgaap")
         self.assertIsNone(F.parse_summary_zip(z, meta("2026年９月期 決算補足説明資料")))

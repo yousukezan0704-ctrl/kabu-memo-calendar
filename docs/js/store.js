@@ -79,6 +79,23 @@
     } catch (e) { return false; }
   };
 
+  /* ---- 非公開リポジトリへの接続設定 ----
+     トークンは別キー "kmc.src" にだけ保存する。K.state（kmc.v1）・バックアップ・.ics・画面・エラー文には入れない。 */
+  var SRC_KEY = "kmc.src";
+  K.DEFAULT_REPO = "yousukezan0704-ctrl/kabu-memo-private-data";
+  K.srcGet = function () {
+    try {
+      var o = JSON.parse(localStorage.getItem(SRC_KEY) || "null");
+      if (o && typeof o.token === "string" && typeof o.repo === "string") return { repo: o.repo, token: o.token };
+    } catch (e) { /* 読めなければ未設定 */ }
+    return null;
+  };
+  K.srcValidRepo = function (r) { return /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(r || ""); };
+  K.srcSave = function (repo, token) {
+    try { localStorage.setItem(SRC_KEY, JSON.stringify({ repo: repo, token: token })); return true; } catch (e) { return false; }
+  };
+  K.srcClear = function () { try { localStorage.removeItem(SRC_KEY); } catch (e) { /* 無視 */ } };
+
   /* ---- 通知の設定（項目別のON/OFF）。保存先は settings.notify ---- */
   K.NOTIFY_DEFAULT = { before: true, today: true, ir: true, memo: true, browser: false, seenAt: "", fired: {} };
   K.notifyCfg = function () {

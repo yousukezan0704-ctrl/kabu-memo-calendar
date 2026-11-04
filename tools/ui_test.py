@@ -332,6 +332,94 @@ def new_features(pg, tag, vp):
     check(tag + "[高さ] お気に入りなしならお知らせ欄は出ない(高さ増なし)", pg.locator("details[data-key=notices]").count() == 0)
     check(tag + "[高さ] 横スクロールなし(カレンダー)", no_hscroll(pg))
 
+    # ===== 非公開リポジトリ接続（api.github.com を差し替え。本物のトークン・通信は使わない）=====
+    TOKEN = "github_pat_TESTTOKEN0123456789abcdefXYZ"
+    API = "https://api.github.com/repos/yousukezan0704-ctrl/kabu-memo-private-data/contents/data/"
+    seen, mode = [], {"status": 200}
+    def api_handler(route):
+        rq = route.request
+        hd = {"access-control-allow-origin": "*", "access-control-allow-headers": "*", "access-control-allow-methods": "GET,OPTIONS"}
+        if rq.method == "OPTIONS":
+            route.fulfill(status=204, headers=hd); return
+        seen.append((rq.url, rq.headers.get("authorization"), rq.headers.get("accept")))
+        path = rq.url.split("/contents/data/")[1].split("?")[0]
+        if path == "status.json":
+            if mode["status"] != 200:
+                route.fulfill(status=mode["status"], headers=hd, content_type="application/json", body='{"message":"Bad credentials"}'); return
+            body = {"generated_at": "2026-11-05T21:00:00+09:00", "listed": 1, "done": 1, "pending": 0, "failed": 0, "skipped": 0, "range": {"days": 1, "index_ok_days": []}, "source": "テスト", "complete": False, "last_run": None}
+        elif path == "events.json": body = {"generated_at": "2026-11-05T21:00:00+09:00", "events": []}
+        elif path == "ir_index.json": body = {"items": []}
+        elif path == "financials/9999.json": body = FIN_OK
+        elif path == "history/9999.json": body = HIST
+        else:
+            route.fulfill(status=404, headers=hd, content_type="application/json", body='{"message":"Not Found"}'); return
+        route.fulfill(status=200, headers=hd, content_type="application/json", body=json.dumps(body, ensure_ascii=False))
+    pg.route("https://api.github.com/**", api_handler)
+    pg.unroute("**/data/financials/9999.json*"); pg.unroute("**/data/history/9999.json*")   # 以降はAPI経由だけで確かめる
+    pg.evaluate("KMC.state.favorites = []; KMC.ui.tab = 'memo'; KMC.mUi.id = ''; KMC.render()"); pg.wait_for_timeout(200)
+    check(tag + "[接続] 設定欄がある", pg.locator("summary:has-text('非公開データの接続')").count() == 1)
+    openfold(pg, "非公開データの接続"); pg.wait_for_timeout(100)
+    tt = pg.inner_text("details[data-key=tool-src]")
+    check(tag + "[接続] 作り方の注意書き(Contents: Read-only・1リポジトリ・有効期限・他人に見せない)", "Contents: Read-only" in tt and "1リポジトリ" in tt and "有効期限" in tt and "他人に見せない" in tt and "この端末" in tt, tt[:300])
+    check(tag + "[接続] 既定のリポジトリ名・トークン欄はpassword", pg.input_value("#src-repo") == "yousukezan0704-ctrl/kabu-memo-private-data" and pg.get_attribute("#src-token", "type") == "password")
+    check(tag + "[接続] 未設定の表示", "未設定" in tt and pg.locator("button:has-text('接続を解除')").count() == 0)
+    pg.fill("#src-token", "abc"); pg.click("button:has-text('接続テスト')"); pg.wait_for_timeout(200)
+    check(tag + "[接続] 形が正しくないトークンは保存しない", pg.evaluate("localStorage.getItem('kmc.src')") is None and len(seen) == 0)
+    pg.fill("#src-token", TOKEN); pg.click("button:has-text('接続テスト')"); pg.wait_for_timeout(900)
+    res = pg.inner_text("#src-result") if pg.locator("#src-result").count() else ""
+    check(tag + "[接続] テスト成功と取得時刻を表示", "接続できました" in res and "取得 20" in res and "データ更新 2026-11-05 21:00" in res, res)
+    check(tag + "[接続] 入力済みは「設定済み ••••」だけ", "設定済み ••••" in pg.inner_text("details[data-key=tool-src]") and pg.input_value("#src-token") == "")
+    first = [x for x in seen if x[0].startswith(API + "status.json")]
+    check(tag + "[接続] 非公開リポジトリのAPIへ Bearer と raw の Accept で取得", len(first) >= 1 and first[0][1] == "Bearer " + TOKEN and first[0][2] == "application/vnd.github.raw+json", seen[:2])
+    check(tag + "[接続] sample.json と themes.json はAPIに送らない", not any("sample.json" in x[0] or "themes.json" in x[0] for x in seen))
+    check(tag + "[接続] 取得後、events/ir_index も同じ窓口で取得", any("events.json" in x[0] for x in seen) and any("ir_index.json" in x[0] for x in seen))
+    # 銘柄詳細に財務表示
+    pg.evaluate("KMC.ui.tab = 'stocks'; KMC.sUi.sub = 'stocks'; KMC.sUi.code = '9999'; KMC.render()"); pg.wait_for_timeout(700)
+    dt_ = pg.inner_text("main")
+    check(tag + "[接続] 銘柄詳細に財務が出る(API経由)", "株価と指標（計算値）" in dt_ and "60,000" in dt_ and "490億円" in dt_, dt_[:200])
+    check(tag + "[接続] 財務・履歴もAPI経由", any("financials/9999.json" in x[0] for x in seen) and any("history/9999.json" in x[0] for x in seen))
+    pg.evaluate("KMC.sUi.code = '9994'; KMC.render()"); pg.wait_for_timeout(600)
+    check(tag + "[接続] 404は「財務データ未取得」", "財務データ未取得" in pg.inner_text("main"))
+    # トークンが漏れていないか(画面・保存データ・バックアップ・ics)
+    pg.evaluate("KMC.sUi.code = ''; KMC.ui.tab = 'memo'; KMC.render()"); pg.wait_for_timeout(100)
+    openfold(pg, "バックアップと復元")
+    with pg.expect_download() as dl:
+        pg.click("button:has-text('バックアップを書き出す')")
+    bk = open(dl.value.path(), encoding="utf-8").read()
+    check(tag + "[接続] バックアップJSONにトークンを含まない", "TESTTOKEN" not in bk and TOKEN not in bk and "kmc.src" not in bk)
+    check(tag + "[接続] 通常の保存データ(kmc.v1)にトークンを含まない", "TESTTOKEN" not in (pg.evaluate("localStorage.getItem('kmc.v1')") or ""))
+    check(tag + "[接続] トークンは別キー kmc.src にだけある", TOKEN in (pg.evaluate("localStorage.getItem('kmc.src')") or ""))
+    check(tag + "[接続] .ics にトークンを含まない", "TESTTOKEN" not in pg.evaluate("KMC.makeIcs().text"))
+    check(tag + "[接続] 画面(HTML・文字)にトークンを含まない", "TESTTOKEN" not in pg.content() and "TESTTOKEN" not in pg.inner_text("body"))
+    check(tag + "[接続] ページエラー・ログにトークンなし", not any("TESTTOKEN" in e for e in errors))
+    # 401 / 403
+    for code_ in (401, 403):
+        mode["status"] = code_
+        pg.click("button:has-text('接続テスト')"); pg.wait_for_timeout(600)
+        res = pg.inner_text("#src-result")
+        check(tag + "[接続] %d は「トークンが無効か期限切れ」と再設定の案内" % code_, "トークンが無効か期限切れ" in res and "メモ画面で再設定してください" in res and "接続できませんでした" in res, res)
+        check(tag + "[接続] %d の文面にトークンを出さない" % code_, "TESTTOKEN" not in res and "TESTTOKEN" not in pg.content())
+    check(tag + "[接続] 認証エラーは404(未取得)と区別される", "未取得" not in res)
+    pg.evaluate("KMC.ui.tab = 'ir'; KMC.render()"); pg.wait_for_timeout(100)
+    check(tag + "[接続] 重要IR画面にも再設定の案内", "メモ画面で再設定してください" in pg.inner_text("main"))
+    pg.evaluate("KMC.fin = {}; KMC.ui.tab = 'stocks'; KMC.sUi.code = '9999'; KMC.render()")
+    mode_all_401 = True
+    pg.unroute("https://api.github.com/**")
+    pg.route("https://api.github.com/**", lambda r: r.fulfill(status=401, headers={"access-control-allow-origin": "*"}, content_type="application/json", body="{}") if r.request.method != "OPTIONS" else r.fulfill(status=204, headers={"access-control-allow-origin": "*", "access-control-allow-headers": "*"}))
+    pg.evaluate("KMC.fin = {}; KMC.render()"); pg.wait_for_timeout(600)
+    check(tag + "[接続] 銘柄詳細でも認証エラーを区別して表示", "トークンが無効か期限切れ" in pg.inner_text("main") and "財務データ未取得" not in pg.inner_text("main"))
+    # 解除
+    pg.evaluate("KMC.ui.tab = 'memo'; KMC.sUi.code = ''; KMC.render()"); pg.wait_for_timeout(100)
+    openfold(pg, "非公開データの接続")
+    pg.once("dialog", lambda d: d.accept())
+    pg.click("button:has-text('接続を解除')"); pg.wait_for_timeout(800)
+    check(tag + "[接続] 解除でトークンが消える", pg.evaluate("localStorage.getItem('kmc.src')") is None and pg.evaluate("KMC.srcGet()") is None)
+    check(tag + "[接続] 解除後は未設定表示・解除ボタンなし", "未設定" in pg.inner_text("details[data-key=tool-src]") and pg.locator("button:has-text('接続を解除')").count() == 0)
+    n_api = len(seen)
+    pg.evaluate("KMC.reloadAll()"); pg.wait_for_timeout(600)
+    check(tag + "[接続] 解除後はAPIに通信しない(相対パスへ戻る)", len(seen) == n_api and pg.evaluate("KMC.data.events.length") > 0)
+    check(tag + "[接続] 解除後も画面・保存データにトークンなし", "TESTTOKEN" not in pg.content() and "TESTTOKEN" not in json.dumps(pg.evaluate("KMC.state")))
+
 
 with sync_playwright() as p:
     b = p.chromium.launch(channel="msedge", headless=True)
@@ -339,7 +427,7 @@ with sync_playwright() as p:
         ctx = b.new_context(viewport=vp, accept_downloads=True, service_workers="block")
         pg = ctx.new_page()
         pg.on("pageerror", lambda e: errors.append(str(e)))
-        pg.on("console", lambda m: errors.append(m.text) if m.type == "error" and "404" not in m.text else None)
+        pg.on("console", lambda m: errors.append(m.text) if m.type == "error" and not any(c in m.text for c in ("404", "401", "403")) else None)
         pg.goto(URL); pg.wait_for_selector(".grid"); pg.wait_for_timeout(500)
         tag = "[%dpx] " % vp["width"]
         check(tag + "月表示が出る", pg.locator(".cell").count() > 20)

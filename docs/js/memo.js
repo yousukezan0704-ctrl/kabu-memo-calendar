@@ -146,6 +146,20 @@
     K.save();
   };
 
+  /* ---------- 非公開リポジトリへの接続（トークンは画面に出さない） ---------- */
+  K.srcUi = K.srcUi || { msg: "", ok: null };
+  function srcPanel() {
+    var cfg = K.srcGet(), r = K.srcUi;
+    var h = '<p class="muted">TDnet由来のIRデータ（予定・財務・履歴）は、公開サイトではなく<b>非公開のGitHubリポジトリ</b>に置いてあります。ここで接続すると、iPhoneでもファイル転送なしで見られます。PCで open_app.bat から開いている場合は設定不要です。</p>' +
+      '<p class="warn"><b>トークンの作り方（GitHub → Settings → Developer settings → Fine-grained tokens）</b><br>・対象は<b>この1リポジトリだけ</b>を選ぶ<br>・権限は<b>Contents: Read-only のみ</b><br>・<b>有効期限</b>を付ける<br>トークンは他人に見せないでください。この端末のブラウザにだけ保存され、バックアップや書き出しには含まれません。</p>' +
+      '<label>リポジトリ名（所有者/名前）<input id="src-repo" autocomplete="off" value="' + E(cfg ? cfg.repo : K.DEFAULT_REPO) + '"></label>' +
+      '<label>トークン<input id="src-token" type="password" autocomplete="off" placeholder="' + (cfg ? "設定済み ••••（変える場合だけ入力）" : "github_pat_ から始まる文字列") + '"></label>' +
+      '<p class="muted">状態: ' + (cfg ? "<b>設定済み ••••</b>" : "未設定（この端末では公開サイトの相対パスだけを読みます）") + "</p>" +
+      '<div class="row wrap"><button data-act="srctest">保存して接続テスト</button>' + (cfg ? '<button class="danger" data-act="srcclear">接続を解除（この端末のトークンを消す）</button>' : "") + "</div>";
+    if (r.msg) h += '<p id="src-result" class="' + (r.ok ? "okbox" : "errbox") + '">' + E(r.msg) + "</p>";
+    return h;
+  }
+
   /* ---------- 通知・バックアップ ---------- */
   function tools() {
     var s = K.state.settings;
@@ -162,6 +176,7 @@
       '<label>実機での確認結果（自分で記録）<select id="n-ck">' + ["未確認", "確認OK（アプリを閉じても届いた）", "確認NG（届かなかった）"].map(function (o) {
         return '<option' + (s.notifyChecked === o ? " selected" : "") + ">" + o + "</option>";
       }).join("") + '</select></label><input id="n-note" placeholder="メモ（機種・iOSのバージョンなど）" value="' + E(s.notifyNote) + '">', false, "pf");
+    h += K.det("tool-src", "非公開データの接続（IRの収集データ）", srcPanel(), false, "pf");
     h += K.det("tool-backup", "バックアップと復元", '<p class="muted">データはこの端末のブラウザの中にだけあります。端末の故障や設定削除に備えて、ときどき書き出してください。最後の書き出し: ' + E(s.lastBackup || "まだありません") + "</p>" +
       '<div class="row wrap"><button data-act="backup">バックアップを書き出す</button><label class="btnlike">バックアップから復元<input id="restore-file" type="file" accept=".json,application/json" hidden></label>' +
       '<button data-act="undorestore">復元を取り消す</button></div>', false, "pf");

@@ -91,6 +91,26 @@
       if (!K.isFav(c)) K.toggleFav(c);
       render();
     },
+    srctest: function () {
+      var repo = ($("src-repo").value || "").trim() || K.DEFAULT_REPO, tok = ($("src-token").value || "").trim(), old = K.srcGet();
+      if (!K.srcValidRepo(repo)) { K.toast("リポジトリ名は「所有者/名前」の形で入れてください", true); return; }
+      if (tok && !/^[A-Za-z0-9_-]{20,}$/.test(tok)) { K.toast("トークンの形が正しくありません（コピーし直してください）", true); return; }
+      if (!tok && old) tok = old.token;
+      if (!tok) { K.toast("トークンを入力してください", true); return; }
+      if (!K.srcSave(repo, tok)) { K.toast("この端末に保存できませんでした（ブラウザの設定を確認してください）", true); return; }
+      K.srcUi = { msg: "接続テスト中…", ok: null }; render();
+      K.fetchData("status.json").then(function (j) {
+        K.srcUi = { msg: "接続できました（取得 " + K.nowStamp() + (j && j.generated_at ? " ／ データ更新 " + String(j.generated_at).replace("T", " ").slice(0, 16) : "") + "）。データを読み込みます。", ok: true };
+        return K.reloadAll();
+      }).catch(function (e) {
+        K.srcUi = { msg: "接続できませんでした: " + (e && e.message ? e.message : "不明なエラー"), ok: false }; render();
+      });
+    },
+    srcclear: function () {
+      if (!confirm("この端末に保存したトークンを消して、接続を解除しますか？")) return;
+      K.srcClear(); K.srcUi = { msg: "接続を解除しました（トークンをこの端末から消しました）", ok: true };
+      K.reloadAll();
+    },
     irseen: function () { K.setNotify("seenAt", K.nowStamp()); K.toast("既読にしました"); render(); },
     sback: function () { K.sUi.code = ""; render(); },
     ssub: function (t) { K.sUi.sub = t.dataset.v; render(); },

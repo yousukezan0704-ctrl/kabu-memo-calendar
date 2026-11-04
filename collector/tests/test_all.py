@@ -497,6 +497,77 @@ class TestV7(unittest.TestCase):
         self.assertEqual([e for e in extract_page("USD/円 144.82 162.45 157.33 THB/円 4.43 4.87 4.7", 5, CTX) if e["kind"] == "fx"], [])
 
 
+class TestV8(unittest.TestCase):
+    def kinds(self, s, **kw):
+        return [e for e in extract_page(s, 1, dict(CTX, **kw))]
+
+    def test_recap_in_briefing_not_alliance(self):
+        s = "WCS ABYAKTA NAWASENA（インドネシア）を子会社化し、ローカル市場へ参入。"
+        self.assertEqual([e for e in self.kinds(s, title="2026年度第２四半期決算実績ならびに中期経営計画の進捗") if e["kind"] == "alliance"], [])
+        s = "インドの現地法人設立準備、業務提携の締結、今後ライセンスを追加する。"
+        self.assertEqual([e for e in self.kinds(s, title="2026年12月期 第3四半期 決算説明資料") if e["kind"] == "alliance"], [])
+        self.assertEqual([e for e in self.kinds("2025/8 資本業務提携4件を実施", title="統合報告書2026") if e["kind"] == "alliance"], [])
+
+    def test_past_form_not_alliance_even_for_plain_title(self):
+        self.assertEqual([e for e in self.kinds("WCSを子会社化し、ローカル市場へ参入しました。") if e["kind"] == "alliance"], [])
+        self.assertEqual([e for e in self.kinds("2025年9月に株式会社本田の全株式を取得し子会社化(百万円)") if e["kind"] == "alliance"], [])
+
+    def test_new_disclosure_still_alliance(self):
+        ev = [e for e in self.kinds("当社は、A社と資本業務提携契約を締結いたしました。", title="資本業務提携に関するお知らせ") if e["kind"] == "alliance"]
+        self.assertEqual(len(ev), 1)
+        self.assertFalse(ev[0]["needs_review"])
+        ev = [e for e in self.kinds("本日開催の取締役会において、B社の株式を取得し子会社化することを決議いたしました。", title="B社の株式取得(子会社化)に関するお知らせ") if e["kind"] == "alliance"]
+        self.assertEqual(len(ev), 1)
+        ev = [e for e in self.kinds("大型案件を受注いたしましたので、お知らせいたします。", title="大型案件の受注に関するお知らせ") if e["kind"] == "alliance"]
+        self.assertEqual(len(ev), 1)
+
+    def test_tanshin_alliance_needs_review(self):
+        ev = [e for e in self.kinds("自動車向け開発を手掛けるC社と資本業務提携契約を締結いたしました。", title="2027年3月期 第2四半期 決算短信〔IFRS〕(連結)") if e["kind"] == "alliance"]
+        self.assertEqual(len(ev), 1)
+        self.assertTrue(ev[0]["needs_review"])
+        self.assertFalse(ev[0]["confirmed"])
+
+    def test_revision_still_extracted_in_briefing(self):
+        s = "通期業績予想の経常利益を350億円に上方修正しました。"
+        self.assertIn("revision_up", [e["kind"] for e in self.kinds(s, title="2026年度中間期決算説明資料")])
+
+    def test_delay_target_from_next_sentence(self):
+        s = ("上記3カ所の完工時期が大幅に遅れる見通しであるとの連絡を受けました。"
+             "なお、完工時期は令和9年10月頃を見込んでいます。")
+        ev = [e for e in self.kinds(s, pubdate="2026-11-02 15:00:00") if e["kind"] == "delay"]
+        self.assertTrue(ev)
+        self.assertEqual(ev[0]["target"]["start"], "2027-10-01")
+        self.assertTrue(ev[0]["needs_review"])   # 隣の文から拾ったので要確認
+
+    def test_delay_target_same_sentence_far(self):
+        s = "発売時期を延期することとし、新たな発売時期は十分な検証を踏まえたうえで2027年10月を予定しております。"
+        ev = [e for e in self.kinds(s) if e["kind"] == "delay"]
+        self.assertEqual(ev[0]["target"]["start"], "2027-10-01")
+
+    def test_delay_undecided_is_review_without_date(self):
+        ev = [e for e in self.kinds("発売時期を延期いたします。新たな発売時期は未定です。") if e["kind"] == "delay"]
+        self.assertEqual(len(ev), 1)
+        self.assertIsNone(ev[0]["target"])
+        self.assertTrue(ev[0]["needs_review"])
+        self.assertIn("未定", ev[0]["summary"])
+        self.assertFalse(ev[0]["confirmed"])
+
+    def test_buyback_summary_has_period_and_limit(self):
+        s = ("当社は、自己株式の取得を決議いたしました。2．取得する株式の総数:1,000,000株（上限）"
+             "3．取得価額の総額:1,500,000,000円（上限）4．取得期間2026年11月4日から2027年3月31日まで")
+        ev = [e for e in self.kinds(s, title="自己株式取得に係る事項の決定に関するお知らせ") if e["kind"] == "buyback"]
+        self.assertTrue(ev)
+        for k in ("2026年11月4日", "2027年3月31日", "1,000,000株", "1,500,000,000円"):
+            self.assertIn(k, ev[0]["summary"])
+
+    def test_buyback_progress_report_not_plan(self):
+        s = "自己株式取得に係る事項の進捗状況。取得株式の総数:3,514,700株、取得価額の総額:785,928,000円"
+        self.assertEqual([e for e in self.kinds(s, title="自己株式取得に係る事項の進捗状況に関するお知らせ") if e["kind"] == "buyback"], [])
+
+    def test_version(self):
+        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v8")
+
+
 class TestRetention(unittest.TestCase):
     cutoff, today = "2026-09-04", "2026-11-03"
 

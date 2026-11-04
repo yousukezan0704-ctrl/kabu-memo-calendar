@@ -9,7 +9,7 @@ import datetime as dt
 from dates_jp import parse_target, parse_time, norm
 
 NONE = "記載なし"
-EXT_VERSION = "rule-v7"
+EXT_VERSION = "rule-v8"
 
 # (kind, 表示名, トリガー正規表現)  上から順に判定。1文が複数に当てはまってもよい。
 RULES = [
@@ -37,7 +37,14 @@ DELAY_CTX_RE = re.compile(r"時期|予定|スケジュール|計画|発売|完�
 # 資料の種類で除く（月次の速報・リスク情報・事業計画及び成長可能性の資料）
 NOISE_TITLE_RE = re.compile(r"速報|月次|\d+月度|KPI")
 RISK_TITLE_RE = re.compile(r"リスク|事業計画及び成長可能性")   # 延期・決算の判定には使わない(定型のリスク文が多い)
-END_BUYBACK_TITLE_RE = re.compile(r"取得状況|取得結果|取得終了|取得完了")
+END_BUYBACK_TITLE_RE = re.compile(r"取得状況|取得結果|取得終了|取得完了|進捗状況")
+# 実績・再掲が中心の資料(説明資料・補足資料・統合報告書・中計など)。提携/受注/子会社化は新規の開示として出さない
+RECAP_TITLE_RE = re.compile(r"決算説明|説明会資料|説明資料|補足資料|統合報告書|決算ハイライト|決算概要|決算実績|中期経営計画|"
+                            r"IR資料|行使状況|アニュアル|会社説明|ファクトブック|Fact\s?Book|有価証券報告書|プレゼン|進捗")
+TANSHIN_TITLE_RE = re.compile(r"決算短信")   # 短信は新規の提携を書くこともあるが再掲も多い → 要確認にする
+# 過去の経緯・実績の書き方(「子会社化し、」「提携を終了」「前年同期に…」)
+ALLIANCE_PAST_RE = re.compile(r"(?:子会社化|設立|取得|提携)(?:し|いたし)(?:た|ました|て|、|。|$)|完了|終了|公表したとおり|開示したとおり|提携契約に基づ|前年同期|前期|反動|差益")
+YM_RE = re.compile(r"(\d{4})\s*[年/.]\s*(\d{1,2})")
 SUBSIDIARY_TITLE_RE = re.compile(r"連結子会社.*業績予想|子会社の業績予想")
 # 想定為替は「想定・前提・影響」と数字がそろうものだけ。ETFの換算レート等は除く
 FX_CORE = re.compile(r"想定(?:為替)?レート|為替(?:レート)?(?:の)?前提|前提(?:為替)?レート|適用為替レート")
@@ -90,13 +97,69 @@ def _mask_quotes(s):
     return re.sub(r"[「『][^」』]{0,80}[」』]", lambda m: "〓" * len(m.group(0)), s)
 
 
+PROGRESS_RE = re.compile(r"進捗|状況|結果")
+BB_PERIOD_RE = re.compile(r"取得(?:の)?期間[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)\s*(?:から|～|〜|~|－|-)\s*(\d{4}年\d{1,2}月\d{1,2}日)")
+BB_SHARES_RE = re.compile(r"取得(?:する)?株式の総数[:：]?\s*([\d,]+)\s*株")
+BB_AMOUNT_RE = re.compile(r"取得価額の総額[:：]?\s*([\d,\.]+\s*(?:百万円|億円|万円|円))")
+BB_RATIO_RE = re.compile(r"発行済株式総数[^。]{0,30}?の?\s*(\d+(?:\.\d+)?)\s*%")
+
+
+def buyback_detail(flat):
+    """自己株式取得の 取得期間・上限(株数/金額) を、書かれているものだけ返す。"""
+    t = norm(flat)
+    parts = []
+    m = BB_PERIOD_RE.search(t)
+    if m:
+        parts.append("期間 %s～%s" % (m.group(1), m.group(2)))
+    m = BB_SHARES_RE.search(t)
+    if m:
+        parts.append("上限 %s株" % m.group(1))
+    m = BB_AMOUNT_RE.search(t)
+    if m:
+        parts.append("上限金額 %s" % re.sub(r"\s+", "", m.group(1)))
+    return parts
+
+
+def _past_ym_before(seg, base):
+    """該当語の直前に、発表月より前の年月(「2025/8」「2026年4月に」)があれば過去の経緯とみなす。"""
+    for m in YM_RE.finditer(seg):
+        y, mo = int(m.group(1)), int(m.group(2))
+        if 1 <= mo <= 12 and (y, mo) < (base.year, base.month):
+            return True
+    return False
+
+
+def _delay_target(sents, si, s, m, base, fy_end_month):
+    """延期の変更後の日付: 同じ文の該当語より後ろ → 次の2文の順に探す。戻り値 (target or None, 未定か)。"""
+    for cand, neigh in ((s[m.start(): m.end() + 200], False), ("".join(sents[si + 1: si + 3]), True)):
+        if not cand or not DATEISH.search(cand):
+            continue
+        # 先に「未定」が来るなら日付は探さない
+        t = parse_target(cand, base, fy_end_month)
+        if t is None:
+            continue
+        if t["precision"] == "fy" and t["reason"] == "決算期の指定":
+            continue
+        if t["precision"] == "day" and t["start"] < base.isoformat():
+            continue
+        if t.get("end") and t["end"] < base.isoformat():
+            continue
+        if neigh:
+            t = dict(t, from_neighbor=True, needs_review=True)
+        return t, False
+    return None, bool(re.search(r"未定", s[m.end():] + "".join(sents[si + 1: si + 3])))
+
+
 def extract_page(page_text, page_no, ctx):
     """ctx: code,name,pubdate(iso str 'YYYY-MM-DD HH:MM:SS'),title,url,fy_end_month,checked_at"""
     base = dt.date.fromisoformat(ctx["pubdate"][:10])
     title = ctx.get("title", "")
     noise_doc = bool(NOISE_TITLE_RE.search(title))
     events = []
-    for s in sentences(page_text):
+    sents = sentences(page_text)
+    page_flat = "".join(sents)
+    bb_detail = [None]
+    for si, s in enumerate(sents):
         # 免責の定型文は対象外
         if re.search(r"将来の見通し|リスクや不確実|投資勧誘", s):
             continue
@@ -161,8 +224,12 @@ def extract_page(page_text, page_no, ctx):
             if k == "buyback" and (END_BUYBACK_TITLE_RE.search(title) or re.search(r"取得を終了|終了いたしました", near)):
                 continue
             if k == "alliance" and (re.search(r"ご参照|プレスリリース|開示事項の経過", s_win + title)
-                                    or re.search(r"(?:子会社化|設立|取得|提携)(?:し|いたし)(?:た|ました|て)|完了", near)):
+                                    or ALLIANCE_PAST_RE.search(near)
+                                    or RECAP_TITLE_RE.search(title)
+                                    or _past_ym_before(sm[max(0, m.start() - 40): m.end()], base)):
                 continue
+            if k == "delay" and tgt is None:
+                tgt, _ = _delay_target(sents, si, s, m, base, ctx.get("fy_end_month"))
             if k == "delay" and re.search(r"時期(?:については|は)", near) and not re.search(r"変更|延期|遅", title + s):
                 continue   # 「時期は○年」だけでは、変更後の日程かどうか分からない
             if k in ("revision_up", "revision_down") and ADJUST_RE.search(s_win):
@@ -174,6 +241,20 @@ def extract_page(page_text, page_no, ctx):
                 # 日付が書かれていない決算発表は予定として使えない（過去の説明の可能性が高い）
                 if tgt is None or tgt["precision"] not in ("day", "month"):
                     continue
+            review_extra = False
+            summary = _quote(s_win, 90)
+            if k == "alliance" and TANSHIN_TITLE_RE.search(title):
+                review_extra = True   # 短信内の提携・受注は再掲の可能性があるため要確認
+            if k == "delay" and tgt is None and re.search(r"未定", s_win + "".join(sents[si + 1: si + 3])):
+                review_extra = True   # 変更後の日程が「未定」: 日付なしで要確認
+                summary = _quote(s_win, 70) + "（変更後の時期は未定）"
+            if k == "delay" and tgt is not None and tgt.get("from_neighbor"):
+                review_extra = True   # 隣の文から拾った日付(対象が一部の可能性)
+            if k == "buyback" and not PROGRESS_RE.search(title):
+                if bb_detail[0] is None:
+                    bb_detail[0] = buyback_detail(page_flat)
+                if bb_detail[0]:
+                    summary = "自己株式の取得（" + "／".join(bb_detail[0]) + "）"
             ev = {
                 "kind": k,
                 "kind_label": n,
@@ -184,7 +265,7 @@ def extract_page(page_text, page_no, ctx):
                 # 時刻は日付の直後に書かれたものだけ。書かれていなければ None（補わない）
                 "time_text": (tgt or {}).get("time") if (tgt or {}).get("precision") == "day" else None,
                 "impact_period": _impact(s_win) if k in ("revision_up", "revision_down", "forecast", "fx") else NONE,
-                "summary": _quote(s_win, 90),
+                "summary": summary,
                 "quote": _quote(s_win),
                 "page": page_no,
                 "url": ctx["url"],
@@ -193,7 +274,7 @@ def extract_page(page_text, page_no, ctx):
                 "origin": "official",       # 会社の公表資料から機械的に抽出
                 "extractor": EXT_VERSION,
                 "confirmed": bool(tgt and tgt["precision"] == "day" and not tgt["needs_review"]),
-                "needs_review": bool(tgt and tgt["needs_review"]),
+                "needs_review": bool((tgt and tgt["needs_review"]) or review_extra),
             }
             ev["id"] = event_key(ctx["code"], k, s_win)
             events.append(ev)
