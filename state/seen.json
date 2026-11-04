@@ -6472,9 +6472,9 @@
   "pubdate": "2026-11-04 16:00:00",
   "title": "業績予想の修正に関するお知らせ",
   "url": "https://www.release.tdnet.info/inbs/140120261026556269.pdf",
-  "tries": 1,
+  "tries": 2,
   "note": "ValueError: 文字を取り出せない(画像PDFの可能性)",
-  "checked_at": "2026-11-04T18:22:13+09:00"
+  "checked_at": "2026-11-04T21:10:29+09:00"
  },
  "1289453": {
   "status": "done",
@@ -7658,9 +7658,9 @@
   "pubdate": "2026-11-04 15:30:00",
   "title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
   "url": "https://www.release.tdnet.info/inbs/140120261104563708.pdf",
-  "tries": 1,
+  "tries": 2,
   "note": "ValueError: 文字を取り出せない(画像PDFの可能性)",
-  "checked_at": "2026-11-04T18:22:13+09:00"
+  "checked_at": "2026-11-04T21:10:29+09:00"
  },
  "1289324": {
   "status": "done",
@@ -10096,9 +10096,9 @@
   "pubdate": "2026-11-04 11:30:00",
   "title": "2027年3月期 第2四半期決算説明資料",
   "url": "https://www.release.tdnet.info/inbs/140120261102562240.pdf",
-  "tries": 1,
+  "tries": 2,
   "note": "ValueError: 文字を取り出せない(画像PDFの可能性)",
-  "checked_at": "2026-11-04T18:22:13+09:00"
+  "checked_at": "2026-11-04T21:10:29+09:00"
  },
  "1289153": {
   "status": "done",
