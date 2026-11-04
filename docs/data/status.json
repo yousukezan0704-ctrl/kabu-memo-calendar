@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-04T21:10:29+09:00",
+ "generated_at": "2026-11-04T19:32:46+09:00",
  "is_sample": false,
  "range": {
   "days": 3,
@@ -9,29 +9,31 @@
    "2026-11-04"
   ]
  },
- "listed": 809,
- "done": 773,
+ "listed": 441,
+ "done": 420,
  "pending": 0,
- "failed": 6,
- "skipped": 30,
+ "failed": 3,
+ "skipped": 18,
  "complete": false,
  "period": {
   "from": "2026-11-02",
-  "to": "2026-11-04"
+  "to": "2026-11-02"
  },
  "oldest_pending": null,
- "budget_per_run": 600,
+ "budget_per_run": 300,
+ "financials": {
+  "enabled": true,
+  "parsed": 46,
+  "failed": 0,
+  "pending": 0
+ },
  "last_run": {
-  "at": "2026-11-04T21:10:29+09:00",
+  "at": "2026-11-04T19:32:46+09:00",
   "ok": true,
-  "trigger": "schedule",
+  "trigger": "local",
   "error": null
  },
  "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",
  "source": "TDnet(非公式API: webapi.yanoshin.jp)＋release.tdnet.info の公開PDF",
- "errors": [
-  "6147 業績予想の修正に関するお知らせ ValueError: 文字を取り出せない(画像PDFの可能性)",
-  "4203 2027年3月期 第2四半期決算説明資料 ValueError: 文字を取り出せない(画像PDFの可能性)",
-  "4886 2027年３月期 第２四半期（中間期）決 ValueError: 文字を取り出せない(画像PDFの可能性)"
- ]
+ "errors": []
 }

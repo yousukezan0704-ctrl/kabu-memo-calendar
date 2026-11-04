@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288784",
+   "announced_at": "2026-11-02 12:00:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年３月期 第２四半期（中間期）決算短信〔ＩＦＲＳ〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261102562314.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 1098980,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 39066,
+    "eps": 79.91
+   },
+   "yoy_pct": {
+    "sales": 11.7,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": -42.2
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 2095000,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 110000,
+    "eps": null,
+    "dps": 96,
+    "yoy_pct": {
+     "sales": 4.1,
+     "operating_income": null,
+     "ordinary_income": null,
+     "net_income": -20.1
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 96
+   },
+   "balance": {
+    "net_assets": 1543196,
+    "equity_ratio_pct": 45.1,
+    "bps": 2609.12,
+    "shares_issued": 437143500,
+    "treasury_shares": 7191588
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "9201",
+ "name": "ＪＡＬ",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

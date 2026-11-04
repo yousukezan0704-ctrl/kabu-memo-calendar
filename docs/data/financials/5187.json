@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1289030",
+   "announced_at": "2026-11-02 15:30:00",
+   "period_type": "第3四半期",
+   "fiscal_year_end": "2026-12-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2026年12月期 第3四半期決算短信[日本基準](連結)",
+   "url": "https://www.release.tdnet.info/inbs/140120261030561284.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 10467,
+    "operating_income": 509,
+    "ordinary_income": 568,
+    "net_income": 301,
+    "eps": 37.05
+   },
+   "yoy_pct": {
+    "sales": 4.1,
+    "operating_income": -44.2,
+    "ordinary_income": -34.8,
+    "net_income": -54.7
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 13960,
+    "operating_income": 760,
+    "ordinary_income": 800,
+    "net_income": 560,
+    "eps": 68.9,
+    "dps": 47,
+    "yoy_pct": {
+     "sales": 2.5,
+     "operating_income": -24.4,
+     "ordinary_income": -19,
+     "net_income": -21.5
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 47
+   },
+   "balance": {
+    "net_assets": 16148,
+    "equity_ratio_pct": 81.4,
+    "bps": 2028.71,
+    "shares_issued": 9664327,
+    "treasury_shares": 1704726
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "5187",
+ "name": "クリエート",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

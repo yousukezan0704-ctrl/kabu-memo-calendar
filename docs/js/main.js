@@ -62,6 +62,7 @@
     });
   }
 
+  var NOTIFY_IDS = { "n-before": "before", "n-today": "today", "n-ir": "ir", "n-memo": "memo", "n-browser": "browser" };
   var A = {
     tab: function (t) { go(t.dataset.v); },
     view: function (t) { K.ui.view = t.dataset.v; render(); },
@@ -80,7 +81,17 @@
     },
     chk: function (t) { K.state.checked[t.dataset.id] = !K.state.checked[t.dataset.id]; K.save(); render(); },
     fav: function (t) { K.toggleFav(t.dataset.code); render(); },
-    stock: function (t) { K.ui.tab = "stocks"; K.sUi.code = t.dataset.code; K.sUi.sub = "stocks"; render(); window.scrollTo(0, 0); },
+    stock: function (t) {
+      if (K.ui.tab !== "stocks") K.sUi.sub = "stocks";   // 注目・銘柄の一覧から開いたときは、戻る先をそのまま残す
+      K.ui.tab = "stocks"; K.sUi.code = t.dataset.code; render(); window.scrollTo(0, 0);
+    },
+    addfav: function () {
+      var c = ($("w-add").value || "").trim().toUpperCase();
+      if (!/^[0-9A-Z]{4}$/.test(c)) { K.toast("コードは英数字4桁です（例 7203）", true); return; }
+      if (!K.isFav(c)) K.toggleFav(c);
+      render();
+    },
+    irseen: function () { K.setNotify("seenAt", K.nowStamp()); K.toast("既読にしました"); render(); },
     sback: function () { K.sUi.code = ""; render(); },
     ssub: function (t) { K.sUi.sub = t.dataset.v; render(); },
     "open-code": function () {
@@ -126,8 +137,9 @@
     },
     ics: function () {
       var r = K.makeIcs();
-      if (!r.count) { K.toast("追跡中で再確認日があるメモがありません", true); return; }
-      K.download("株メモ_確認日.ics", r.text, "text/calendar"); K.toast(r.count + "件を書き出しました。開いてカレンダーに追加してください");
+      if (!r.count) { K.toast("書き出せる予定がありません（追跡中で再確認日のあるメモ、または注目銘柄の確定した決算予定が対象です。通知がOFFの項目は含みません）", true); return; }
+      K.download("株メモ_確認日.ics", r.text, "text/calendar");
+      K.toast("メモ " + r.memoCount + "件・決算予定 " + r.earnCount + "件を書き出しました。開いてカレンダーに追加してください");
     },
     notiftest: function () {
       if (!("Notification" in window)) { K.toast("このブラウザは通知に対応していません。カレンダー取り込み(.ics)をお使いください", true); return; }
@@ -186,6 +198,7 @@
     var id = t.id;
     if (id === "f-text") { K.filter.text = t.value; render(id); }
     else if (id === "s-q") { K.sUi.q = t.value; render(id); }
+    else if (id === "w-q") { K.sUi.wq = t.value; render(id); }
   });
 
   document.addEventListener("change", function (ev) {
@@ -200,6 +213,21 @@
     else if (id === "f-fav") { K.filter.fav = t.checked; render(); }
     else if (id === "ir-review") { K.irUi.reviewOnly = t.checked; render(); }
     else if (id === "set-sample") { K.state.settings.showSample = t.checked; K.save(); render(); }
+    else if (id === "w-sort") { K.sUi.wsort = t.value; render(); }
+    else if (id === "w-near") { K.sUi.wnear = t.checked; render(); }
+    else if (id === "w-rev") { K.sUi.wrev = t.checked; render(); }
+    else if (NOTIFY_IDS[id]) {
+      if (id === "n-browser" && t.checked) {
+        if (!("Notification" in window)) { K.toast("このブラウザはブラウザ通知に対応していません", true); render(); return; }
+        Notification.requestPermission().then(function (p) {
+          if (p === "granted") { K.setNotify("browser", true); K.toast("アプリを開いている間の通知をONにしました"); }
+          else { K.setNotify("browser", false); K.toast("通知が許可されていないためOFFのままです（" + p + "）", true); }
+          render();
+        });
+        return;
+      }
+      K.setNotify(NOTIFY_IDS[id], t.checked); render();
+    }
     else if (id === "n-ck") { K.state.settings.notifyChecked = t.value; K.save(); }
     else if (id === "n-note") { K.state.settings.notifyNote = t.value; K.save(); }
     else if (id === "csv-adj") {
@@ -232,6 +260,9 @@
   if (sw) navigator.serviceWorker.register("sw.js").catch(function () { /* 未対応でも動く */ });
   window.addEventListener("beforeunload", function () { K.saveNow(); });
   render();
-  K.loadData().then(function () { render(); });
+  K.loadData().then(function () {
+    render();
+    if (K.fireNotices) { K.fireNotices(); setInterval(K.fireNotices, 15 * 60 * 1000); }   // 開いている間だけ（日付が変わったら再確認）
+  });
   $("savestate").textContent = K.saveStatus.text;
 })(window.KMC);

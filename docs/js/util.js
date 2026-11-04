@@ -51,7 +51,8 @@ window.KMC = window.KMC || {};
 
   /* 予定の種類: 文字(label) と 色(color) の両方で区別する */
   K.KINDS = {
-    earnings:      { label: "決算",       color: "#1a56db" },
+    earnings:      { label: "決算(予定)", color: "#1a56db" },
+    earnings_actual: { label: "決算(実績)", color: "#5b6f8f" },
     revision_up:   { label: "上方修正",   color: "#0e7a4b" },
     revision_down: { label: "下方修正",   color: "#c0262d" },
     forecast:      { label: "予想変更",   color: "#8a5a00" },

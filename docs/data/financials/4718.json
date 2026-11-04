@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1289021",
+   "announced_at": "2026-11-02 15:30:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261030561829.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 20066,
+    "operating_income": 2538,
+    "ordinary_income": 2534,
+    "net_income": 1570,
+    "eps": 85.68
+   },
+   "yoy_pct": {
+    "sales": 9.8,
+    "operating_income": 52.3,
+    "ordinary_income": 51.1,
+    "net_income": 48.2
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 40900,
+    "operating_income": 4770,
+    "ordinary_income": 4780,
+    "net_income": 3080,
+    "eps": 169.76,
+    "dps": 85,
+    "yoy_pct": {
+     "sales": 8.6,
+     "operating_income": 20.4,
+     "ordinary_income": 20.5,
+     "net_income": 23.8
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 85
+   },
+   "balance": {
+    "net_assets": 16149,
+    "equity_ratio_pct": 63.9,
+    "bps": null,
+    "shares_issued": 19012452,
+    "treasury_shares": 1052190
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "4718",
+ "name": "早稲アカ",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

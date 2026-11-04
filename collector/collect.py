@@ -18,12 +18,22 @@ import urllib.error
 import datetime as dt
 
 sys.path.insert(0, os.path.dirname(__file__))
+try:
+    from history import classify_title
+    from financials import parse_summary_zip, merge_period
+    FIN_OK = True
+except ImportError:  # 財務モジュール未導入でもIR収集は動く
+    FIN_OK = False
+
+    def classify_title(t):
+        return 'その他'
 from extract import extract_document, merge_events, is_correction, keep_event, EXT_VERSION  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "docs", "data")
 STATE = os.path.join(ROOT, "state", "seen.json")
 WATCH = os.path.join(ROOT, "config", "watchlist.txt")
+FIN_DIR = os.path.join(DATA, "financials")
 API = "https://webapi.yanoshin.jp/webapi/tdnet/list/%s.json?limit=%d"
 UA = "kabu-memo-calendar/1.0 (personal use; polite 1req/sec)"
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -75,7 +85,10 @@ def fetch_index(day):
         t = it.get("Tdnet", {})
         url = t.get("document_url") or ""
         url = url.split("rd.php?", 1)[-1] if "rd.php?" in url else url
+        xb = t.get("url_xbrl") or ""
+        xb = xb.split("rd.php?", 1)[-1] if "rd.php?" in xb else xb
         items.append({
+            "xbrl": xb,
             "id": str(t.get("id")), "code": (t.get("company_code") or "")[:4].upper(),
             "name": t.get("company_name") or "", "pubdate": t.get("pubdate") or "",
             "title": t.get("title") or "", "url": url,
@@ -93,6 +106,21 @@ def score(item, wl):
     return s
 
 
+def make_actual_event(v, checked_at):
+    """決算短信を発表した事実（TDnetの公表日時）。予定ではなく実績として区別する。"""
+    d, t = v["pubdate"][:10], v["pubdate"][11:16]
+    return {
+        "id": "earn:" + v["id"], "kind": "earnings", "kind_label": "決算発表(実績)",
+        "code": v["code"], "name": v["name"], "announced_at": v["pubdate"],
+        "target": {"raw": v["pubdate"][:16], "start": d, "end": d, "precision": "day", "needs_review": False,
+                   "reason": "", "time": t},
+        "target_text": v["pubdate"][:16], "time_text": t, "impact_period": "記載なし",
+        "summary": "決算短信を発表（実績）: " + v["title"][:40], "quote": v["title"][:140], "page": 1,
+        "url": v["url"], "title": v["title"], "checked_at": checked_at, "origin": "official",
+        "extractor": EXT_VERSION, "actual": True, "confirmed": True, "needs_review": False,
+    }
+
+
 def pdf_pages(data):
     from pypdf import PdfReader
     r = PdfReader(io.BytesIO(data))
@@ -104,6 +132,7 @@ def run():
     ap.add_argument("--days", type=int, default=3)
     ap.add_argument("--budget", type=int, default=150)
     ap.add_argument("--retention-days", type=int, default=60)
+    ap.add_argument("--fin-budget", type=int, default=200)
     a = ap.parse_args()
 
     now = dt.datetime.now(JST)
@@ -125,7 +154,10 @@ def run():
         index_ok_days.append(day.isoformat())
         for it in items:
             if it["id"] not in seen:
-                seen[it["id"]] = {"status": "pending", **it}
+                seen[it["id"]] = {"status": "pending", "cat": classify_title(it["title"]), **it}
+            else:  # 以前の記録に分類・XBRLが無ければ補う（既存の状態は変えない）
+                seen[it["id"]].setdefault("xbrl", it.get("xbrl", ""))
+                seen[it["id"]].setdefault("cat", classify_title(it["title"]))
         time.sleep(1)
 
     # 抽出ルールが新しくなったら、読み終えた資料も当て直す（古いルールの項目は捨てる）
@@ -184,6 +216,45 @@ def run():
             errors.append("%s %s %s" % (v["code"], v["title"][:20], v["note"]))
         time.sleep(1)
 
+    # 2b) 決算短信の「発表実績」イベント: TDnetの公表日時そのもの（確定した事実。将来の予定ではない）
+    for v in seen.values():
+        if v.get("cat") == "決算短信" and v.get("pubdate"):
+            ev = make_actual_event(v, checked_at)
+            events, _, _ = merge_events(events, [ev])
+
+    # 2c) 決算短信XBRLから財務数値を取り込む（売上・利益・前年同期比・会社予想・配当）
+    fin = {"enabled": FIN_OK, "parsed": 0, "failed": 0, "pending": 0}
+    if FIN_OK:
+        todo = [v for v in seen.values() if v.get("cat") == "決算短信" and v.get("xbrl") and v.get("fin") != "done"
+                and v.get("fin_tries", 0) < 3]
+        todo.sort(key=lambda v: v["pubdate"], reverse=True)
+        n = 0
+        for v in todo:
+            if n >= a.fin_budget:
+                break
+            n += 1
+            try:
+                rec = parse_summary_zip(http_get(v["xbrl"], timeout=60), {
+                    "id": v["id"], "code": v["code"], "name": v["name"], "pubdate": v["pubdate"],
+                    "title": v["title"], "url": v["url"]})
+                if rec is None:
+                    v["fin"] = "done"   # 決算短信ではない／サマリーなし。再挑戦しない
+                    v["fin_note"] = "財務サマリーなし"
+                else:
+                    path = os.path.join(FIN_DIR, "%s.json" % v["code"])
+                    doc = merge_period(load(path, None), rec, v["code"], v["name"])
+                    doc["updated_at"] = checked_at
+                    save(path, doc)
+                    v["fin"] = "done"
+                    fin["parsed"] += 1
+            except Exception as e:
+                v["fin_tries"] = v.get("fin_tries", 0) + 1
+                v["fin_note"] = "%s: %s" % (type(e).__name__, str(e)[:100])
+                fin["failed"] += 1
+                errors.append("財務 %s %s" % (v["code"], v["fin_note"]))
+            time.sleep(1)
+        fin["pending"] = sum(1 for v in seen.values() if v.get("cat") == "決算短信" and v.get("xbrl") and v.get("fin") != "done" and v.get("fin_tries", 0) < 3)
+
     # 3) 古いものを整理して保存
     cutoff = (now - dt.timedelta(days=a.retention_days)).strftime("%Y-%m-%d")
     seen = {k: v for k, v in seen.items() if v["pubdate"][:10] >= cutoff}
@@ -205,13 +276,14 @@ def run():
                    "to": max((v["pubdate"][:10] for v in seen.values()), default=None)},
         "oldest_pending": min((v["pubdate"][:10] for v in seen.values() if v["status"] == "pending"), default=None),
         "budget_per_run": a.budget,
+        "financials": fin,
         "last_run": {"at": checked_at, "ok": len(index_ok_days) > 0, "trigger": os.environ.get("GITHUB_EVENT_NAME", "local"),
                      "error": None if index_ok_days else "一覧を1日分も取得できませんでした: " + "; ".join(errors[:3])},
         "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",
         "source": "TDnet(非公式API: webapi.yanoshin.jp)＋release.tdnet.info の公開PDF",
         "errors": errors[:30],
     }
-    index_items = [{k: v.get(k) for k in ("id", "code", "name", "pubdate", "title", "url", "status", "note", "events", "pages", "checked_at")}
+    index_items = [{k: v.get(k) for k in ("id", "code", "name", "pubdate", "title", "url", "cat", "status", "note", "events", "pages", "checked_at")}
                    for v in sorted(seen.values(), key=lambda v: v["pubdate"], reverse=True)
                    if v["status"] in ("done", "failed") or score(v, wl) >= 20]
     save(STATE, seen)

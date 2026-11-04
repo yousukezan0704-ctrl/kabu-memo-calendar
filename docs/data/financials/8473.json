@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288810",
+   "announced_at": "2026-11-02 10:10:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年３月期  第２四半期（中間期）決算短信〔ＩＦＲＳ〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261030561832.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 1057515,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 230572,
+    "eps": 356.7
+   },
+   "yoy_pct": {
+    "sales": 17.2,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 39.1
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": null,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": null,
+    "eps": null,
+    "dps": 110,
+    "yoy_pct": {
+     "sales": null,
+     "operating_income": null,
+     "ordinary_income": null,
+     "net_income": null
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 110
+   },
+   "balance": {
+    "net_assets": 2553183,
+    "equity_ratio_pct": 4.9,
+    "bps": null,
+    "shares_issued": 661256614,
+    "treasury_shares": 14761438
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "8473",
+ "name": "ＳＢＩ",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

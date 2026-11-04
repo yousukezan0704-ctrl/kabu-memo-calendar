@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288987",
+   "announced_at": "2026-11-02 15:30:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年３月期 第２四半期（中間期）決算短信〔日本基準〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261021554165.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 18255,
+    "operating_income": 3115,
+    "ordinary_income": 3297,
+    "net_income": 2026,
+    "eps": 79.87
+   },
+   "yoy_pct": {
+    "sales": 10.6,
+    "operating_income": 13.7,
+    "ordinary_income": 8.5,
+    "net_income": 8.4
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 37000,
+    "operating_income": 6300,
+    "ordinary_income": 6550,
+    "net_income": 4200,
+    "eps": 165.75,
+    "dps": 62,
+    "yoy_pct": {
+     "sales": 7.6,
+     "operating_income": 1.5,
+     "ordinary_income": 0.1,
+     "net_income": 0.6
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 62
+   },
+   "balance": {
+    "net_assets": 30704,
+    "equity_ratio_pct": 60.7,
+    "bps": null,
+    "shares_issued": 27550278,
+    "treasury_shares": 2286631
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "3371",
+ "name": "ソフトクリエＨＤ",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

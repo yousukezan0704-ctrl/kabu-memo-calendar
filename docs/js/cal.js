@@ -14,6 +14,7 @@
   };
   K.certainty = function (it) {
     if (it.src === "memo") return "";
+    if (it.kind === "earnings_actual") return '<span class="badge b-ok">発表済み(実績)</span>';
     if (it.isAnnounce) return '<span class="badge b-ok">発表日</span>';
     if (it.date) {
       return it.confirmed ? '<span class="badge b-ok">日付確定</span>'
@@ -37,12 +38,13 @@
     h += '<div class="l3">';
     if (it.src === "ir") {
       h += '<span class="muted">発表 ' + E(md(it.announced_at)) + " ／ 対象 " + E(it.raw || "記載なし") + (it.date ? " → " + E(K.fmtDay(it.date)) : "") + "</span> ";
-      if (it.kind === "earnings") h += '<span class="muted">／ 時刻 ' + E(K.timeText(it)) + "</span> ";
+      if (it.kind === "earnings" || it.kind === "earnings_actual") h += '<span class="muted">／ 時刻 ' + E(K.timeText(it)) + "</span> ";
     } else if (it.time || it.kind === "earnings") {
       h += '<span class="muted">時刻 ' + E(K.timeText(it)) + "</span> ";
     }
     h += (it.kind === "forecast_item" ? "" : K.certainty(it) + " ") + K.originBadge(it.origin);
     if (it.sample) h += ' <span class="badge b-sample">サンプル</span>';
+    if (it.src === "ir" && K.catOf(it)) h += ' <span class="badge b-cat">' + E(K.catOf(it)) + "</span>";
     if (it.src === "ir" && K.RISKY_KINDS[it.kind]) h += ' <span class="badge b-warn">自動抽出・要確認</span>';
     if (it.src === "ir" && /^revision/.test(it.kind) && String(it.refId).indexOf("table") >= 0 && it.ev && it.ev.note) h += ' <span class="badge b-warn">表の数値から判定</span>';
     if (it.checkedByMe) h += ' <span class="badge b-ok">確認済み</span>';

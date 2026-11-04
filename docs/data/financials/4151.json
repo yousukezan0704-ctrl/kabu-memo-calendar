@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1289004",
+   "announced_at": "2026-11-02 15:30:00",
+   "period_type": "第3四半期",
+   "fiscal_year_end": "2026-12-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2026年12月期 第3四半期 決算短信〔ＩＦＲＳ〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261030560518.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 384947,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 51673,
+    "eps": 98.7
+   },
+   "yoy_pct": {
+    "sales": 10.2,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 58.5
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 520000,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": null,
+    "eps": 143.27,
+    "dps": 70,
+    "yoy_pct": {
+     "sales": 4.7,
+     "operating_income": null,
+     "ordinary_income": null,
+     "net_income": null
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 70
+   },
+   "balance": {
+    "net_assets": 908543,
+    "equity_ratio_pct": 83.5,
+    "bps": null,
+    "shares_issued": 525634500,
+    "treasury_shares": 2049790
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "4151",
+ "name": "協和キリン",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

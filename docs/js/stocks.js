@@ -1,7 +1,7 @@
 /* 銘柄・テーマ画面: 銘柄一覧／銘柄詳細／テーマ／突発材料 */
 (function (K) {
   var E = K.esc;
-  K.sUi = K.sUi || { sub: "stocks", code: "" };
+  K.sUi = K.sUi || { sub: "watch", code: "", wq: "", wsort: "date", wnear: false, wrev: false };
 
   function knownStocks() {
     var m = {};
@@ -22,12 +22,13 @@
   K.renderStocks = function () {
     var u = K.sUi;
     if (u.code) return detail(u.code);
-    var h = '<div class="subtabs">' + [["stocks", "銘柄"], ["themes", "テーマ"], ["breaking", "突発材料"]].map(function (v) {
+    var h = '<div class="subtabs">' + [["watch", "注目"], ["stocks", "銘柄"], ["themes", "テーマ"], ["breaking", "突発材料"]].map(function (v) {
       return '<button class="' + (u.sub === v[0] ? "on" : "") + '" data-act="ssub" data-v="' + v[0] + '">' + v[1] + "</button>";
     }).join("") + "</div>";
     if (u.sub === "themes") return h + themes();
     if (u.sub === "breaking") return h + breaking();
-    return h + list();
+    if (u.sub === "stocks") return h + list();
+    return h + K.renderWatch();
   };
 
   function list() {
@@ -48,12 +49,17 @@
   /* ---------- 銘柄詳細 ---------- */
   function detail(code) {
     var name = K.stockName(code), st = K.volStats(code);
+    var fc = K.fin[code];
+    if (!name && fc && fc.st === "ok" && fc.data.name) name = fc.data.name;
     var items = K.buildItems().filter(function (it) { return it.code === code; });
     var irs = items.filter(function (it) { return it.src === "ir"; });
     var h = '<button data-act="sback">← 一覧へ</button> <h2 class="inl">' + E(name || "") + " (" + E(code) + ")</h2> " +
       '<button data-act="fav" data-code="' + E(code) + '">' + (K.isFav(code) ? "★ お気に入り" : "☆ お気に入りに追加") + "</button>";
     var th = K.allThemes().filter(function (t) { return t.stocks.some(function (s) { return s.code === code; }); });
     h += '<div class="muted">テーマ: ' + (th.length ? th.map(function (t) { return E(t.name); }).join("、") : "未登録") + "</div>";
+
+    /* 財務・指標・修正（財務データが無い銘柄は「財務データ未取得」） */
+    h += finSection(code, items);
 
     /* 株価・出来高 */
     var ph = "";
@@ -128,9 +134,272 @@
     tl.sort(function (a, b) { return a.at < b.at ? 1 : -1; });
     h += K.det("tl:" + code, "時系列（新しい順） " + tl.length + "件", (tl.length ? tl.slice(0, 60).map(function (x) { return '<div class="tl"><span class="tld">' + E(x.at.slice(0, 16)) + "</span> " + x.html + "</div>"; }).join("") : '<p class="empty">まだ記録がありません。</p>'), false, "pf");
 
-    h += K.det("mm:" + code, "自分のメモ " + K.memoByCode(code).length + "件", '<button data-act="newmemo" data-code="' + E(code) + '">＋ この銘柄のメモを作る</button>' +
-      K.memoByCode(code).map(function (m) { return '<div class="mline">' + E((m.reason || "（理由なし）").slice(0, 50)) + ' <a href="#" data-act="gomemo" data-id="' + E(m.id) + '">開く</a></div>'; }).join(""), true, "pf");
+    h += K.det("mm:" + code, "自分の投資メモ " + K.memoByCode(code).length + "件", '<button data-act="newmemo" data-code="' + E(code) + '">＋ この銘柄のメモを作る</button>' +
+      K.memoByCode(code).map(function (m) {
+        var stt = m.status === "open" ? "追跡中" : m.status === "done" ? "確認済み" : "見送り";
+        return '<div class="mline"><span class="badge">' + stt + "</span> " + E((m.reason || "（理由なし）").slice(0, 60)) +
+          (m.checks ? '<div class="muted">調べること: ' + E(m.checks.split("\n")[0].slice(0, 60)) + "</div>" : "") +
+          '<div class="muted">再確認日: ' + E(m.reviewDate || "未設定") + ' <a href="#" data-act="gomemo" data-id="' + E(m.id) + '">開く</a></div></div>';
+      }).join(""), true, "pf");
     return h;
+  }
+
+  /* ---------- 財務・指標（銘柄詳細） ---------- */
+  K.onFinLoaded = function (code) { if (K.ui.tab === "stocks" && K.sUi.code === code) K.render(); };
+
+  var NA = '<span class="muted">未取得</span>';
+  function numHtml(v, d) { return v == null ? NA : E(K.fmtNum(v, d != null ? d : (v % 1 ? 2 : 0))); }
+  function pctHtml(v, d) {
+    if (v == null) return NA;
+    var t = K.fmtNum(Math.abs(v), d == null ? 1 : d) + "%";
+    return '<span class="' + (v > 0 ? "up" : v < 0 ? "down" : "") + '">' + (v > 0 ? "▲ ＋" : v < 0 ? "▼ －" : "") + E(t) + "</span>";
+  }
+  function table(cls, heads, rows) {
+    return '<div class="tbl-wrap"><table class="tbl ' + cls + '"><thead><tr>' + heads.map(function (x) { return "<th>" + E(x) + "</th>"; }).join("") +
+      "</tr></thead><tbody>" + rows.map(function (r) {
+        return "<tr>" + r.map(function (c, i) { return '<td data-l="' + E(heads[i]) + '"' + (i ? ' class="num"' : "") + ">" + c + "</td>"; }).join("") + "</tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+  var FKEYS = [["sales", "売上高"], ["operating_income", "営業利益"], ["ordinary_income", "経常利益"], ["net_income", "純利益"]];
+
+  function finMetricsHtml(code, fin) {
+    var m = K.finMetrics(code, fin), h = "";
+    if (m.px) {
+      h += '<p class="pxline"><b>株価</b> 終値 ' + E(K.fmtNum(m.px.c, m.px.c % 1 ? 2 : 0)) + '円 <span class="badge">データ日 ' + E(m.px.d) + "</span></p>";
+      if (m.stale != null && m.stale > 7) h += '<p class="warn">株価データが' + Math.floor(m.stale) + "日前のものです。古い株価で計算しているため、実際とずれています。</p>";
+    } else {
+      h += '<p class="warn">' + E(m.noPx) + "です。時価総額・PER・PBR・配当利回りは、株価のCSVを取り込むと計算されます（下の「株価データの取り込み」）。</p>";
+    }
+    h += '<div class="mets">';
+    m.items.forEach(function (it) {
+      h += '<div class="met"><div class="mh"><span class="ml">' + E(it.label) + "</span> ";
+      if (it.value != null) h += '<span class="mv">' + E(it.value) + '</span> <span class="badge b-calc">' + E(it.tag || "計算値") + "</span>";
+      else h += '<span class="mv na">未取得</span>';
+      h += "</div>";
+      if (it.value != null) h += '<div class="fm">式: ' + E(it.formula || "") + (it.note ? " ／ " + E(it.note) : "") + "</div>";
+      else h += '<div class="fm">' + E(it.why || "材料がそろっていません") + "（推測値では埋めません）</div>";
+      h += "</div>";
+    });
+    h += "</div>";
+    h += '<p class="muted">上の数字は、財務データと取り込んだ株価からこのアプリが計算した値です（会社・取引所の公表値ではありません）。「概算」は材料が足りず近似した値です。</p>';
+    return h;
+  }
+
+  function finResultsHtml(fin) {
+    var p = fin.periods[0], r = p.results || {}, y = p.yoy_pct || {}, unit = p.unit || "";
+    var h = '<p class="muted">' + E((p.period_type || "期区分不明") + "（" + (p.period_end || "期末不明") + "）") + " ／ " + E((p.announced_at || "").slice(0, 10) || "発表日不明") + " 発表 ／ 単位: " + E(unit || "不明") +
+      (K.safeUrl(p.url) ? ' ／ <a href="' + E(p.url) + '" target="_blank" rel="noopener">元の資料</a>' : "") + (K.isFullYear(p) ? "" : " ／ 累計") + "</p>";
+    var rows = FKEYS.map(function (k) { return [E(k[1]), numHtml(K.toNum(r[k[0]]), 0), pctHtml(K.toNum(y[k[0]]))]; });
+    rows.push(["EPS（1株利益）", numHtml(K.toNum(r.eps), 2) + (K.toNum(r.eps) != null ? '<small class="unit">円</small>' : ""), '<span class="muted">―</span>']);
+    h += table("fres", ["項目", "実績" + (unit ? "（" + unit + "）" : ""), "前年同期比"], rows);
+    return h;
+  }
+
+  function finForecastHtml(fin) {
+    var P = fin.periods, p0 = P[0], fr = K.finForecastRows(P), unit = p0.unit || "";
+    if (!p0.forecast || !fr.rows.length) return '<p class="empty">会社予想が財務データに入っていません（未取得）。</p>';
+    var full = fr.kind === "full";
+    var h = '<p class="muted">会社予想の対象: ' + E(p0.forecast.period || "不明") + (full ? "（直近の決算が通期のため、これは次の期の予想です）" : "") + "</p>";
+    var heads = ["項目", "会社予想" + (unit ? "（" + unit + "）" : ""), full ? "前の予想との差（実績－予想）" : "進捗率（実績÷通期予想）", full ? "—" : "前回予想→今回"];
+    var rows = fr.rows.map(function (x) {
+      var mid, chg;
+      if (full) {
+        mid = x.mid ? pctHtml(x.mid.pct) + ' <small class="unit">差 ' + E((x.mid.diff > 0 ? "＋" : x.mid.diff < 0 ? "－" : "") + K.fmtNum(Math.abs(x.mid.diff))) + "</small>" : NA;
+        chg = '<span class="muted">―</span>';
+      } else {
+        mid = x.mid != null ? E(K.fmtNum(x.mid, 1)) + "%" + (fr.q ? '<small class="unit">均等ペースの目安 ' + fr.q * 25 + "%</small>" : "") : (x.midText ? '<span class="muted">' + E(x.midText) + "</span>" : NA);
+        if (x.chg) {
+          var lab = x.chg.dir === "up" ? '<span class="up">▲ 上方</span>' : x.chg.dir === "down" ? '<span class="down">▼ 下方</span>' : '<span class="muted">変更なし</span>';
+          chg = E(K.fmtNum(x.chg.prev)) + " → " + E(K.fmtNum(x.chg.now)) + " " + lab;
+        } else chg = '<span class="muted">比較なし</span>';
+      }
+      return [E(x.label), numHtml(x.f, 0), mid, chg];
+    });
+    h += table("ffc", heads, rows);
+    if (full) h += '<p class="muted">' + (fr.prev ? "比べた予想: " + E(fr.prev.announced_at ? fr.prev.announced_at.slice(0, 10) : "") + " 発表時点の会社予想" : "同じ期の直前の会社予想がデータにないため、差は出せません（未取得）。") + "</p>";
+    else {
+      h += '<p class="muted">進捗率は、累計の実績が通期予想の何%かを割り算しただけの値です。' + (fr.q ? "均等ペースの目安は期の経過(" + fr.q + "/4)から機械的に出した数字で、季節による偏りは考慮していません。" : "") +
+        (fr.prev ? " 前回予想は " + E((fr.prev.announced_at || "").slice(0, 10)) + " 発表の同じ期の予想です。" : " 同じ期の前回予想がデータにないため、上方・下方の判定は出せません（未取得）。") + "</p>";
+    }
+    return h;
+  }
+
+  function finHistoryHtml(fin) {
+    var rows = fin.periods.slice(0, 12).map(function (p) {
+      var r = p.results || {}, y = p.yoy_pct || {}, u = p.unit || "";
+      var lk = K.safeUrl(p.url) ? '<a href="' + E(p.url) + '" target="_blank" rel="noopener">開く</a>' : '<span class="muted">なし</span>';
+      return [E((p.announced_at || "").slice(0, 10) || "不明"), E((p.period_type || "") + " " + (p.period_end || "")), numHtml(K.toNum(r.sales), 0), numHtml(K.toNum(r.operating_income), 0), numHtml(K.toNum(r.net_income), 0), pctHtml(K.toNum(y.operating_income)), lk];
+    });
+    var unit = (fin.periods[0] && fin.periods[0].unit) || "";
+    return table("fhist", ["発表日", "期", "売上高", "営業利益", "純利益", "営業利益 前年同期比", "資料"], rows) +
+      '<p class="muted">金額の単位: ' + E(unit || "不明") + (fin.periods.length > 12 ? "。新しい12件を表示しています。" : "。") + "</p>";
+  }
+
+  /* 業績修正(上方・下方)と、予想の前回→今回。財務データが無くても出す */
+  function revisionHtml(items, code) {
+    var irs = items.filter(function (i) { return i.src === "ir"; });
+    var revs = irs.filter(function (i) { return /^revision/.test(i.kind); }).sort(function (a, b) { return a.announced_at < b.announced_at ? 1 : -1; });
+    var fis = irs.filter(function (i) { return i.kind === "forecast_item" && i.ev && i.ev.prev != null; }).sort(function (a, b) { return a.announced_at < b.announced_at ? 1 : -1; });
+    var h = "";
+    if (!revs.length && !fis.length) return { n: 0, recent: false, html: '<p class="empty">取得済みのIRに、業績修正・予想数値の変更は見つかっていません（未取得分は含みません）。</p>' };
+    revs.slice(0, 8).forEach(function (i) {
+      h += '<div class="mline">' + K.chip(i.kind) + " " + E((i.announced_at || "").slice(0, 10)) + " " + E((i.title || "").slice(0, 80)) +
+        (K.safeUrl(i.url) ? ' <a href="' + E(i.url) + '" target="_blank" rel="noopener">原文</a>' : "") + "</div>";
+    });
+    fis.slice(0, 10).forEach(function (i) {
+      var e = i.ev;
+      h += '<div class="mline">' + K.chip("forecast_item") + " " + E((i.announced_at || "").slice(0, 10)) + " <b>" + E(e.item) + "</b>: 前回 " + E(e.prev) + " → 今回 " + E(e.new) + (e.unit ? E(e.unit) : "") +
+        (e.verified ? "" : ' <span class="badge b-ng">原文で確認</span>') + "</div>";
+    });
+    h += '<p class="muted">IR本文からの自動抽出です。数字の列の対応は原文で確認してください。</p>';
+    var rc = K.addDays(K.today(), -7);
+    return { n: revs.length + fis.length, recent: revs.some(function (i) { return (i.announced_at || "").slice(0, 10) >= rc; }), html: h };
+  }
+
+  function finSection(code, items) {
+    var f = K.finGet(code), h = "", rv = revisionHtml(items, code);
+    if (f.st === "loading") h += K.det("fm:" + code, "財務・指標", '<p class="muted">財務データを読み込み中…</p>', true, "pf");
+    else if (f.st === "none") {
+      h += K.det("fm:" + code, "財務・指標", '<p class="warn"><b>財務データ未取得</b>です。この銘柄の財務データファイルが、まだ作られていません。売上・利益・PER・PBRなどは、データが入るまで表示しません（推測では埋めません）。</p>', true, "pf");
+    } else if (f.st === "err") {
+      h += K.det("fm:" + code, "財務・指標", '<p class="errbox">⚠ 財務データを読み込めませんでした（' + E(f.msg || "不明") + "）。しばらくして開き直してください。</p>", true, "pf");
+    } else {
+      var fin = f.data, p0 = fin.periods[0];
+      var meta = '<p class="muted">出典: ' + E(fin.source || "不明") + " ／ データ更新: " + E((fin.updated_at || "不明").replace("T", " ").slice(0, 16)) + "。自動抽出のため、必ず元の資料で確認してください。</p>";
+      if (!p0) h += K.det("fm:" + code, "財務・指標", '<p class="warn"><b>財務データ未取得</b>です（決算の記録が空です）。</p>' + meta, true, "pf");
+      else {
+        h += K.det("fm:" + code, "株価と指標（計算値）", finMetricsHtml(code, fin) + meta, true, "pf");
+        h += K.det("fr:" + code, "最新の決算と前年同期比", finResultsHtml(fin), true, "pf");
+        h += K.det("ff:" + code, "会社予想との差", finForecastHtml(fin), false, "pf");
+        h += K.det("fh:" + code, "過去の決算履歴 " + Math.min(12, fin.periods.length) + "件", finHistoryHtml(fin), false, "pf");
+      }
+    }
+    h += K.det("fv:" + code, "上方・下方修正と予想の変更（IR） " + rv.n + "件", rv.html, rv.recent, "pf");
+    return h;
+  }
+
+  /* ---------- 注目（お気に入り）の一覧 ---------- */
+  /* 重要なIR: 業績修正 > 予想・配当の修正 > 決算短信 */
+  K.irImportance = function (it) {
+    if (it.src !== "ir") return null;
+    var cat = K.catOf(it);
+    if (it.kind === "earnings_actual") return { pri: 3, label: "決算短信(実績)" };
+    if (it.kind === "revision_up") return { pri: 1, label: "上方修正" };
+    if (it.kind === "revision_down") return { pri: 1, label: "下方修正" };
+    var t = ((it.ev && it.ev.title) || "") + (it.title || "");
+    if (it.kind === "forecast" || cat === "配当修正") return { pri: 2, label: cat === "配当修正" || /配当/.test(t) ? "配当予想の修正" : "業績予想の変更" };
+    if (it.kind !== "forecast_item" && (cat === "決算短信" || /決算短信/.test(t))) return { pri: 3, label: "決算短信" };
+    return null;
+  };
+  K.nextEarnings = function (code, items, today) {
+    var L = items.filter(function (i) { return i.kind === "earnings" && i.src !== "memo" && i.code === code && i.date && i.date >= today; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (b.time ? 1 : 0) - (a.time ? 1 : 0); });
+    return L[0] || null;
+  };
+  /* 決算発表日の前日終値 → 翌営業日終値。材料が足りなければ理由つきで「株価データなし」 */
+  K.earnReaction = function (code, items, today) {
+    var cand = [];
+    items.forEach(function (i) {
+      if (i.code !== code || i.src === "memo") return;
+      var imp = K.irImportance(i);
+      if (i.src === "ir" && imp && /^決算短信/.test(imp.label)) cand.push((i.announced_at || "").slice(0, 10));
+      else if (i.kind === "earnings" && i.date && i.confirmed) cand.push(i.date);
+    });
+    cand = cand.filter(function (d) { return d && d <= today; }).sort();
+    if (!cand.length) return { st: "noday" };
+    var day = cand[cand.length - 1], st = K.volStats(code), rows = st.rows;
+    if (!rows.length) return { st: "noprice", day: day };
+    var prev = null, next = null;
+    rows.forEach(function (r) { if (r.d < day) prev = r; else if (r.d > day && !next) next = r; });
+    if (!prev) return { st: "gap", day: day, why: "発表日の前日までの株価がありません" };
+    if (!next) return { st: "gap", day: day, why: "発表日の翌営業日の株価がまだありません" };
+    if (K.addDays(prev.d, 7) < day || K.addDays(day, 7) < next.d) return { st: "gap", day: day, why: "株価データの日付が発表日から離れています" };
+    var sp = (K.state.splits[code] || []).filter(function (d) { return d > prev.d && d <= next.d; });
+    if (sp.length && !(K.state.priceMeta[code] || {}).adjusted) return { st: "gap", day: day, why: "この間に株式分割があり、調整前の株価では比べられません" };
+    return { st: "ok", day: day, prev: prev, next: next, pct: (next.c / prev.c - 1) * 100 };
+  };
+
+  function watchRows() {
+    var items = K.buildItems(), today = K.today(), from = K.addDays(today, -7);
+    var names = {};
+    knownStocks().forEach(function (s) { names[s.code] = s.name; });
+    items.forEach(function (i) { if (i.code && i.name && !names[i.code]) names[i.code] = i.name; });
+    return K.state.favorites.map(function (code) {
+      var ne = K.nextEarnings(code, items, today), best = null, n = 0, hasRev = false;
+      items.forEach(function (i) {
+        if (i.code !== code || i.src !== "ir") return;
+        var d = (i.announced_at || "").slice(0, 10);
+        if (d < from) return;
+        if (/^revision/.test(i.kind)) hasRev = true;
+        var imp = K.irImportance(i);
+        if (!imp) return;
+        n++;
+        if (!best || imp.pri < best.imp.pri || (imp.pri === best.imp.pri && i.announced_at > best.it.announced_at)) best = { it: i, imp: imp };
+      });
+      var days = ne ? Math.round((K.parseYmd(ne.date) - K.parseYmd(today)) / 86400000) : null;
+      return { code: code, name: names[code] || "", next: ne, days: days, best: best, more: n - (best ? 1 : 0), hasRev: hasRev, react: K.earnReaction(code, items, today) };
+    });
+  }
+
+  K.renderWatch = function () {
+    var u = K.sUi, q = (u.wq || "").trim().toLowerCase();
+    var all = watchRows(), L = all.filter(function (r) {
+      if (q && (r.code + " " + r.name).toLowerCase().indexOf(q) < 0) return false;
+      if (u.wnear && !(r.days != null && r.days <= 14)) return false;
+      if (u.wrev && !r.hasRev) return false;
+      return true;
+    });
+    L.sort(function (a, b) {
+      if (u.wsort === "code") return a.code < b.code ? -1 : 1;
+      if (a.next && b.next) return a.next.date < b.next.date ? -1 : a.next.date > b.next.date ? 1 : (a.code < b.code ? -1 : 1);
+      if (a.next) return -1;
+      if (b.next) return 1;
+      return a.code < b.code ? -1 : 1;
+    });
+    var h = '<div class="filters"><input id="w-q" type="search" placeholder="コード・会社名で検索" value="' + E(u.wq || "") + '">' +
+      '<select id="w-sort"><option value="date"' + (u.wsort !== "code" ? " selected" : "") + '>並び: 決算が近い順</option><option value="code"' + (u.wsort === "code" ? " selected" : "") + ">並び: コード順</option></select>" +
+      '<label class="chk"><input id="w-near" type="checkbox"' + (u.wnear ? " checked" : "") + '> 決算が14日以内</label>' +
+      '<label class="chk"><input id="w-rev" type="checkbox"' + (u.wrev ? " checked" : "") + "> 直近7日に業績修正あり</label></div>";
+    h += '<div class="row wrap"><input id="w-add" placeholder="コードを追加(例 7203)" size="10" style="flex:1 1 140px"><button data-act="addfav">★ 注目に追加</button></div>';
+    if (!all.length) return h + '<p class="empty">注目の銘柄はまだありません。上の欄にコードを入れるか、「銘柄」「カレンダー」の☆から追加できます。</p>';
+    var nd = all.filter(function (r) { return r.next; }).length, nr = all.filter(function (r) { return r.hasRev; }).length;
+    h += '<p class="muted">注目 ' + all.length + "銘柄 ／ 決算予定あり " + nd + " ／ 直近7日に業績修正 " + nr + (L.length !== all.length ? " ／ 表示 " + L.length + "件" : "") + "</p>";
+    if (!L.length) h += '<p class="empty">条件に合う銘柄がありません。</p>';
+    L.forEach(function (r) { h += watchCard(r); });
+    return h;
+  };
+
+  function watchCard(r) {
+    var hot = r.best && r.best.imp.pri === 1;
+    var cls = hot ? (r.best.it.kind === "revision_up" ? " hot-up" : " hot-down") : "";
+    var h = '<article class="card wrow' + cls + '"><div class="l1"><span class="ttl"><a href="#" data-act="stock" data-code="' + E(r.code) + '">' + E(r.name || "(名称未登録)") + " (" + E(r.code) + ")</a></span>" +
+      ' <button class="mini" data-act="fav" data-code="' + E(r.code) + '" aria-label="注目から外す">★</button></div>';
+    /* 次の決算 */
+    h += '<div class="wl"><span class="wk">次の決算</span> ';
+    if (r.next) {
+      h += "<b>" + E(K.fmtDay(r.next.date)) + "</b> " + E(r.days === 0 ? "今日" : "あと" + r.days + "日") + " ／ " +
+        (r.next.time ? "時刻 " + E(r.next.time) : '<span class="badge b-warn">時刻 未公表</span>') + " " +
+        (r.next.confirmed ? '<span class="badge b-ok">日付確定</span>' : '<span class="badge b-warn">未確定</span>') + (r.next.sample ? ' <span class="badge b-sample">サンプル</span>' : "");
+    } else h += '<span class="badge b-warn">予定未確認</span>';
+    h += "</div>";
+    /* 最新の重要IR */
+    h += '<div class="wl"><span class="wk">重要IR（7日）</span> ';
+    if (r.best) {
+      var i = r.best.it, d = (i.announced_at || "").slice(0, 10);
+      h += (hot ? '<b class="hotl">' : "<span>") + K.chip(i.kind) + " " + E(r.best.imp.label) + " " + E(K.fmtDay(d)) + (hot ? "</b>" : "</span>") +
+        (K.safeUrl(i.url) ? ' <a href="' + E(i.url) + '" target="_blank" rel="noopener">原文</a>' : "") + (r.more > 0 ? ' <span class="muted">ほか' + r.more + "件</span>" : "");
+    } else h += '<span class="muted">直近7日の重要IRなし</span>';
+    h += "</div>";
+    /* 決算前後の株価 */
+    var x = r.react;
+    h += '<div class="wl"><span class="wk">決算前後の株価</span> ';
+    if (x.st === "ok") {
+      h += E(K.fmtDay(x.day)) + "発表: 前日終値 " + E(K.fmtNum(x.prev.c, x.prev.c % 1 ? 2 : 0)) + "円 → 翌営業日終値 " + E(K.fmtNum(x.next.c, x.next.c % 1 ? 2 : 0)) + "円 " + pctHtml(x.pct, 1) +
+        ' <span class="muted">(' + E(x.prev.d.slice(5)) + "→" + E(x.next.d.slice(5)) + ")</span>";
+    } else if (x.st === "noday") h += '<span class="muted">株価データなし（直近の決算発表日が不明）</span>';
+    else if (x.st === "noprice") h += '<span class="muted">株価データなし（' + E(K.fmtDay(x.day)) + "発表。株価CSVが未取り込み）</span>";
+    else h += '<span class="muted">株価データなし（' + E(x.why) + "）</span>";
+    return h + "</div></article>";
   }
 
   /* ---------- テーマ ---------- */

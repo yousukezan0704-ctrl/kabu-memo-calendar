@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288769",
+   "announced_at": "2026-11-02 13:00:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年3月期第2四半期決算短信〔IFRS〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261030561906.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 3918561,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 347865,
+    "eps": 73.35
+   },
+   "yoy_pct": {
+    "sales": 10.8,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 15.5
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": null,
+    "operating_income": null,
+    "ordinary_income": null,
+    "net_income": 670000,
+    "eps": 141.44,
+    "dps": 44,
+    "yoy_pct": {
+     "sales": null,
+     "operating_income": null,
+     "ordinary_income": null,
+     "net_income": 11.6
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 44
+   },
+   "balance": {
+    "net_assets": 4838495,
+    "equity_ratio_pct": 35.5,
+    "bps": null,
+    "shares_issued": 4780604217,
+    "treasury_shares": 55055109
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "8053",
+ "name": "住友商",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

@@ -7,7 +7,7 @@
     return {
       version: 1, memos: [], userEvents: [], favorites: [], checked: {}, themeStocks: [],
       prices: {}, splits: {}, priceMeta: {}, breaking: [],
-      settings: { showSample: true, notifyChecked: "未確認", notifyNote: "" },
+      settings: { showSample: true, notifyChecked: "未確認", notifyNote: "", notify: {} },
       savedAt: null
     };
   };
@@ -77,6 +77,19 @@
       K.state = Object.assign(empty(), JSON.parse(raw));
       return doSave();
     } catch (e) { return false; }
+  };
+
+  /* ---- 通知の設定（項目別のON/OFF）。保存先は settings.notify ---- */
+  K.NOTIFY_DEFAULT = { before: true, today: true, ir: true, memo: true, browser: false, seenAt: "", fired: {} };
+  K.notifyCfg = function () {
+    var n = K.state.settings.notify;
+    var c = Object.assign({}, K.NOTIFY_DEFAULT, n && typeof n === "object" ? n : {});
+    c.fired = Object.assign({}, c.fired || {});   // 既定値の入れ物を共有しない
+    return c;
+  };
+  K.setNotify = function (key, val) {
+    K.state.settings.notify = Object.assign(K.notifyCfg(), { [key]: val });
+    K.save();
   };
 
   /* ---- よく使う更新 ---- */

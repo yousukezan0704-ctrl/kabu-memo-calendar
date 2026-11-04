@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288762",
+   "announced_at": "2026-11-02 13:00:00",
+   "period_type": "第2四半期",
+   "fiscal_year_end": "2027-03-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2027年３月期第２四半期（中間期）決算短信〔日本基準〕(連結)",
+   "url": "https://www.release.tdnet.info/inbs/140120261030560482.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 84046,
+    "operating_income": 224,
+    "ordinary_income": 46071,
+    "net_income": 27556,
+    "eps": 461.17
+   },
+   "yoy_pct": {
+    "sales": 10.3,
+    "operating_income": -88.7,
+    "ordinary_income": 65,
+    "net_income": 44
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 180000,
+    "operating_income": 2200,
+    "ordinary_income": 95500,
+    "net_income": 62000,
+    "eps": 1037.59,
+    "dps": 420,
+    "yoy_pct": {
+     "sales": 12.2,
+     "operating_income": -51.1,
+     "ordinary_income": 46.4,
+     "net_income": -0.6
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 420
+   },
+   "balance": {
+    "net_assets": 606584,
+    "equity_ratio_pct": 84.8,
+    "bps": null,
+    "shares_issued": 62000000,
+    "treasury_shares": 2246091
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "5444",
+ "name": "大和工",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}

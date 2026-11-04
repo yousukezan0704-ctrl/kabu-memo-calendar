@@ -170,3 +170,28 @@ button.wide{width:100%;margin-bottom:12px}
 }
 .fold.morefold>summary{padding:8px 18px}
 .card .body{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---- 財務・指標 / 注目 / お知らせ ---- */
+.mets{display:grid;grid-template-columns:1fr;gap:0}
+.met{padding:8px 0;border-bottom:1px solid var(--line)}
+.mh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.ml{font-weight:700;min-width:5.5em}
+.mv{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.mv.na{font-size:16px;color:var(--mut);font-weight:600}
+.fm{font-size:13px;color:var(--mut);line-height:1.5;margin-top:2px}
+.b-calc{background:var(--bg);color:var(--mut)}
+.pxline{margin:4px 0}
+@media (min-width:700px){.mets{grid-template-columns:1fr 1fr;gap:0 24px}}
+.fres td.num,.ffc td.num,.fhist td.num{white-space:nowrap}
+.wl{margin:6px 0;font-size:16px}
+.wk{display:inline-block;min-width:7.5em;color:var(--mut);font-size:14px}
+.wrow.hot-up{border-left-color:var(--ok);border-left-width:10px}
+.wrow.hot-down{border-left-color:var(--ng);border-left-width:10px}
+.hotl{font-size:17px}
+.ntc{padding:6px 0;border-bottom:1px solid var(--line)}
+.ntc.hot{background:var(--warnbg);padding:6px 8px;border-radius:6px}
+.fold.notices{border-color:var(--acc)}
+@media (max-width:520px){.wk{display:block;min-width:0}.mv{font-size:19px}}
+.b-cat{background:var(--bg);color:var(--mut)}
+button.mini{color:var(--fg);background:var(--card);height:auto}
+.ffc td small.unit{display:block;margin-left:0;text-align:right}

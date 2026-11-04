@@ -3,11 +3,78 @@
   var E = K.esc;
   K.mUi = K.mUi || { id: "", filter: "open" };
 
+  /* ---------- お知らせ（ホーム上部）。注目（お気に入り）銘柄だけが対象。設定でONの項目だけ出す ---------- */
+  /* 一覧を作る。type: before(決算前日) / today(決算当日) / ir(重要IR新着)。決算は日付が確定しているものだけ */
+  K.noticeList = function () {
+    var cfg = K.notifyCfg(), fav = K.state.favorites, out = [];
+    if (!fav.length) return out;
+    var items = K.buildItems().slice().sort(function (a, b) { return (b.time ? 1 : 0) - (a.time ? 1 : 0); });
+    var t = K.today();
+    function earn(date, type, on) {
+      if (!on) return;
+      var seen = {};
+      items.forEach(function (i) {
+        if (i.kind !== "earnings" || i.src === "memo" || i.date !== date || !i.confirmed || fav.indexOf(i.code) < 0) return;
+        var k = i.code + date;
+        if (seen[k]) return;
+        seen[k] = 1;
+        out.push({ key: type + ":" + i.code + ":" + date, type: type, it: i, date: date });
+      });
+    }
+    earn(K.addDays(t, 1), "before", cfg.before);
+    earn(t, "today", cfg.today);
+    if (cfg.ir) {
+      var lo = K.addDays(t, -7) + " 00:00:00";
+      if (cfg.seenAt && cfg.seenAt > lo) lo = cfg.seenAt;
+      var by = {};
+      items.forEach(function (i) {
+        if (fav.indexOf(i.code) < 0) return;
+        var imp = K.irImportance(i);
+        if (!imp || (i.announced_at || "") <= lo) return;
+        var k = i.code + "|" + (i.url || i.refId);
+        if (!by[k] || imp.pri < by[k].imp.pri) by[k] = { key: "ir:" + k, type: "ir", it: i, imp: imp };
+      });
+      Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) {
+        return a.imp.pri - b.imp.pri || (a.it.announced_at < b.it.announced_at ? 1 : -1);
+      }).forEach(function (x) { out.push(x); });
+    }
+    return out;
+  };
+  function who(it) { return (it.name || "") + (it.code ? " (" + it.code + ")" : ""); }
+  K.noticeText = function (n) {
+    var i = n.it;
+    if (n.type === "ir") return n.imp.label + ": " + who(i);
+    return (n.type === "before" ? "明日" : "今日") + "は決算発表: " + who(i) + "（" + (i.time ? "時刻 " + i.time : "時刻 未公表") + "）";
+  };
+  K.noticeBox = function () {
+    var L = K.noticeList();
+    if (!L.length) return "";
+    var body = "";
+    L.slice(0, 10).forEach(function (n) {
+      var i = n.it, link = '<a href="#" data-act="stock" data-code="' + E(i.code) + '">' + E(who(i)) + "</a>";
+      if (n.type === "ir") {
+        var hot = n.imp.pri === 1;
+        body += '<div class="ntc' + (hot ? " hot" : "") + '">' + K.chip(i.kind) + " " + (hot ? "<b>" : "") + E(n.imp.label) + (hot ? "</b>" : "") + " " + link +
+          ' <span class="muted">' + E((i.announced_at || "").slice(5, 16)) + "</span>" + (K.safeUrl(i.url) ? ' <a href="' + E(i.url) + '" target="_blank" rel="noopener">原文</a>' : "") + "</div>";
+      } else {
+        body += '<div class="ntc"><span class="badge ' + (n.type === "today" ? "b-ng" : "b-warn") + '">' + (n.type === "today" ? "今日" : "明日") + "</span> 決算発表 " + link +
+          " " + E(K.fmtDay(n.date)) + " ／ " + (i.time ? "時刻 " + E(i.time) : '<span class="badge b-warn">時刻 未公表</span>') + "</div>";
+      }
+    });
+    if (L.length > 10) body += '<p class="muted">ほか ' + (L.length - 10) + "件</p>";
+    if (L.some(function (n) { return n.type === "ir"; })) {
+      var seen = K.notifyCfg().seenAt;
+      body += '<div class="row wrap"><button data-act="irseen">重要IRを既読にする</button><span class="muted">' + (seen ? E(seen.slice(0, 16)) + " に既読にした以降（最大7日）" : "直近7日分") + "</span></div>";
+    }
+    return K.det("notices", "🔔 お知らせ（注目銘柄） " + L.length + "件", body, true, "pf notices");
+  };
+
   K.homeBanner = function () {
-    var due = K.dueMemos(), t = K.today();
+    var due = K.notifyCfg().memo ? K.dueMemos() : [], t = K.today();
     var h = '<section class="home">';
     var st = K.data.status;
     if (!K.hasRealData()) h += '<div class="warn">実データは未取得です。表示中のものにサンプル(架空)が含まれる場合は「サンプル」と書いてあります。</div>';
+    h += K.noticeBox();
     if (!due.length) return h + "</section>";
     h += "<h3>⏰ 自分が調べる日が来ています（" + due.length + "件）</h3>";
     due.slice(0, 6).forEach(function (m) {
@@ -82,11 +149,16 @@
   /* ---------- 通知・バックアップ ---------- */
   function tools() {
     var s = K.state.settings;
-    var h = K.det("tool-notif", "通知（再確認日のお知らせ）", '<p class="warn">iPhoneでこのアプリを閉じていても届くかは、実機での確認が必要です。まだ確認していません（下の記録は自己申告です）。</p>' +
-      "<ol><li><b>おすすめ: iPhoneの標準カレンダーに取り込む</b>（.ics）。取り込んだ予定の通知はiPhone本体が出すため、このアプリを閉じていても届く見込みです。前日18:00と当日7:30にお知らせを付けます。</li>" +
-      "<li>アプリを開いている間だけ出る通知（ブラウザ通知）。ホーム画面に追加したアプリでのみ動く場合があります。</li>" +
-      "<li>どちらも使えなくても、期限が来たメモは画面の上部に「期限到来／期限超過」として出ます。</li></ol>" +
-      '<div class="row wrap"><button data-act="ics">再確認日を .ics で書き出す</button><button data-act="notiftest">通知のテスト</button></div>' +
+    var nc = K.notifyCfg();
+    function ck(id, on, label) { return '<label class="chk"><input id="' + id + '" type="checkbox"' + (on ? " checked" : "") + "> " + label + "</label>"; }
+    var h = K.det("tool-notif", "通知・お知らせの設定", '<p class="muted">項目ごとにON/OFFを選べます（この端末に保存）。対象は「注目」（お気に入り）の銘柄です。決算の通知は、日付が確定しているものだけです。</p>' +
+      ck("n-before", nc.before, "決算の前日") + ck("n-today", nc.today, "決算の当日") + ck("n-ir", nc.ir, "重要IRの新着（業績修正・配当修正・決算短信）") + ck("n-memo", nc.memo, "メモの再確認日") +
+      "<h4>どこに届くか</h4>" +
+      "<ol><li><b>アプリを開いたときの「お知らせ」欄</b>（カレンダー・メモの上部）。ONの項目だけ出ます。</li>" +
+      "<li><b>iPhoneの標準カレンダー（おすすめ）</b>: 下のボタンで .ics を書き出して取り込むと、前日18:00と当日7:30にiPhone本体が知らせます。OFFの項目は .ics にも含めません。</li>" +
+      "<li><b>アプリを開いている間のブラウザ通知</b>: " + ck("n-browser", nc.browser, "ONにする（初回に許可を求めます）") + "ホーム画面に追加したアプリでのみ動く場合があります。</li></ol>" +
+      '<p class="warn"><b>未実装:</b> iPhoneでアプリを閉じていても届く「プッシュ通知」は、無料の範囲では実装していません（実機での確認と、外部サービスの設定が必要なためです）。閉じている間の通知が必要なときは .ics をお使いください。</p>' +
+      '<div class="row wrap"><button data-act="ics">再確認日と決算予定を .ics で書き出す</button><button data-act="notiftest">通知のテスト</button></div>' +
       '<label>実機での確認結果（自分で記録）<select id="n-ck">' + ["未確認", "確認OK（アプリを閉じても届いた）", "確認NG（届かなかった）"].map(function (o) {
         return '<option' + (s.notifyChecked === o ? " selected" : "") + ">" + o + "</option>";
       }).join("") + '</select></label><input id="n-note" placeholder="メモ（機種・iOSのバージョンなど）" value="' + E(s.notifyNote) + '">', false, "pf");
@@ -97,12 +169,13 @@
     return h;
   }
 
-  /* .ics: 再確認日（終日予定）＋ 前日18:00 / 当日7:30 のアラーム */
+  /* .ics: 再確認日（終日予定）＋ 注目銘柄の確定した決算予定。アラームは 前日18:00 / 当日7:30（ONの項目だけ） */
   K.makeIcs = function () {
     function esc(s) { return String(s || "").replace(/[\\;,]/g, function (c) { return "\\" + c; }).replace(/\r?\n/g, "\\n"); }
+    var cfg = K.notifyCfg();
     var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//kabu-memo-calendar//JP", "CALSCALE:GREGORIAN"];
-    var n = 0, stamp = K.today().replace(/-/g, "") + "T000000Z";
-    K.state.memos.forEach(function (m) {
+    var n = 0, ne = 0, stamp = K.today().replace(/-/g, "") + "T000000Z";
+    if (cfg.memo) K.state.memos.forEach(function (m) {
       if (m.status !== "open" || !m.reviewDate) return;
       n++;
       var d = m.reviewDate.replace(/-/g, ""), nx = K.addDays(m.reviewDate, 1).replace(/-/g, "");
@@ -112,7 +185,48 @@
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + esc("今日は株の確認日: " + (m.name || m.code)), "TRIGGER:PT7H30M", "END:VALARM",   // 当日7:30
         "END:VEVENT");
     });
+    if ((cfg.before || cfg.today) && K.state.favorites.length) {
+      var t = K.today(), seen = {};
+      K.buildItems().slice().sort(function (a, b) { return (b.time ? 1 : 0) - (a.time ? 1 : 0); }).forEach(function (i) {
+        if (i.kind !== "earnings" || i.src === "memo" || !i.date || i.date < t || !i.confirmed || K.state.favorites.indexOf(i.code) < 0) return;
+        var k = i.code + i.date;
+        if (seen[k]) return;
+        seen[k] = 1; ne++;
+        var d = i.date.replace(/-/g, ""), nx = K.addDays(i.date, 1).replace(/-/g, ""), nm = (i.name || "") + "(" + i.code + ")";
+        var tm = i.time ? "会社公表 " + i.time : "時刻は未公表";
+        L.push("BEGIN:VEVENT", "UID:earn-" + i.code + "-" + d + "@kabu-memo", "DTSTAMP:" + stamp, "DTSTART;VALUE=DATE:" + d, "DTEND;VALUE=DATE:" + nx,
+          "SUMMARY:" + esc("決算発表: " + nm), "DESCRIPTION:" + esc("会社が公表した決算発表の予定日です（" + tm + "）。日付は元の資料で確認してください。"));
+        if (cfg.before) L.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + esc("明日は決算発表: " + nm), "TRIGGER:-PT6H", "END:VALARM");
+        if (cfg.today) L.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + esc("今日は決算発表: " + nm + "（" + tm + "）"), "TRIGGER:PT7H30M", "END:VALARM");
+        L.push("END:VEVENT");
+      });
+    }
     L.push("END:VCALENDAR");
-    return { text: L.join("\r\n"), count: n };
+    return { text: L.join("\r\n"), count: n + ne, memoCount: n, earnCount: ne };
+  };
+
+  /* ---------- アプリを開いている間のブラウザ通知（同じ内容は1回だけ） ---------- */
+  function show(title, body, tag) {
+    try { new Notification(title, { body: body, tag: tag }); }
+    catch (e) {
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+        navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.showNotification(title, { body: body, tag: tag }); }).catch(function () { /* 出せなければ画面のお知らせだけ */ });
+      }
+    }
+  }
+  K.fireNotices = function () {
+    var cfg = K.notifyCfg();
+    if (!cfg.browser || !("Notification" in window) || Notification.permission !== "granted") return 0;
+    var t = K.today(), list = K.noticeList().map(function (n) { return { key: n.key, title: n.type === "ir" ? "重要IR" : "決算発表", text: K.noticeText(n) }; });
+    if (cfg.memo) K.dueMemos().forEach(function (m) { list.push({ key: "m:" + m.id + ":" + t, title: "メモの再確認日", text: (m.reviewDate < t ? "期限超過: " : "今日: ") + (m.name || m.code || "メモ") }); });
+    var fired = cfg.fired, lim = K.addDays(t, -8), c = 0;
+    Object.keys(fired).forEach(function (k) { if (fired[k] < lim) delete fired[k]; });
+    list.forEach(function (x) {
+      if (fired[x.key]) return;
+      fired[x.key] = t; c++;
+      show("株メモ: " + x.title, x.text, x.key);
+    });
+    if (c) { K.state.settings.notify = cfg; K.save(); }
+    return c;
   };
 })(window.KMC);

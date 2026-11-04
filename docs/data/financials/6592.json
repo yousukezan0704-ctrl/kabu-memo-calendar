@@ -1,0 +1,58 @@
+{
+ "periods": [
+  {
+   "id": "1288773",
+   "announced_at": "2026-11-02 12:30:00",
+   "period_type": "第3四半期",
+   "fiscal_year_end": "2026-12-31",
+   "period_end": "2026-09-30",
+   "doc_title": "2026年12月期第3四半期決算短信〔日本基準〕（連結）",
+   "url": "https://www.release.tdnet.info/inbs/140120261026556154.pdf",
+   "unit": "百万円",
+   "results": {
+    "sales": 167949,
+    "operating_income": 21631,
+    "ordinary_income": 26489,
+    "net_income": 18545,
+    "eps": 76.53
+   },
+   "yoy_pct": {
+    "sales": 14.2,
+    "operating_income": 10.6,
+    "ordinary_income": 13,
+    "net_income": 2.5
+   },
+   "forecast": {
+    "period": "通期",
+    "sales": 225000,
+    "operating_income": 26500,
+    "ordinary_income": 31300,
+    "net_income": 22200,
+    "eps": 92.35,
+    "dps": 70,
+    "yoy_pct": {
+     "sales": 12.3,
+     "operating_income": 4.1,
+     "ordinary_income": -10.8,
+     "net_income": -15.5
+    }
+   },
+   "dividend": {
+    "annual_actual": null,
+    "annual_forecast": 70
+   },
+   "balance": {
+    "net_assets": 325847,
+    "equity_ratio_pct": 85.3,
+    "bps": null,
+    "shares_issued": 260649848,
+    "treasury_shares": 26453014
+   },
+   "source": "TDnet決算短信(XBRL)"
+  }
+ ],
+ "code": "6592",
+ "name": "マブチモーター",
+ "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+ "updated_at": "2026-11-04T19:32:46+09:00"
+}
