@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 try:
     from history import classify_title
     from financials import parse_summary_zip, merge_period
+    from history import earnings_history
     FIN_OK = True
 except ImportError:  # 財務モジュール未導入でもIR収集は動く
     FIN_OK = False
@@ -34,6 +35,7 @@ DATA = os.path.join(ROOT, "docs", "data")
 STATE = os.path.join(ROOT, "state", "seen.json")
 WATCH = os.path.join(ROOT, "config", "watchlist.txt")
 FIN_DIR = os.path.join(DATA, "financials")
+HIST_DIR = os.path.join(DATA, "history")
 API = "https://webapi.yanoshin.jp/webapi/tdnet/list/%s.json?limit=%d"
 UA = "kabu-memo-calendar/1.0 (personal use; polite 1req/sec)"
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -133,6 +135,7 @@ def run():
     ap.add_argument("--budget", type=int, default=150)
     ap.add_argument("--retention-days", type=int, default=60)
     ap.add_argument("--fin-budget", type=int, default=200)
+    ap.add_argument("--hist-budget", type=int, default=15)
     a = ap.parse_args()
 
     now = dt.datetime.now(JST)
@@ -255,6 +258,36 @@ def run():
             time.sleep(1)
         fin["pending"] = sum(1 for v in seen.values() if v.get("cat") == "決算短信" and v.get("xbrl") and v.get("fin") != "done" and v.get("fin_tries", 0) < 3)
 
+    # 2d) 過去の決算発表日時の履歴（「昨年同期」の参考表示用）。対象は財務データのある会社とウォッチリスト。
+    #     1回に取る会社数を絞り、25日たつまで再取得しない。取得に失敗しても既存ファイルは消さない。
+    hist = {"enabled": FIN_OK, "fetched": 0, "failed": 0, "targets": 0}
+    if FIN_OK:
+        codes = {os.path.splitext(f)[0] for f in (os.listdir(FIN_DIR) if os.path.isdir(FIN_DIR) else []) if f.endswith(".json")}
+        codes |= {c for c in wl if re.fullmatch(r"[0-9]{3}[0-9A-Z]", c)}
+        hist["targets"] = len(codes)
+        limit = (now - dt.timedelta(days=25)).strftime("%Y-%m-%d")
+        todo = []
+        for c in sorted(codes):
+            old = load(os.path.join(HIST_DIR, "%s.json" % c), None)
+            if not old or str(old.get("updated_at", ""))[:10] < limit:
+                todo.append((str(old.get("updated_at", "")) if old else "", c))
+        todo.sort()
+        for _, c in todo[:a.hist_budget]:
+            try:
+                data = json.loads(http_get(API % (c, 300)).decode("utf-8"))
+                items = [it.get("Tdnet", it) for it in data.get("items", [])]
+                eh = earnings_history(items)[:16]
+                if not eh and not items:
+                    raise ValueError("一覧が空")
+                save(os.path.join(HIST_DIR, "%s.json" % c), {
+                    "code": c, "updated_at": checked_at, "source": "TDnet由来(非公式API経由・利用条件は未確認)",
+                    "items": [{k: h.get(k) for k in ("pubdate", "period_type", "fiscal_label", "correction")} for h in eh]})
+                hist["fetched"] += 1
+            except Exception as e:
+                hist["failed"] += 1
+                errors.append("履歴 %s %s: %s" % (c, type(e).__name__, str(e)[:80]))
+            time.sleep(1)
+
     # 3) 古いものを整理して保存
     cutoff = (now - dt.timedelta(days=a.retention_days)).strftime("%Y-%m-%d")
     seen = {k: v for k, v in seen.items() if v["pubdate"][:10] >= cutoff}
@@ -277,6 +310,7 @@ def run():
         "oldest_pending": min((v["pubdate"][:10] for v in seen.values() if v["status"] == "pending"), default=None),
         "budget_per_run": a.budget,
         "financials": fin,
+        "history": hist,
         "last_run": {"at": checked_at, "ok": len(index_ok_days) > 0, "trigger": os.environ.get("GITHUB_EVENT_NAME", "local"),
                      "error": None if index_ok_days else "一覧を1日分も取得できませんでした: " + "; ".join(errors[:3])},
         "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",

@@ -195,3 +195,4 @@ button.wide{width:100%;margin-bottom:12px}
 .b-cat{background:var(--bg);color:var(--mut)}
 button.mini{color:var(--fg);background:var(--card);height:auto}
 .ffc td small.unit{display:block;margin-left:0;text-align:right}
+.refline{margin-top:4px;font-size:15px}

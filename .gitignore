@@ -1,3 +1,12 @@
 __pycache__/
 *.pyc
 *.tmp
+
+# TDnet由来の収集データは公開しない(個人のPC内だけに置く)。利用条件が未確認のため
+docs/data/events.json
+docs/data/ir_index.json
+docs/data/status.json
+docs/data/financials/
+docs/data/history/
+state/
+検証レポート.md

@@ -316,4 +316,42 @@
     res.prev = prev;
     return res;
   };
+  K.hist = {};   // コード -> { st: "loading"|"ok"|"none"|"err", items, at }
+  K.histGet = function (code) {
+    if (!/^[0-9A-Z]{4}$/.test(code || "")) return { st: "none" };
+    var c = K.hist[code];
+    if (c && (c.st !== "err" || Date.now() - c.at < 30000)) return c;
+    c = K.hist[code] = { st: "loading", at: Date.now(), items: [] };
+    fetch("data/history/" + code + ".json?t=" + Date.now(), { cache: "no-store" }).then(function (r) {
+      if (r.status === 404) { c.st = "none"; return; }
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json().then(function (j) {
+        if (!j || !Array.isArray(j.items)) { c.st = "err"; c.msg = "形が正しくありません"; return; }
+        c.items = j.items.filter(function (x) { return x && /^\d{4}-\d{2}-\d{2}/.test(x.pubdate || ""); })
+          .sort(function (a, b) { return a.pubdate < b.pubdate ? 1 : -1; });
+        c.st = "ok";
+      });
+    }).catch(function (e) { c.st = "err"; c.msg = e.message; })
+      .then(function () { c.at = Date.now(); if (K.onHistLoaded) K.onHistLoaded(code); });
+    return c;
+  };
+  /* 昨年同期の発表日(参考・未確定)。collector/history.py の reference_next と同じ計算:
+     訂正を除き、発表日が今日より前で、1年後が今日以降のうち最も近いもの */
+  K.refNext = function (items) {
+    var today = K.today(), best = null;
+    (items || []).forEach(function (h) {
+      if (h.correction || !h.pubdate) return;
+      var o = K.parseYmd(h.pubdate), s = new Date(o.getFullYear() + 1, o.getMonth(), o.getDate());
+      if (s.getMonth() !== o.getMonth()) s = new Date(o.getFullYear() + 1, o.getMonth(), 28);   // 2/29 -> 2/28
+      var sy = K.ymd(s), oy = K.ymd(o);
+      if (sy < today || oy > today) return;
+      if (!best || sy < best.approx) best = { approx: sy, h: h };
+    });
+    return best;
+  };
+  K.refNextText = function (r) {
+    var a = K.parseYmd(r.approx), o = K.parseYmd(r.h.pubdate), hh = String(r.h.pubdate).slice(11, 13);
+    return "約" + (a.getMonth() + 1) + "月" + a.getDate() + "日ごろ" + (hh ? "・" + (+hh) + "時台" : "") +
+      "（昨年" + (o.getMonth() + 1) + "月" + o.getDate() + "日" + (hh ? (+hh) + "時" : "") + "の実績から）";
+  };
 })(window.KMC);

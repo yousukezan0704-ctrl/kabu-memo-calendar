@@ -109,7 +109,9 @@
     var er = items.filter(function (i) { return i.kind === "earnings" && i.date && i.date >= K.today(); }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
     var eh = "";
     if (!er.length) eh += '<p class="empty">この銘柄の決算発表予定日は、取得済みの資料・入力済みの予定にありません（未確認）。自分で入力する場合は「カレンダー」→「＋予定を追加」。</p>';
-    er.forEach(function (i) { eh += '<div class="plan">' + K.chip("earnings") + " " + E(K.fmtDay(i.date)) + " ／ 時刻: " + E(K.timeText(i)) + " " + K.originBadge(i.origin) + "</div>"; });
+    er.forEach(function (i) { eh += '<div class="plan">' + K.chip("earnings") + " " + E(K.fmtDay(i.date)) + " ／ 時刻: " + E(K.timeText(i)) + " " + K.originBadge(i.origin) + (i.confirmed ? "" : ' <span class="badge b-warn">未確定</span>') + "</div>"; });
+    var refh = refHtml(code, er.some(function (i) { return i.confirmed; }));
+    if (refh) eh += '<div class="plan refline">' + refh + "</div>";
     h += K.det("er:" + code, "決算発表の予定 " + er.length + "件", eh, true, "pf");
 
     /* 計画の進捗 */
@@ -146,6 +148,33 @@
 
   /* ---------- 財務・指標（銘柄詳細） ---------- */
   K.onFinLoaded = function (code) { if (K.ui.tab === "stocks" && K.sUi.code === code) K.render(); };
+  /* 履歴の読み込みが終わったら、その銘柄の詳細か、注目の一覧を描き直す */
+  K.onHistLoaded = function (code) {
+    if (K.ui.tab !== "stocks") return;
+    if (K.sUi.code === code || (!K.sUi.code && K.sUi.sub === "watch" && K.isFav(code))) K.render();
+  };
+  var REFNOTE = "会社の公表予定ではありません（参考・未確定）";
+  /* 会社の確定予定が無いときだけ、昨年同期の発表日を参考として返す(HTML)。確定予定があれば空 */
+  function refHtml(code, hasConfirmed) {
+    if (hasConfirmed) return "";
+    var h = K.histGet(code);
+    if (h.st === "loading") return '<span class="muted">昨年同期の発表日を確認中…</span>';
+    if (h.st === "none") return '<span class="muted">履歴未取得（昨年同期の発表日は出せません）</span>';
+    if (h.st === "err") return '<span class="muted">履歴を読み込めませんでした</span>';
+    var r = K.refNext(h.items);
+    if (!r) return '<span class="muted">昨年同期の発表日から目安を出せませんでした（履歴に該当なし）</span>';
+    return '<span class="badge b-warn">昨年同期の発表日(参考・未確定)</span> ' + E(K.refNextText(r)) + ' <span class="muted">' + E(REFNOTE) + "</span>";
+  }
+  function histListHtml(code) {
+    var h = K.histGet(code);
+    if (h.st === "loading") return '<p class="muted">過去の決算発表日時を読み込み中…</p>';
+    if (h.st === "none") return '<p class="muted"><b>履歴未取得</b>: 過去の決算発表日時のファイルがまだありません。</p>';
+    if (h.st === "err") return '<p class="muted">過去の決算発表日時を読み込めませんでした（' + E(h.msg || "不明") + "）。</p>";
+    if (!h.items.length) return '<p class="muted">過去の決算発表日時は記録されていません。</p>';
+    return "<h4>過去の決算発表日時（実績・直近" + Math.min(8, h.items.length) + "件）</h4>" + h.items.slice(0, 8).map(function (x) {
+      return '<div class="mline">' + E(String(x.pubdate).slice(0, 16)) + " " + E((x.fiscal_label || "") + " " + (x.period_type || "")) + (x.correction ? ' <span class="badge b-warn">訂正</span>' : "") + "</div>";
+    }).join("");
+  }
 
   var NA = '<span class="muted">未取得</span>';
   function numHtml(v, d) { return v == null ? NA : E(K.fmtNum(v, d != null ? d : (v % 1 ? 2 : 0))); }
@@ -271,9 +300,10 @@
         h += K.det("fm:" + code, "株価と指標（計算値）", finMetricsHtml(code, fin) + meta, true, "pf");
         h += K.det("fr:" + code, "最新の決算と前年同期比", finResultsHtml(fin), true, "pf");
         h += K.det("ff:" + code, "会社予想との差", finForecastHtml(fin), false, "pf");
-        h += K.det("fh:" + code, "過去の決算履歴 " + Math.min(12, fin.periods.length) + "件", finHistoryHtml(fin), false, "pf");
+        h += K.det("fh:" + code, "過去の決算履歴 " + Math.min(12, fin.periods.length) + "件", finHistoryHtml(fin) + histListHtml(code), false, "pf");
       }
     }
+    if (!(f.st === "ok" && f.data.periods[0])) h += K.det("fh:" + code, "過去の決算発表日時", histListHtml(code), false, "pf");
     h += K.det("fv:" + code, "上方・下方修正と予想の変更（IR） " + rv.n + "件", rv.html, rv.recent, "pf");
     return h;
   }
@@ -337,7 +367,7 @@
         if (!best || imp.pri < best.imp.pri || (imp.pri === best.imp.pri && i.announced_at > best.it.announced_at)) best = { it: i, imp: imp };
       });
       var days = ne ? Math.round((K.parseYmd(ne.date) - K.parseYmd(today)) / 86400000) : null;
-      return { code: code, name: names[code] || "", next: ne, days: days, best: best, more: n - (best ? 1 : 0), hasRev: hasRev, react: K.earnReaction(code, items, today) };
+      return { code: code, name: names[code] || "", next: ne, hasConfirmed: !!(ne && ne.confirmed), days: days, best: best, more: n - (best ? 1 : 0), hasRev: hasRev, react: K.earnReaction(code, items, today) };
     });
   }
 
@@ -381,6 +411,8 @@
         (r.next.time ? "時刻 " + E(r.next.time) : '<span class="badge b-warn">時刻 未公表</span>') + " " +
         (r.next.confirmed ? '<span class="badge b-ok">日付確定</span>' : '<span class="badge b-warn">未確定</span>') + (r.next.sample ? ' <span class="badge b-sample">サンプル</span>' : "");
     } else h += '<span class="badge b-warn">予定未確認</span>';
+    var rf = refHtml(r.code, r.hasConfirmed);
+    if (rf) h += '<div class="refline">' + rf + "</div>";
     h += "</div>";
     /* 最新の重要IR */
     h += '<div class="wl"><span class="wk">重要IR（7日）</span> ';

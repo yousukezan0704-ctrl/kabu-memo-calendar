@@ -82,6 +82,21 @@ def new_features(pg, tag, vp):
     shot = lambda name: pg.screenshot(path=os.path.join(SHOT_DIR, "%d_%s.png" % (vp["width"], name)), full_page=True)
     route_json(pg, "9999", FIN_OK); route_json(pg, "9998", FIN_EMPTY); route_json(pg, "9997", FIN_XSS); route_json(pg, "9995", FIN_PBR)
     route_json(pg, "9996", "oops")
+    # 過去の決算発表日時(history)。昨年同期の目安の確認用。日付は「今日」からの相対
+    td = dt.date.fromisoformat(pg.evaluate("KMC.today()"))
+    ly = lambda plus, hh="15:00:00": (td + dt.timedelta(days=plus)).replace(year=td.year - 1).isoformat() + " " + hh
+    HIST = {"code": "X", "updated_at": "2026-11-05", "source": "テスト", "items": [
+        {"pubdate": ly(1, "10:00:00"), "period_type": "第1四半期", "fiscal_label": "2026年3月期", "correction": True},   # 訂正は目安に使わない
+        {"pubdate": ly(2), "period_type": "第2四半期", "fiscal_label": "2026年3月期", "correction": False},             # 目安になる(今日+2日ごろ・15時台)
+        {"pubdate": ly(40), "period_type": "第3四半期", "fiscal_label": "2026年3月期", "correction": False},
+        {"pubdate": ly(-60), "period_type": "通期", "fiscal_label": "2025年3月期", "correction": False},
+    ] + [{"pubdate": "20%02d-0%d-10 15:00:00" % (10 + i % 5, 1 + i % 9), "period_type": "第1四半期", "fiscal_label": "古い%d" % i, "correction": False} for i in range(8)]}
+    route_json(pg, "9999", FIN_OK, status=200) if False else None
+    for c in ("9999", "T004", "T001"):
+        pg.route("**/data/history/%s.json*" % c, lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(HIST, ensure_ascii=False)))
+    ref_txt = "約%d月%d日ごろ・15時台" % ((td + dt.timedelta(days=2)).month, (td + dt.timedelta(days=2)).day)
+    check(tag + "[履歴] refNext: 訂正を除き最も近い昨年同期を選ぶ", pg.evaluate("(items) => { var r = KMC.refNext(items); return r && r.h.period_type; }", HIST["items"]) == "第2四半期")
+    check(tag + "[履歴] refNext: 発表日が今日より後・1年後が過去のものは除く", pg.evaluate("(td) => KMC.refNext([{pubdate: KMC.addDays(td, 5) + ' 15:00:00'}, {pubdate: KMC.addDays(td, -400) + ' 15:00:00'}])", pg.evaluate("KMC.today()")) is None)
 
     # ===== (C) 設定の既定値 =====
     pg.evaluate("KMC.state.settings = {showSample: true, notifyChecked: '未確認', notifyNote: ''}; KMC.save()")   # 古い保存形式(notifyなし)
@@ -120,10 +135,28 @@ def new_features(pg, tag, vp):
     check(tag + "[財務] 横スクロールなし(履歴)", no_hscroll(pg))
     shot("detail_fin")
 
+    et = pg.inner_text("main") + pg.text_content("main")
+    check(tag + "[履歴] 確定予定が無ければ昨年同期の参考を出す", ref_txt in et and "昨年" in et and "の実績から" in et, et[:200])
+    check(tag + "[履歴] 「会社の公表予定ではありません」を必ず添える", "会社の公表予定ではありません" in et and "参考・未確定" in et)
+    check(tag + "[履歴] 訂正は目安に使わない(10時台にならない)", "10時台" not in et.split("決算発表の予定")[1][:300])
+    openfold(pg, "過去の決算履歴"); pg.wait_for_timeout(100)
+    hl = pg.locator("details[data-key='fh:9999']").inner_text()
+    check(tag + "[履歴] 過去の決算発表日時は直近8件", "直近8件" in hl and hl.count("第") >= 0 and pg.locator("details[data-key='fh:9999'] .mline").count() == 8, pg.locator("details[data-key='fh:9999'] .mline").count())
+    check(tag + "[履歴] 新しい順", hl.index(ly(2)[:10]) < hl.index(ly(-60)[:10]) if ly(2)[:10] in hl and ly(-60)[:10] in hl else True)
+    check(tag + "[履歴] 横スクロールなし", no_hscroll(pg))
+    # 確定予定があれば参考は出さない / 履歴が無ければ「履歴未取得」
+    pg.evaluate("""() => { var s = KMC.data.sample.events, d = KMC.addDays(KMC.today(), 9);
+      s.push(Object.assign({}, s.filter(e => e.kind === 'earnings')[0], {id: 'hx-c', code: '9999', name: '財務テスト', target: {raw: d, start: d, end: d, precision: 'day', needs_review: false, reason: ''}, target_text: d, time_text: '15:00', confirmed: true})); KMC.render(); }""")
+    pg.wait_for_timeout(150)
+    sched = pg.locator("details[data-key='er:9999']").inner_text()
+    check(tag + "[履歴] 確定予定がある日は参考を出さない", "昨年同期" not in sched and "15:00" in sched, sched)
+    pg.evaluate("KMC.data.sample.events = KMC.data.sample.events.filter(e => e.id !== 'hx-c'); KMC.render()")
+
     # ===== 材料が欠ける: 推測で埋めない =====
     pg.evaluate("KMC.sUi.code = '9998'; KMC.render()"); pg.wait_for_timeout(500)
     t = pg.inner_text("main")
     check(tag + "[財務] 株価なしは「株価未取得」", "株価未取得" in t)
+    check(tag + "[履歴] 履歴ファイルが無ければ「履歴未取得」", "履歴未取得" in pg.text_content("main"))
     check(tag + "[財務] 値が全部nullなら指標の数値は出ない", pg.locator(".met .mv:not(.na)").count() == 0 and pg.locator(".met .mv.na").count() == 5, pg.locator(".met .mv:not(.na)").count())
     check(tag + "[財務] 未取得の理由と推測しない旨", "推測値では埋めません" in t and "EPS" in t)
     pg.evaluate("KMC.state.prices['9998'] = [{d: KMC.addDays(KMC.today(),-2), c: 500, v: 10}]; KMC.render()"); pg.wait_for_timeout(200)
@@ -176,6 +209,10 @@ def new_features(pg, tag, vp):
     rowB = pg.locator(".wrow:has-text('T002')")
     check(tag + "[注目] 7日より古いIRは出さない", "直近7日の重要IRなし" in rowB.inner_text())
     check(tag + "[注目] 株価がなければ「株価データなし」", "株価データなし" in rowB.inner_text() and "株価データなし" in pg.locator(".wrow:has-text('T004')").inner_text())
+    t4 = pg.locator(".wrow:has-text('T004')").inner_text()
+    check(tag + "[履歴] 注目: 確定予定なしの行に昨年同期の参考", ref_txt in t4 and "会社の公表予定ではありません" in t4 and "予定未確認" in t4, t4)
+    check(tag + "[履歴] 注目: 確定予定がある行には参考を出さない", "昨年同期" not in pg.locator(".wrow:has-text('T001')").inner_text())
+    check(tag + "[履歴] 注目: 履歴ファイルなしは「履歴未取得」", "履歴未取得" in pg.locator(".wrow:has-text('T003')").inner_text() or "昨年同期" not in pg.locator(".wrow:has-text('T003')").inner_text())
     check(tag + "[注目] 横スクロールなし", no_hscroll(pg))
     print("INFO %s 注目タブ 画面の高さ=%dpx" % (tag, pg.evaluate("document.documentElement.scrollHeight")))
     shot("watch")
@@ -219,6 +256,7 @@ def new_features(pg, tag, vp):
     pg.evaluate("""() => { var s = KMC.data.sample.events, d = KMC.addDays(KMC.today(), 1);
       s.push(Object.assign({}, s.filter(e => e.id === 'tx-5')[0], {id: 'tx-un', code: 'T008', name: '未確定テスト社', confirmed: false})); KMC.state.favorites.push('T008'); KMC.render(); }""")
     check(tag + "[通知] 日付が未確定の決算は通知しない", "未確定テスト社" not in nb())
+    nb_text = nb()
     # 設定画面
     pg.click(".tab:has-text('メモ')"); pg.wait_for_timeout(200)
     openfold(pg, "通知")
@@ -233,6 +271,8 @@ def new_features(pg, tag, vp):
         return [x for x in parts if uid in x]
     b5 = block(ics["text"], "UID:earn-T005-")
     check(tag + "[通知] ics に注目銘柄の決算(前日18:00・当日7:30のアラーム)", len(b5) == 1 and "TRIGGER:-PT6H" in b5[0] and "TRIGGER:PT7H30M" in b5[0] and "13:30" in b5[0], ics["text"][:400])
+    check(tag + "[履歴] 参考(未確定)の日付は ics に入れない", "T004" not in ics["text"] and "昨年" not in ics["text"])
+    check(tag + "[履歴] 参考(未確定)はお知らせに入れない", "T004" not in nb_text)
     check(tag + "[通知] ics は日付が確定した注目銘柄だけ", ics["earnCount"] == 5 and not block(ics["text"], "T008") and not block(ics["text"], "T004"), ics["earnCount"])
     check(tag + "[通知] ics の時刻なしは「未公表」", "未公表" in block(ics["text"], "UID:earn-T006-")[0])
     check(tag + "[通知] 既存のメモ確認日のicsも残る", ics["memoCount"] >= 1 and "株を調べる" in ics["text"])
