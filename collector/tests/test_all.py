@@ -531,13 +531,15 @@ class TestV8(unittest.TestCase):
         s = "通期業績予想の経常利益を350億円に上方修正しました。"
         self.assertIn("revision_up", [e["kind"] for e in self.kinds(s, title="2026年度中間期決算説明資料")])
 
-    def test_delay_target_from_next_sentence(self):
+    def test_delay_neighbor_date_not_inherited(self):
+        # 地点ごとに日付が違う: 次の文の日付(1地点だけ)を、地点を限らない延期の文に継承しない
         s = ("上記3カ所の完工時期が大幅に遅れる見通しであるとの連絡を受けました。"
-             "なお、完工時期は令和9年10月頃を見込んでいます。")
+             "なお、藤枝市の完工時期は令和9年10月頃を見込んでおり、長浜市と京丹後市は未定です。")
         ev = [e for e in self.kinds(s, pubdate="2026-11-02 15:00:00") if e["kind"] == "delay"]
-        self.assertTrue(ev)
-        self.assertEqual(ev[0]["target"]["start"], "2027-10-01")
-        self.assertTrue(ev[0]["needs_review"])   # 隣の文から拾ったので要確認
+        first = ev[0]
+        self.assertIsNone(first["target"])
+        self.assertTrue(first["needs_review"])
+        self.assertIn("一部の地点", first["summary"])
 
     def test_delay_target_same_sentence_far(self):
         s = "発売時期を延期することとし、新たな発売時期は十分な検証を踏まえたうえで2027年10月を予定しております。"
@@ -565,7 +567,59 @@ class TestV8(unittest.TestCase):
         self.assertEqual([e for e in self.kinds(s, title="自己株式取得に係る事項の進捗状況に関するお知らせ") if e["kind"] == "buyback"], [])
 
     def test_version(self):
-        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v8")
+        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v9")
+
+
+class TestV9(unittest.TestCase):
+    TS = "2027年3月期 第2四半期 決算短信〔IFRS〕(連結)"
+
+    def alli(self, s, title):
+        return [e for e in extract_page(s, 1, dict(CTX, title=title)) if e["kind"] == "alliance"]
+
+    def test_tanshin_dated_past_partnership_dropped(self):
+        s = "当社は2026年7月にホテル会社と提携を締結し、本提携を通じて会員に訴求します。"
+        self.assertEqual(self.alli(s, self.TS), [])
+        self.assertEqual(self.alli("既存の提携をA社運航便まで拡大・拡充します。", self.TS), [])
+
+    def test_order_intake_wording_not_alliance(self):
+        s = "引き続き月額課金案件の受注獲得を推し進め、過去最高の売上に着地する見込みです。"
+        self.assertEqual(self.alli(s, self.TS), [])
+        s = "当社グループは、M&A(子会社化、事業譲受、資本参加等)を実施することにより事業を補完・強化できると考えており、積極的に推進します。"
+        self.assertEqual(self.alli(s, "2026年9月期決算短信〔日本基準〕(連結)"), [])
+        self.assertEqual(self.alli("海外拠点税前利益は5,644億円となりました。", "決算の概要"), [])
+
+    def test_order_notice_one_event_per_document(self):
+        pages = ["大型案件の受注に関するお知らせ 当社は、入札において、下記の大型案件を受注いたしましたので、お知らせいたします。"
+                 "記 1．受注の概要 当社は、国内における以下の大型案件を受注しております。"]
+        ev = [e for e in extract_document(pages, dict(CTX, title="大型案件の受注に関するお知らせ")) if e["kind"] == "alliance"]
+        self.assertEqual(len(ev), 1)
+
+    def test_buyback_one_per_document_target_is_period(self):
+        body = ("自己株式取得に係る事項の決定に関するお知らせ 当社は、自己株式取得に係る事項を決議いたしましたのでお知らせいたします。"
+                "資本効率の向上のため、自己株式の取得を決定いたしました。"
+                "取得する株式の総数:1,000,000株（上限）取得価額の総額:1,500,000,000円（上限）取得期間2026年11月4日から2027年3月31日まで")
+        ev = [e for e in extract_document([body], dict(CTX, title="自己株式取得に係る事項の決定に関するお知らせ")) if e["kind"] == "buyback"]
+        self.assertEqual(len(ev), 1)
+        self.assertEqual((ev[0]["target"]["start"], ev[0]["target"]["end"]), ("2026-11-04", "2027-03-31"))
+        self.assertIn("上限 1,000,000株", ev[0]["summary"])
+
+    def test_buyback_recap_in_briefing_dropped(self):
+        s = "資本効率の向上のため自己株式取得を決定。取得する株式の総数:1,000,000株"
+        self.assertEqual([e for e in extract_page(s, 27, dict(CTX, title="決算説明資料")) if e["kind"] == "buyback"], [])
+
+    def test_merge_same_buyback_in_two_documents_keeps_notice(self):
+        body = "自己株式取得に係る事項を決議いたしました。取得する株式の総数:500,000株 取得期間2026年11月4日から2027年3月31日まで"
+        tan = extract_document([body], dict(CTX, title="2027年3月期 第2四半期 決算短信〔日本基準〕(連結)", url="https://example.invalid/tanshin.pdf"))
+        notice = extract_document([body], dict(CTX, title="自己株式取得に係る事項の決定に関するお知らせ", url="https://example.invalid/notice.pdf"))
+        tan = [e for e in tan if e["kind"] == "buyback"]
+        notice = [e for e in notice if e["kind"] == "buyback"]
+        self.assertEqual(tan[0]["id"], notice[0]["id"])
+        for first, second in ((tan, notice), (notice, tan)):
+            evs, _, _ = merge_events([], [dict(x) for x in first])
+            evs, _, _ = merge_events(evs, [dict(x) for x in second])
+            self.assertEqual(len(evs), 1)
+            self.assertEqual(evs[0]["url"], "https://example.invalid/notice.pdf")
+            self.assertEqual(evs[0]["title"], "自己株式取得に係る事項の決定に関するお知らせ")   # 題名とURLがずれない
 
 
 class TestRetention(unittest.TestCase):

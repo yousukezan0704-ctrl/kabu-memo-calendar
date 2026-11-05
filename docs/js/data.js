@@ -96,6 +96,7 @@
     var base = t.raw ? "「" + t.raw + "」" : "";
     if (t.precision === "month") return s.getFullYear() + "年" + (s.getMonth() + 1) + "月 " + base;
     if (t.precision === "season") return s.getFullYear() + "年 " + (s.getMonth() + 1) + "〜" + (en.getMonth() + 1) + "月頃 " + base;
+    if (t.precision === "range" && en) return t.start + "〜" + t.end + " " + base;
     if (t.precision === "fy") return t.start.slice(0, 7) + "〜" + t.end.slice(0, 7) + " " + base;
     return t.start.slice(0, 4) + "年 " + base;
   }
