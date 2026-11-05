@@ -401,3 +401,197 @@ def merge_period(doc, rec, code, name, now=None):
     now = now or dt.datetime.now(JST)
     out["updated_at"] = now.isoformat(timespec="seconds") if hasattr(now, "isoformat") else str(now)
     return out
+
+
+# ===================== 業績予想の修正(tse-rvfc)の解釈 =====================
+# 『業績予想の修正に関するお知らせ』のTDnet公式XBRL。単位は金額=百万円、EPS/配当=円、率=%。
+# 方針: 前回発表予想(PreviousMember)と今回修正予想(CurrentMember)の ForecastMember だけを読む。
+#       LowerMember/UpperMember(予想レンジ)や四半期メンバーが付いた別枠のコンテキストは、
+#       値があっても採用しない(別の意味の数値と混ざるため)。読めない項目は None のまま。
+REVISION_SOURCE = "公式XBRL(tse-rvfc)"
+_REV_ITEMS = (
+    ("sales", _SALES),
+    ("operating_income", _OPINC),
+    ("ordinary_income", _ORDINC),
+    # 連結の「親会社株主に帰属する当期純利益」は書式によって ProfitAttributable... か NetIncome のタグで出る
+    ("net_income", _NETINC + _NETINC_SOLO),
+    ("eps", _EPS),
+)
+_REV_PERIODS = (("CurrentYearDuration", "通期"), ("CurrentAccumulatedQ1Duration", "第1四半期累計"),
+                ("CurrentAccumulatedQ2Duration", "第2四半期累計"), ("CurrentAccumulatedQ3Duration", "第3四半期累計"))
+_REV_DIV_MEMBERS = {"FirstQuarterMember": "q1", "SecondQuarterMember": "q2", "ThirdQuarterMember": "q3",
+                    "YearEndMember": "year_end", "AnnualMember": "annual"}
+_NIL_NF = re.compile(r"<ix:nonFraction\b[^>]*?xsi:nil\s*=\s*\"true\"[^>]*?/>", re.S)
+_REV_HTM = re.compile(r"(?:^|/)tse-rv[a-z]{2}-[^/]*-ixbrl\.htm$", re.I)
+
+
+def _rev_text(s):
+    if not s:
+        return None
+    s = re.sub(r"\s+", " ", s).strip()
+    s = re.sub(r"(?<=[^\x00-\x7f]) (?=[^\x00-\x7f])", "", s)  # 全角どうしの間の改行由来の空白を除く
+    return s or None
+
+
+def _rev_date(s):
+    """'令和8年11月2日' / '2026年11月2日' / '2026-11-02' -> 'YYYY-MM-DD'。読めなければ None。"""
+    if not s:
+        return None
+    t = unicodedata.normalize("NFKC", s)
+    m = re.search(r"令和\s*(\d{1,2}|元)\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日", t)
+    if m:
+        try:
+            y = 2018 + (1 if m.group(1) == "元" else int(m.group(1)))
+            return dt.date(y, int(m.group(2)), int(m.group(3))).isoformat()
+        except ValueError:
+            return None
+    return _parse_date(t)
+
+
+def _rev_pick(facts, base, scope, which, names, mode):
+    """facts から (base, scope, which, Forecast) ちょうどのコンテキストの値を引く。余計なメンバー付きは除く。"""
+    want = {scope, which + "Member", "ForecastMember"}
+    for name in names:
+        for (n, cid), v in facts.items():
+            if n != name or v is None:
+                continue
+            b, mem = _ctx_parts(cid)
+            if b == base and mem == want:
+                return _num(v, mode)
+    return None
+
+
+def _rev_direction(items):
+    ds = [it["diff"] for it in items if it["item"] in ("operating_income", "ordinary_income", "net_income")
+          and it["diff"] is not None]
+    if not ds:
+        return None
+    if all(d == 0 for d in ds):
+        return "flat"
+    if all(d >= 0 for d in ds):
+        return "up"
+    if all(d <= 0 for d in ds):
+        return "down"
+    return "mixed"
+
+
+def _rev_section(facts, base, scope_member):
+    items = []
+    for key, names in _REV_ITEMS:
+        mode = "raw" if key == "eps" else "money"
+        prev = _rev_pick(facts, base, scope_member, "Previous", names, mode)
+        new = _rev_pick(facts, base, scope_member, "Current", names, mode)
+        if prev is None and new is None:
+            continue
+        diff = pct = None
+        if key != "eps":
+            diff = _rev_pick(facts, base, scope_member, "Current", _alias(names, "AmountChange"), "money")
+            pct = _rev_pick(facts, base, scope_member, "Current",
+                            _alias(names, "ChangeIn") + _alias(names, "ChangesIn"), "pct")
+        diff_src = pct_src = None
+        if diff is not None:
+            diff_src = "XBRL"
+        elif prev is not None and new is not None:
+            diff, diff_src = round(new - prev, 6), "計算"
+            diff = int(diff) if diff == int(diff) else diff
+        if pct is not None:
+            pct_src = "XBRL"
+        elif key != "eps" and prev not in (None, 0) and new is not None:
+            pct, pct_src = round((new - prev) / abs(prev) * 100, 1), "計算"
+        it = {"item": key, "prev": prev, "new": new, "diff": diff, "diff_pct": pct,
+              "diff_source": diff_src, "pct_source": pct_src}
+        if diff_src == "XBRL" and prev is not None and new is not None and abs((new - prev) - diff) > 1e-6:
+            it["diff_consistent"] = False  # 開示された増減額が 今回-前回 と合わない(そのまま載せ、確認が必要)
+        items.append(it)
+    return items
+
+
+def parse_revision_zip(zip_bytes, meta):
+    """『業績予想の修正に関するお知らせ』のXBRL zip(bytes) -> dict。読めない/対象外なら None。
+    主(items)は 通期の連結(無ければ通期の非連結、さらに無ければ四半期累計)。同じ期間の非連結は non_consolidated、
+    別の期間(例: 第2四半期累計)は other_periods に入れる。配当の修正は dividend(円/株)。"""
+    meta = meta or {}
+    title = meta.get("title") or ""
+    if title and "修正" not in title:
+        return None
+    try:
+        z = zipfile.ZipFile(io.BytesIO(zip_bytes))
+        names = sorted(n for n in z.namelist() if _REV_HTM.search(n.replace("\\", "/")))
+        if not names:
+            return None
+        htm = z.read(names[0]).decode("utf-8", errors="replace")
+    except (zipfile.BadZipFile, KeyError, OSError):
+        return None
+    htm = _NIL_NF.sub("", htm)  # xsi:nil の自己閉じタグを先に除く(入れ子対応が崩れるため)
+    facts, texts, contexts = _parse_facts(htm)
+    if not facts:
+        return None
+    doc_name = texts.get("DocumentName") or ""
+    if doc_name and "修正" not in doc_name:
+        return None
+
+    sections = {}  # (期間名, 範囲) -> (base, items)
+    for base, plabel in _REV_PERIODS:
+        for member, label in (("ConsolidatedMember", "連結"), ("NonConsolidatedMember", "非連結")):
+            items = _rev_section(facts, base, member)
+            if items:
+                sections[(plabel, label)] = (base, items)
+
+    # 配当予想の修正(DividendPerShare。連結/非連結どちらのメンバーが付いていても同じ1株配当として扱う)
+    allowed = {"ForecastMember", "PreviousMember", "CurrentMember", "ConsolidatedMember",
+               "NonConsolidatedMember"} | set(_REV_DIV_MEMBERS)
+    div = {}
+    for (n, cid), v in facts.items():
+        if n != "DividendPerShare" or v is None:
+            continue
+        b, mem = _ctx_parts(cid)
+        if b != "CurrentYearDuration" or "ForecastMember" not in mem or not mem <= allowed:
+            continue
+        which = "prev" if "PreviousMember" in mem else ("new" if "CurrentMember" in mem else None)
+        fam = [_REV_DIV_MEMBERS[m] for m in mem if m in _REV_DIV_MEMBERS]
+        if which and len(fam) == 1:
+            div.setdefault(fam[0], {})[which] = _num(v, "raw")
+    dividend = None
+    if div:
+        dividend = {k: {"prev": d.get("prev"), "new": d.get("new")} for k, d in sorted(div.items())}
+        dividend["reason_text"] = _rev_text(texts.get("ReasonForDividendForecastCorrection"))
+
+    if not sections and not dividend:
+        return None
+
+    def ctx_range(base, member):
+        for cid, (s, e, _i) in contexts.items():
+            b, mem = _ctx_parts(cid)
+            if b == base and member in mem and s and e:
+                return s, e
+        return None, None
+
+    def pack(plabel, scope):
+        base, items = sections[(plabel, scope)]
+        s, e = ctx_range(base, "ConsolidatedMember" if scope == "連結" else "NonConsolidatedMember")
+        return {"scope": scope, "period": plabel, "period_start": s, "period_end": e,
+                "items": items, "direction": _rev_direction(items)}
+
+    code5 = (texts.get("SecuritiesCode") or "").strip()
+    out = {"kind": "業績予想修正" if sections else "配当予想修正",
+           "code": code5[:-1] if len(code5) == 5 else (code5 or None),
+           "announced_date": _rev_date(texts.get("ReportingDateOfFinancialForecastCorrection"))
+           or (meta.get("pubdate") or "")[:10] or None,
+           "scope": None, "period": None, "items": [], "direction": None,
+           "reason_text": _rev_text(texts.get("ReasonForForecastCorrection")),
+           "non_consolidated": None, "other_periods": [], "dividend": dividend,
+           "basis": REVISION_SOURCE}
+    if sections:
+        order = [p for _b, p in _REV_PERIODS]
+        have = sorted({p for (p, _s) in sections}, key=order.index)
+        mp = "通期" if "通期" in have else have[0]
+        ms = "連結" if (mp, "連結") in sections else "非連結"
+        main = pack(mp, ms)
+        out.update({k: main[k] for k in ("scope", "period", "period_start", "period_end", "items", "direction")})
+        if ms == "連結" and (mp, "非連結") in sections:
+            out["non_consolidated"] = pack(mp, "非連結")
+        for p in have:
+            for s in ("連結", "非連結"):
+                if (p, s) in sections and (p, s) != (mp, ms) and not (p == mp and s == "非連結" and ms == "連結"):
+                    out["other_periods"].append(pack(p, s))
+    return out

@@ -22,6 +22,7 @@ try:
     from history import classify_title
     from financials import parse_summary_zip, merge_period
     from history import earnings_history
+    from financials import parse_revision_zip
     FIN_OK = True
 except ImportError:  # 財務モジュール未導入でもIR収集は動く
     FIN_OK = False
@@ -158,6 +159,56 @@ def make_image_event(v, checked_at):
     }
 
 
+_RV_NAMES = {"sales": ("売上高", "百万円"), "operating_income": ("営業利益", "百万円"),
+             "ordinary_income": ("経常利益", "百万円"), "net_income": ("親会社株主に帰属する当期純利益", "百万円"),
+             "eps": ("1株当たり当期純利益", "円")}
+_RV_KIND = {"up": ("revision_up", "上方修正"), "down": ("revision_down", "下方修正")}
+_TEXT_REV_KINDS = ("revision_up", "revision_down", "forecast", "forecast_item")
+
+
+def _fmt_num(x, eps=False):
+    if x is None:
+        return None
+    return ("{:,.2f}" if eps else "{:,.0f}").format(x)
+
+
+def xbrl_revision_events(rec, v, checked_at):
+    """公式XBRL(tse-rvfc)の『前回予想→今回予想』から、修正イベントと予想数値の行を作る。
+    文章を読んだ推測ではなく、開示された数値そのもの。"""
+    kind, label = _RV_KIND.get(rec.get("direction"), ("forecast", "予想変更(増減が混在・または判定不能)"))
+    period = rec.get("period") or "記載なし"
+    scope = rec.get("scope") or ""
+    parts = []
+    for it in rec.get("items", []):
+        if it.get("item") in ("operating_income", "ordinary_income", "net_income", "sales") and it.get("prev") is not None and it.get("new") is not None:
+            parts.append("%s %s→%s" % (_RV_NAMES[it["item"]][0], _fmt_num(it["prev"]), _fmt_num(it["new"])))
+    base = {"code": v["code"], "name": v["name"], "announced_at": v["pubdate"], "target": None, "target_text": "記載なし",
+            "time_text": None, "impact_period": period, "page": 1, "url": v["url"], "title": v["title"],
+            "checked_at": checked_at, "origin": "official", "extractor": "xbrl", "history": []}
+    main = dict(base, id="xrv:" + v["id"], kind=kind, kind_label=label, confirmed=True, needs_review=False,
+                summary="公式の数値データ(XBRL)から[%s・%s]: %s" % (scope, period, "; ".join(parts) or "数値なし"),
+                quote="; ".join(parts)[:140], note="公式XBRL(tse-rvfc)の前回発表予想と今回修正予想の数値から作成（文章からの推測ではない）")
+    out = [main]
+    for it in rec.get("items", []):
+        if it.get("prev") is None or it.get("new") is None:
+            continue
+        name, unit = _RV_NAMES[it["item"]]
+        eps = it["item"] == "eps"
+        diff = it.get("diff")
+        pct = it.get("diff_pct")
+        dtxt = ("%+.1f%%" % pct) if pct is not None else None
+        out.append(dict(base, id="xrvi:%s:%s" % (v["id"], it["item"]), kind="forecast_item", kind_label="予想数値の変更",
+                        summary="%s[%s]: 前回 %s%s → 今回 %s%s%s" % (
+                            name, period, _fmt_num(it["prev"], eps), unit, _fmt_num(it["new"], eps), unit,
+                            "（差 %s%s）" % (("%+g" % diff), unit) if diff is not None else ""),
+                        item=name, unit=unit, prev=_fmt_num(it["prev"], eps), new=_fmt_num(it["new"], eps), diff=diff,
+                        diff_text=dtxt, values=[_fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)],
+                        verified=True, verify_basis="公式XBRLの前回予想・今回予想の数値（増減は%s）" % (it.get("diff_source") or "不明"),
+                        note=None, quote="%s %s %s" % (name, _fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)),
+                        confirmed=False, needs_review=False, section=scope))
+    return out
+
+
 def pdf_pages(data):
     from pypdf import PdfReader
     r = PdfReader(io.BytesIO(data))
@@ -179,6 +230,7 @@ def run():
     ap.add_argument("--retention-days", type=int, default=60)
     ap.add_argument("--fin-budget", type=int, default=200)
     ap.add_argument("--hist-budget", type=int, default=15)
+    ap.add_argument("--rv-budget", type=int, default=60)
     a = ap.parse_args()
 
     now = dt.datetime.now(JST)
@@ -346,6 +398,49 @@ def run():
                 errors.append("履歴 %s %s: %s" % (c, type(e).__name__, str(e)[:80]))
             time.sleep(1)
 
+    # 2e) 業績予想の修正通知の公式XBRL(tse-rvfc): 画像PDFや文章から読めなかったものを補い、文章からの抽出と方向を照合する
+    rv = {"enabled": FIN_OK, "parsed": 0, "added": 0, "checked_match": 0, "checked_mismatch": 0, "failed": 0}
+    if FIN_OK:
+        todo = [v for v in seen.values() if v.get("cat") == "業績修正" and v.get("xbrl") and v.get("rv") != EXT_VERSION
+                and v.get("rv_tries", 0) < 3]
+        todo.sort(key=lambda v: v["pubdate"], reverse=True)
+        for v in todo[:a.rv_budget]:
+            try:
+                rec = parse_revision_zip(http_get(v["xbrl"], timeout=60), {
+                    "id": v["id"], "code": v["code"], "name": v["name"], "pubdate": v["pubdate"],
+                    "title": v["title"], "url": v["url"]})
+                v["rv"] = EXT_VERSION
+                if rec is None:
+                    v["rv_note"] = "修正XBRLを読めない／対象外"
+                else:
+                    rv["parsed"] += 1
+                    mine = [e for e in events if e.get("url") == v["url"] and e.get("kind") in _TEXT_REV_KINDS
+                            and e.get("extractor") != "xbrl" and not str(e.get("id", "")).startswith("img:")]
+                    if v["status"] == "image" or not mine:
+                        events = [e for e in events if e.get("id") != "img:" + v["id"]]
+                        events, _, _ = merge_events(events, xbrl_revision_events(rec, v, checked_at))
+                        rv["added"] += 1
+                    else:
+                        d = rec.get("direction")
+                        text_dirs = {e["kind"] for e in mine if e["kind"] in ("revision_up", "revision_down")}
+                        want = {"up": "revision_up", "down": "revision_down"}.get(d)
+                        for e in mine:
+                            if e["kind"] in ("revision_up", "revision_down") and want:
+                                if e["kind"] == want:
+                                    e["xbrl_check"] = "公式XBRLと方向が一致"
+                                    rv["checked_match"] += 1
+                                else:
+                                    e["xbrl_check"] = "公式XBRLと方向が一致しません"
+                                    e["needs_review"] = True
+                                    e["confirmed"] = False
+                                    rv["checked_mismatch"] += 1
+                                    errors.append("修正の方向不一致 %s %s" % (v["code"], v["title"][:20]))
+            except Exception as e:
+                v["rv_tries"] = v.get("rv_tries", 0) + 1
+                rv["failed"] += 1
+                errors.append("修正XBRL %s %s: %s" % (v["code"], type(e).__name__, str(e)[:80]))
+            time.sleep(1)
+
     # 3) 古いものを整理して保存
     cutoff = (now - dt.timedelta(days=a.retention_days)).strftime("%Y-%m-%d")
     seen = {k: v for k, v in seen.items() if v["pubdate"][:10] >= cutoff}
@@ -369,6 +464,7 @@ def run():
         "budget_per_run": a.budget,
         "financials": fin,
         "history": hist,
+        "revisions_xbrl": rv,
         "last_run": {"at": checked_at, "ok": len(index_ok_days) > 0, "trigger": os.environ.get("GITHUB_EVENT_NAME", "local"),
                      "error": None if index_ok_days else "一覧を1日分も取得できませんでした: " + "; ".join(errors[:3])},
         "source_terms": "明確な許諾は未確認（やのしんは「情報収集・分析目的」とのみ記載、頻度制限・再配布の規定なし。JPX側の規約は確認できず）。個人利用・差分のみ・1秒間隔で運用し、停止指示があれば止める",

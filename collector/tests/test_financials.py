@@ -273,5 +273,126 @@ class TestHistory(unittest.TestCase):
         self.assertIsNone(H.reference_next(h, "2026-11-20", period_type="第2四半期"))
 
 
+def rev_zip(htm_text, inner="tse-rvfc-00000-20261102000000-ixbrl.htm"):
+    return make_zip(htm_text, inner)
+
+
+def rev_fixture(name):
+    with open(os.path.join(FIX, name + ".htm"), encoding="utf-8") as f:
+        return rev_zip(f.read())
+
+
+def rev_fact(name, ctx, val, scale=6, sign="", nil=False):
+    if nil:
+        return '<ix:nonFraction name="tse-ed-t:%s" contextRef="%s" xsi:nil="true"/>' % (name, ctx)
+    sg = ' sign="-"' if sign else ""
+    return '<ix:nonFraction name="tse-ed-t:%s" contextRef="%s" scale="%d"%s format="ixt:numdotdecimal">%s</ix:nonFraction>' % (
+        name, ctx, scale, sg, val)
+
+
+def rev_doc(*facts):
+    return "<html><body>" + "".join(facts) + "</body></html>"
+
+
+class TestRevision(unittest.TestCase):
+    """業績予想の修正(tse-rvfc)。フィクスチャは実物(東計電算4746・ほくほくFG8377)の数値タグだけの抜粋。"""
+
+    def test_consolidated_and_nonconsolidated_annual(self):
+        r = F.parse_revision_zip(rev_fixture("revision_consol_nonconsol"), meta("業績予想の修正に関するお知らせ"))
+        self.assertEqual((r["kind"], r["scope"], r["period"]), ("業績予想修正", "連結", "通期"))
+        self.assertEqual((r["code"], r["announced_date"]), ("4746", "2026-11-02"))
+        self.assertEqual((r["period_start"], r["period_end"]), ("2026-01-01", "2026-12-31"))
+        self.assertEqual(r["basis"], "公式XBRL(tse-rvfc)")
+        it = {i["item"]: i for i in r["items"]}
+        self.assertEqual([it[k][x] for k in ("sales", "operating_income", "ordinary_income", "net_income")
+                          for x in ("prev", "new")], [21884, 21884, 6825, 6425, 7879, 7479, 8601, 8323])
+        self.assertEqual((it["sales"]["diff"], it["sales"]["diff_pct"]), (0, 0))
+        self.assertEqual((it["operating_income"]["diff"], it["operating_income"]["diff_pct"]), (-400, -5.9))
+        self.assertEqual((it["ordinary_income"]["diff"], it["ordinary_income"]["diff_pct"]), (-400, -5.1))
+        self.assertEqual((it["net_income"]["diff"], it["net_income"]["diff_pct"]), (-278, -3.2))
+        self.assertEqual(it["net_income"]["diff_source"], "XBRL")
+        # EPS は増減がXBRLに無いので 今回-前回 を計算し、そう明記する
+        self.assertEqual((it["eps"]["prev"], it["eps"]["new"], it["eps"]["diff"]), (119.3, 115.45, -3.85))
+        self.assertEqual(it["eps"]["diff_source"], "計算")
+        self.assertIsNone(it["eps"]["diff_pct"])
+        self.assertEqual(r["direction"], "down")
+        self.assertTrue(r["reason_text"])
+        nc = r["non_consolidated"]
+        self.assertEqual((nc["scope"], nc["period"], nc["direction"]), ("非連結", "通期", "down"))
+        nit = {i["item"]: i for i in nc["items"]}
+        self.assertNotIn("operating_income", nit)  # 個別は営業利益のタグが無い -> 作らない
+        self.assertEqual((nit["net_income"]["prev"], nit["net_income"]["new"], nit["net_income"]["diff"]), (8590, 8312, -278))
+        self.assertEqual(r["other_periods"], [])
+        self.assertIsNone(r["dividend"])
+
+    def test_q2_other_period_and_dividend(self):
+        r = F.parse_revision_zip(rev_fixture("revision_q2_dividend"), meta("業績予想及び配当予想の修正に関するお知らせ"))
+        self.assertEqual((r["scope"], r["period"]), ("連結", "通期"))
+        it = {i["item"]: i for i in r["items"]}
+        o = it["ordinary_income"]
+        self.assertEqual((o["prev"], o["new"], o["diff"], o["diff_pct"]), (89000, 108500, 19500, 21.9))
+        self.assertNotIn("sales", it)
+        self.assertEqual(r["direction"], "up")
+        self.assertEqual(len(r["other_periods"]), 1)
+        q2 = r["other_periods"][0]
+        self.assertEqual((q2["scope"], q2["period"], q2["period_end"]), ("連結", "第2四半期累計", "2026-09-30"))
+        self.assertEqual([(i["item"], i["prev"], i["new"]) for i in q2["items"]],
+                         [("ordinary_income", 45000, 59500), ("net_income", 31500, 42000), ("eps", 26.51, 35.32)])
+        d = r["dividend"]
+        self.assertEqual((d["q2"], d["year_end"]), ({"prev": 75, "new": 95}, {"prev": 7.5, "new": 9.5}))
+        self.assertNotIn("annual", d)  # 年間は前期実績にしか無い -> 作らない
+
+    def test_direction_and_computed_diff(self):
+        def doc(pairs):
+            f = []
+            for name, (prev, new) in pairs.items():
+                f.append(rev_fact(name, "CurrentYearDuration_ConsolidatedMember_PreviousMember_ForecastMember", prev))
+                f.append(rev_fact(name, "CurrentYearDuration_ConsolidatedMember_CurrentMember_ForecastMember", new))
+            return rev_zip(rev_doc(*f))
+        r = F.parse_revision_zip(doc({"OperatingIncome": ("1,000", "1,200"), "OrdinaryIncome": ("1,000", "900")}), None)
+        self.assertEqual(r["direction"], "mixed")
+        oi = r["items"][0]
+        self.assertEqual((oi["diff"], oi["diff_pct"], oi["diff_source"], oi["pct_source"]), (200, 20.0, "計算", "計算"))
+        up = F.parse_revision_zip(doc({"OperatingIncome": ("1,000", "1,200"), "OrdinaryIncome": ("1,000", "1,000")}), None)
+        self.assertEqual(up["direction"], "up")
+        flat = F.parse_revision_zip(doc({"OperatingIncome": ("1,000", "1,000"), "NetSales": ("5", "9")}), None)
+        self.assertEqual(flat["direction"], "flat")  # 売上は判定に使わない
+        self.assertIsNone(F.parse_revision_zip(doc({"NetSales": ("5", "9")}), None)["direction"])
+        down = F.parse_revision_zip(doc({"OperatingIncome": ("1,000", "800"), "OrdinaryIncome": ("1,000", "1,000")}), None)
+        self.assertEqual(down["direction"], "down")
+
+    def test_nil_and_range_members_are_not_used(self):
+        cur = "CurrentYearDuration_ConsolidatedMember_CurrentMember_"
+        prv = "CurrentYearDuration_ConsolidatedMember_PreviousMember_"
+        htm = rev_doc(
+            rev_fact("OperatingIncome", prv + "ForecastMember", "100"),
+            rev_fact("OperatingIncome", prv + "LowerMember", "", nil=True),
+            rev_fact("OperatingIncome", cur + "ForecastMember", "", nil=True),   # 今回が空 -> None
+            rev_fact("OperatingIncome", cur + "LowerMember", "999"),              # レンジ側に値が入っても採用しない
+            rev_fact("OperatingIncome", cur + "UpperMember", "888"),
+            rev_fact("OrdinaryIncome", cur + "ForecastMember", "70", sign="-"),   # sign="-" は負
+            rev_fact("OrdinaryIncome", prv + "ForecastMember", "50", sign="-"))
+        r = F.parse_revision_zip(rev_zip(htm), None)
+        it = {i["item"]: i for i in r["items"]}
+        o = it["operating_income"]
+        self.assertEqual((o["prev"], o["new"], o["diff"]), (100, None, None))
+        o = it["ordinary_income"]
+        self.assertEqual((o["prev"], o["new"], o["diff"]), (-50, -70, -20))
+
+    def test_inconsistent_diff_is_flagged(self):
+        c = "CurrentYearDuration_ConsolidatedMember_"
+        htm = rev_doc(rev_fact("OrdinaryIncome", c + "PreviousMember_ForecastMember", "100"),
+                      rev_fact("OrdinaryIncome", c + "CurrentMember_ForecastMember", "150"),
+                      rev_fact("AmountChangeOrdinaryIncome", c + "CurrentMember_ForecastMember", "40"))
+        it = F.parse_revision_zip(rev_zip(htm), None)["items"][0]
+        self.assertEqual((it["diff"], it["diff_consistent"]), (40, False))
+
+    def test_not_revision_returns_none(self):
+        self.assertIsNone(F.parse_revision_zip(b"not a zip", None))
+        self.assertIsNone(F.parse_revision_zip(fixture_zip("annual_jgaap"), meta("決算短信")))  # 決算短信のzip
+        self.assertIsNone(F.parse_revision_zip(rev_fixture("revision_consol_nonconsol"), meta("決算短信〔日本基準〕(連結)")))
+        self.assertIsNone(F.parse_revision_zip(rev_zip("<html><body></body></html>"), None))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -39,5 +39,35 @@ class TestSkipAndPdf(unittest.TestCase):
         self.assertFalse(collect.IMPORTANT_IMG.search("貸借取引貸付金・貸付有価証券等の平均残高のお知らせ"))
 
 
+class TestXbrlRevision(unittest.TestCase):
+    def rec(self, direction):
+        return {"direction": direction, "scope": "連結", "period": "通期", "items": [
+            {"item": "sales", "prev": 21884, "new": 21884, "diff": 0, "diff_pct": 0.0, "diff_source": "XBRL"},
+            {"item": "operating_income", "prev": 6825, "new": 6425, "diff": -400, "diff_pct": -5.9, "diff_source": "XBRL"},
+            {"item": "eps", "prev": 119.30, "new": 115.45, "diff": -3.85, "diff_pct": None, "diff_source": "計算"}]}
+
+    def v(self):
+        return {"id": "9", "code": "1234", "name": "テスト", "pubdate": "2026-11-02 15:30:00",
+                "title": "業績予想の修正に関するお知らせ", "url": "https://example.invalid/x.pdf"}
+
+    def test_down_event_and_rows(self):
+        ev = collect.xbrl_revision_events(self.rec("down"), self.v(), "2026-11-05T10:00:00+09:00")
+        self.assertEqual(ev[0]["kind"], "revision_down")
+        self.assertTrue(ev[0]["confirmed"])
+        self.assertIn("6,825→6,425", ev[0]["summary"])
+        rows = {e["item"]: e for e in ev[1:]}
+        self.assertEqual(rows["営業利益"]["prev"], "6,825")
+        self.assertEqual(rows["営業利益"]["diff"], -400)
+        self.assertTrue(rows["営業利益"]["verified"])
+        self.assertEqual(rows["1株当たり当期純利益"]["new"], "115.45")
+        self.assertEqual(len({e["id"] for e in ev}), len(ev))
+
+    def test_mixed_is_not_up_or_down(self):
+        ev = collect.xbrl_revision_events(self.rec("mixed"), self.v(), "x")
+        self.assertEqual(ev[0]["kind"], "forecast")
+        ev = collect.xbrl_revision_events(self.rec(None), self.v(), "x")
+        self.assertEqual(ev[0]["kind"], "forecast")
+
+
 if __name__ == "__main__":
     unittest.main()
