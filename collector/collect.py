@@ -46,7 +46,7 @@ PRIORITY = [
     (r"承認|治験|開発", 20), (r"量産|工場|設備|稼働", 20), (r"提携|受注|進出|取得|自己株式", 18),
     (r"延期|中止|変更", 22), (r"配当", 15), (r"訂正", 22),
 ]
-SKIP_TITLE = re.compile(r"コーポレート・ガバナンス|株主総会招集|議決権|大量保有|人事|役員|定款")
+SKIP_TITLE = re.compile(r"コーポレート・ガバナンス|株主総会招集|議決権|大量保有|人事|役員|定款の一部変更")   # 「定款の定めに基づく自己株式の取得」(月次の取得状況)は対象外にしない
 
 
 def http_get(url, timeout=40):
@@ -123,10 +123,53 @@ def make_actual_event(v, checked_at):
     }
 
 
+class ImagePdf(Exception):
+    """文字のない(画像だけの)PDF。失敗ではなく『自動では読めない』という別の区分にする。"""
+
+
+IMPORTANT_IMG = re.compile(r"修正|配当|決算|業績|予想")
+
+
+def fetch_pdf(url):
+    """PDFを取得する。通信の途中切れ(末尾の%%EOFがない)は1回だけやり直す。"""
+    last = None
+    for _ in range(2):
+        data = http_get(url)
+        if b"%%EOF" in data[-2048:]:
+            return data
+        last = len(data)
+        time.sleep(1)
+    raise IOError("PDFが途中で切れています(%s バイト)" % last)
+
+
+def make_image_event(v, checked_at):
+    """画像だけのPDF: 本文を読めていない。数値や日付は出さず、タイトルと元資料リンクだけの『要確認』にする。"""
+    d = v["pubdate"][:10]
+    return {
+        "id": "img:" + v["id"], "kind": "forecast", "kind_label": "予想変更(画像PDF・本文未確認)",
+        "code": v["code"], "name": v["name"], "announced_at": v["pubdate"],
+        "target": {"raw": "", "start": None, "end": None, "precision": "unknown", "needs_review": True,
+                   "reason": "画像だけのPDFで本文を自動で読めない", "time": None},
+        "target_text": "", "time_text": None, "impact_period": "記載なし",
+        "summary": "資料が画像だけのため、内容を自動で読めていません（タイトルのみ）: " + v["title"][:50],
+        "quote": v["title"][:140], "page": 1, "url": v["url"], "title": v["title"],
+        "checked_at": checked_at, "origin": "official", "extractor": EXT_VERSION,
+        "confirmed": False, "needs_review": True,
+    }
+
+
 def pdf_pages(data):
     from pypdf import PdfReader
     r = PdfReader(io.BytesIO(data))
-    return [(p.extract_text() or "") for p in r.pages]
+    out, bad = [], 0
+    for p in r.pages:
+        try:
+            out.append(p.extract_text() or "")
+        except Exception:  # 1ページが壊れていても、読めたページは使う
+            out.append("")
+            bad += 1
+    pdf_pages.unread = bad
+    return out
 
 
 def run():
@@ -173,7 +216,10 @@ def run():
     events = [e for e in events if not (e.get('extractor') != EXT_VERSION and e.get('url') in redo)]
     # 失敗は最大3回まで再挑戦する（一時的な通信エラーや、読み取り部品の不足を直した後に拾えるように）
     for v in seen.values():
-        if v["status"] == "failed" and v.get("tries", 1) < 3:
+        if v["status"] == "failed" and v.get("tries", 1) < 6:
+            v["status"] = "pending"
+        # 以前は『定款』の語だけで外していた月次の自己株式取得状況などを、新しい対象外ルールで見直す
+        if v["status"] == "skipped" and score(v, wl) >= 0:
             v["status"] = "pending"
 
     # 2) 本文取得（優先度順・上限つき）
@@ -183,7 +229,7 @@ def run():
     for v in pending:
         if score(v, wl) < 0:
             v["status"] = "skipped"
-            v["note"] = "対象外のタイトル（人事・総会等）。本文は読んでいない"
+            v["note"] = "対象外のタイトル（人事・総会招集・定款変更等）。本文は読んでいない"
             continue
         if done_now + failed_now >= a.budget:
             break
@@ -193,10 +239,10 @@ def run():
             failed_now += 1
             continue
         try:
-            pages = pdf_pages(http_get(v["url"]))
+            pages = pdf_pages(fetch_pdf(v["url"]))
             text_len = sum(len(p) for p in pages)
             if text_len < 20:
-                raise ValueError("文字を取り出せない(画像PDFの可能性)")
+                raise ImagePdf("文字を取り出せない(画像だけのPDF)")
             ctx = {"code": v["code"], "name": v["name"], "pubdate": v["pubdate"], "title": v["title"],
                    "url": v["url"], "checked_at": checked_at, "fy_end_month": None}
             new = extract_document(pages, ctx)
@@ -209,6 +255,18 @@ def run():
             v["events"] = len(new)
             v["pages"] = len(pages)
             v["checked_at"] = checked_at
+            bad = getattr(pdf_pages, "unread", 0)
+            if bad:
+                v["note"] = "一部のページ(%d/%d)を読み取れませんでした。元資料で確認してください" % (bad, len(pages))
+            else:
+                v.pop("note", None)
+            done_now += 1
+        except ImagePdf:
+            v["status"] = "image"
+            v["note"] = "画像だけのPDFで、本文を自動で読めません。元資料で確認してください"
+            v["checked_at"] = checked_at
+            if IMPORTANT_IMG.search(v["title"]):
+                events, _, _ = merge_events(events, [make_image_event(v, checked_at)])
             done_now += 1
         except Exception as e:
             v["status"] = "failed"
@@ -293,17 +351,17 @@ def run():
     seen = {k: v for k, v in seen.items() if v["pubdate"][:10] >= cutoff}
     # 古いIRを整理しても、これからの予定（発売・量産など）と、根拠(原文・URL)つきの項目は消さない
     events = [e for e in events if keep_event(e, cutoff, now.strftime("%Y-%m-%d"))]
-    cnt = {"pending": 0, "done": 0, "failed": 0, "skipped": 0}
+    cnt = {"pending": 0, "done": 0, "failed": 0, "skipped": 0, "image": 0}
     for v in seen.values():
         cnt[v["status"]] = cnt.get(v["status"], 0) + 1
     listed = len(seen)
-    complete = listed > 0 and cnt["skipped"] == 0 and cnt["pending"] == 0 and cnt["failed"] == 0 and len(index_ok_days) == a.days
+    complete = listed > 0 and cnt["skipped"] == 0 and cnt["image"] == 0 and cnt["pending"] == 0 and cnt["failed"] == 0 and len(index_ok_days) == a.days
     status = {
         "generated_at": checked_at,
         "is_sample": False,
         "range": {"days": a.days, "index_ok_days": sorted(index_ok_days)},
         "listed": listed, "done": cnt["done"], "pending": cnt["pending"],
-        "failed": cnt["failed"], "skipped": cnt["skipped"],
+        "failed": cnt["failed"], "skipped": cnt["skipped"], "image": cnt["image"],
         "complete": complete,  # 全件を全文精査できたときだけ True
         "period": {"from": min((v["pubdate"][:10] for v in seen.values()), default=None),
                    "to": max((v["pubdate"][:10] for v in seen.values()), default=None)},
@@ -319,7 +377,7 @@ def run():
     }
     index_items = [{k: v.get(k) for k in ("id", "code", "name", "pubdate", "title", "url", "cat", "status", "note", "events", "pages", "checked_at")}
                    for v in sorted(seen.values(), key=lambda v: v["pubdate"], reverse=True)
-                   if v["status"] in ("done", "failed") or score(v, wl) >= 20]
+                   if v["status"] in ("done", "failed", "image") or score(v, wl) >= 20]
     save(STATE, seen)
     save(os.path.join(DATA, "events.json"), {"generated_at": checked_at, "events": events})
     save(os.path.join(DATA, "ir_index.json"), {"generated_at": checked_at, "items": index_items[:3000]})
