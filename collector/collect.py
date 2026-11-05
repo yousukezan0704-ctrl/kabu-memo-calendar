@@ -162,6 +162,8 @@ def make_image_event(v, checked_at):
 _RV_NAMES = {"sales": ("売上高", "百万円"), "operating_income": ("営業利益", "百万円"),
              "ordinary_income": ("経常利益", "百万円"), "net_income": ("親会社株主に帰属する当期純利益", "百万円"),
              "eps": ("1株当たり当期純利益", "円")}
+RV_VER = "xrv-2"   # 修正XBRLの処理を変えたら上げる(再処理のトリガー)
+RV_KEY = RV_VER + "/" + EXT_VERSION   # 文章の再抽出(EXT_VERSION更新)のあとも、XBRLで置き換え直す
 _RV_KIND = {"up": ("revision_up", "上方修正"), "down": ("revision_down", "下方修正")}
 _TEXT_REV_KINDS = ("revision_up", "revision_down", "forecast", "forecast_item")
 
@@ -189,23 +191,45 @@ def xbrl_revision_events(rec, v, checked_at):
                 summary="公式の数値データ(XBRL)から[%s・%s]: %s" % (scope, period, "; ".join(parts) or "数値なし"),
                 quote="; ".join(parts)[:140], note="公式XBRL(tse-rvfc)の前回発表予想と今回修正予想の数値から作成（文章からの推測ではない）")
     out = [main]
-    for it in rec.get("items", []):
-        if it.get("prev") is None or it.get("new") is None:
+
+    def rows(scope_name, period_name, items):
+        for it in items:
+            if it.get("prev") is None or it.get("new") is None:
+                continue
+            name, unit = _RV_NAMES[it["item"]]
+            eps = it["item"] == "eps"
+            diff, pct = it.get("diff"), it.get("diff_pct")
+            out.append(dict(base, id="xrvi:%s:%s:%s" % (v["id"], period_name, it["item"]), kind="forecast_item",
+                            kind_label="予想数値の変更", impact_period=period_name,
+                            summary="%s[%s]: 前回 %s%s → 今回 %s%s%s" % (
+                                name, period_name, _fmt_num(it["prev"], eps), unit, _fmt_num(it["new"], eps), unit,
+                                "（差 %s%s）" % (("%+g" % diff), unit) if diff is not None else ""),
+                            item=name, unit=unit, prev=_fmt_num(it["prev"], eps), new=_fmt_num(it["new"], eps), diff=diff,
+                            diff_text=("%+.1f%%" % pct) if pct is not None else None,
+                            values=[_fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)],
+                            verified=True, verify_basis="公式XBRLの前回予想・今回予想の数値（増減は%s）" % (it.get("diff_source") or "不明"),
+                            note=None, quote="%s %s %s" % (name, _fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)),
+                            confirmed=False, needs_review=False, section=scope_name))
+
+    rows(scope, period, rec.get("items", []))
+    for op in rec.get("other_periods") or []:
+        rows(op.get("scope") or scope, op.get("period") or "記載なし", op.get("items", []))
+    dv = rec.get("dividend") or {}
+    q2, ye = dv.get("q2") or {}, dv.get("year_end") or {}
+    odd = bool(q2.get("new") and ye.get("new") and not (0.2 <= ye["new"] / q2["new"] <= 5))
+    for key, label in (("q2", "第2四半期末"), ("year_end", "期末")):
+        d = dv.get(key) or {}
+        if d.get("prev") is None or d.get("new") is None:
             continue
-        name, unit = _RV_NAMES[it["item"]]
-        eps = it["item"] == "eps"
-        diff = it.get("diff")
-        pct = it.get("diff_pct")
-        dtxt = ("%+.1f%%" % pct) if pct is not None else None
-        out.append(dict(base, id="xrvi:%s:%s" % (v["id"], it["item"]), kind="forecast_item", kind_label="予想数値の変更",
-                        summary="%s[%s]: 前回 %s%s → 今回 %s%s%s" % (
-                            name, period, _fmt_num(it["prev"], eps), unit, _fmt_num(it["new"], eps), unit,
-                            "（差 %s%s）" % (("%+g" % diff), unit) if diff is not None else ""),
-                        item=name, unit=unit, prev=_fmt_num(it["prev"], eps), new=_fmt_num(it["new"], eps), diff=diff,
-                        diff_text=dtxt, values=[_fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)],
-                        verified=True, verify_basis="公式XBRLの前回予想・今回予想の数値（増減は%s）" % (it.get("diff_source") or "不明"),
-                        note=None, quote="%s %s %s" % (name, _fmt_num(it["prev"], eps), _fmt_num(it["new"], eps)),
-                        confirmed=False, needs_review=False, section=scope))
+        out.append(dict(base, id="xrvd:%s:%s" % (v["id"], key), kind="forecast_item", kind_label="予想数値の変更",
+                        impact_period=label, item="1株当たり配当(%s)" % label, unit="円", section="配当",
+                        prev=_fmt_num(d["prev"], True), new=_fmt_num(d["new"], True), diff=round(d["new"] - d["prev"], 2),
+                        diff_text=None, values=[_fmt_num(d["prev"], True), _fmt_num(d["new"], True)],
+                        summary="1株当たり配当[%s]: 前回 %s円 → 今回 %s円" % (label, _fmt_num(d["prev"], True), _fmt_num(d["new"], True)),
+                        verified=True, verify_basis="公式XBRLの配当予想の数値（差は計算）", confirmed=False,
+                        needs_review=odd,
+                        note="第2四半期末と期末の金額の桁が大きく違います。株式分割などの基準の違いかもしれません。元資料で確認してください" if odd else None,
+                        quote="配当 %s→%s" % (_fmt_num(d["prev"], True), _fmt_num(d["new"], True))))
     return out
 
 
@@ -401,7 +425,7 @@ def run():
     # 2e) 業績予想の修正通知の公式XBRL(tse-rvfc): 画像PDFや文章から読めなかったものを補い、文章からの抽出と方向を照合する
     rv = {"enabled": FIN_OK, "parsed": 0, "added": 0, "checked_match": 0, "checked_mismatch": 0, "failed": 0}
     if FIN_OK:
-        todo = [v for v in seen.values() if v.get("cat") == "業績修正" and v.get("xbrl") and v.get("rv") != EXT_VERSION
+        todo = [v for v in seen.values() if v.get("cat") == "業績修正" and v.get("xbrl") and v.get("rv") != RV_KEY
                 and v.get("rv_tries", 0) < 3]
         todo.sort(key=lambda v: v["pubdate"], reverse=True)
         for v in todo[:a.rv_budget]:
@@ -409,32 +433,27 @@ def run():
                 rec = parse_revision_zip(http_get(v["xbrl"], timeout=60), {
                     "id": v["id"], "code": v["code"], "name": v["name"], "pubdate": v["pubdate"],
                     "title": v["title"], "url": v["url"]})
-                v["rv"] = EXT_VERSION
+                v["rv"] = RV_KEY
                 if rec is None:
                     v["rv_note"] = "修正XBRLを読めない／対象外"
                 else:
                     rv["parsed"] += 1
                     mine = [e for e in events if e.get("url") == v["url"] and e.get("kind") in _TEXT_REV_KINDS
                             and e.get("extractor") != "xbrl" and not str(e.get("id", "")).startswith("img:")]
-                    if v["status"] == "image" or not mine:
-                        events = [e for e in events if e.get("id") != "img:" + v["id"]]
-                        events, _, _ = merge_events(events, xbrl_revision_events(rec, v, checked_at))
-                        rv["added"] += 1
-                    else:
-                        d = rec.get("direction")
-                        text_dirs = {e["kind"] for e in mine if e["kind"] in ("revision_up", "revision_down")}
-                        want = {"up": "revision_up", "down": "revision_down"}.get(d)
-                        for e in mine:
-                            if e["kind"] in ("revision_up", "revision_down") and want:
-                                if e["kind"] == want:
-                                    e["xbrl_check"] = "公式XBRLと方向が一致"
-                                    rv["checked_match"] += 1
-                                else:
-                                    e["xbrl_check"] = "公式XBRLと方向が一致しません"
-                                    e["needs_review"] = True
-                                    e["confirmed"] = False
-                                    rv["checked_mismatch"] += 1
-                                    errors.append("修正の方向不一致 %s %s" % (v["code"], v["title"][:20]))
+                    # 方向の照合結果を数える(置き換える前に、文章からの抽出が正しかったかの目安になる)
+                    want = {"up": "revision_up", "down": "revision_down"}.get(rec.get("direction"))
+                    for e in mine:
+                        if e["kind"] in ("revision_up", "revision_down") and want:
+                            if e["kind"] == want:
+                                rv["checked_match"] += 1
+                            else:
+                                rv["checked_mismatch"] += 1
+                                errors.append("修正の方向不一致 %s %s" % (v["code"], v["title"][:20]))
+                    # 公式XBRLを正とし、同じ通知の文章由来の修正イベントは置き換える(表の読み違い・別の表の混入を避ける)
+                    drop = {id(e) for e in mine}
+                    events = [e for e in events if id(e) not in drop and e.get("id") != "img:" + v["id"]]
+                    events, _, _ = merge_events(events, xbrl_revision_events(rec, v, checked_at))
+                    rv["added"] += 1
             except Exception as e:
                 v["rv_tries"] = v.get("rv_tries", 0) + 1
                 rv["failed"] += 1

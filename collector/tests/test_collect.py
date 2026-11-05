@@ -68,6 +68,19 @@ class TestXbrlRevision(unittest.TestCase):
         ev = collect.xbrl_revision_events(self.rec(None), self.v(), "x")
         self.assertEqual(ev[0]["kind"], "forecast")
 
+    def test_other_periods_and_dividend_rows(self):
+        rec = self.rec("up")
+        rec["other_periods"] = [{"scope": "連結", "period": "第2四半期累計", "direction": "up", "items": [
+            {"item": "ordinary_income", "prev": 45000, "new": 59500, "diff": 14500, "diff_pct": 32.2, "diff_source": "XBRL"}]}]
+        rec["dividend"] = {"q2": {"prev": 75, "new": 95}, "year_end": {"prev": 7.5, "new": 9.5}}
+        ev = collect.xbrl_revision_events(rec, self.v(), "x")
+        periods = {(e.get("item"), e["impact_period"]) for e in ev if e["kind"] == "forecast_item"}
+        self.assertIn(("経常利益", "第2四半期累計"), periods)
+        div = {e["id"]: e for e in ev if e["id"].startswith("xrvd:")}
+        self.assertEqual(len(div), 2)
+        self.assertTrue(all(e["needs_review"] for e in div.values()))  # 桁が大きく違うので要確認
+        self.assertEqual(len({e["id"] for e in ev}), len(ev))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -484,7 +484,10 @@ with sync_playwright() as p:
         check(tag + "時刻なしは未公表", "未公表" in pg.inner_text("table.earn") and "15:00" in pg.inner_text("table.earn"))
         check(tag + "決算予定がサンプルと明記", "サンプル" in pg.inner_text("table.earn"))
         dates = pg.eval_on_selector_all("table.earn tbody tr td:first-child b", "els => els.map(e => e.textContent)")
-        check(tag + "決算予定は日付順", len(dates) >= 3 and dates == sorted(dates, key=lambda x: (int(x.split('月')[0]), int(x.split('月')[1].split('日')[0]))), dates)
+        # 年またぎ(11月→1月)でも崩れないよう、先頭の月より小さい月は翌年扱いにして比べる
+        m0 = int(dates[0].split('月')[0]) if dates else 1
+        dkey = lambda x: ((int(x.split('月')[0]) - m0) % 12, int(x.split('月')[1].split('日')[0]))
+        check(tag + "決算予定は日付順", len(dates) >= 3 and dates == sorted(dates, key=dkey), dates)
         # 予想の比較
         pg.click("button:has-text('予想の比較')"); pg.wait_for_timeout(200)
         t = pg.inner_text("main")

@@ -515,10 +515,11 @@ class TestV8(unittest.TestCase):
     def test_new_disclosure_still_alliance(self):
         ev = [e for e in self.kinds("当社は、A社と資本業務提携契約を締結いたしました。", title="資本業務提携に関するお知らせ") if e["kind"] == "alliance"]
         self.assertEqual(len(ev), 1)
-        self.assertFalse(ev[0]["needs_review"])
+        self.assertTrue(ev[0]["needs_review"])   # 日付がない提携は確定扱いにしない
+        self.assertFalse(ev[0]["confirmed"])
         ev = [e for e in self.kinds("本日開催の取締役会において、B社の株式を取得し子会社化することを決議いたしました。", title="B社の株式取得(子会社化)に関するお知らせ") if e["kind"] == "alliance"]
         self.assertEqual(len(ev), 1)
-        ev = [e for e in self.kinds("大型案件を受注いたしましたので、お知らせいたします。", title="大型案件の受注に関するお知らせ") if e["kind"] == "alliance"]
+        ev = [e for e in self.kinds("当社は、D社と業務提携契約を締結いたしましたので、お知らせいたします。", title="業務提携に関するお知らせ") if e["kind"] == "alliance"]
         self.assertEqual(len(ev), 1)
 
     def test_tanshin_alliance_needs_review(self):
@@ -567,7 +568,7 @@ class TestV8(unittest.TestCase):
         self.assertEqual([e for e in self.kinds(s, title="自己株式取得に係る事項の進捗状況に関するお知らせ") if e["kind"] == "buyback"], [])
 
     def test_version(self):
-        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v9")
+        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v10")
 
 
 class TestV9(unittest.TestCase):
@@ -588,10 +589,16 @@ class TestV9(unittest.TestCase):
         self.assertEqual(self.alli(s, "2026年9月期決算短信〔日本基準〕(連結)"), [])
         self.assertEqual(self.alli("海外拠点税前利益は5,644億円となりました。", "決算の概要"), [])
 
-    def test_order_notice_one_event_per_document(self):
+    def test_order_notice_is_not_alliance(self):
         pages = ["大型案件の受注に関するお知らせ 当社は、入札において、下記の大型案件を受注いたしましたので、お知らせいたします。"
                  "記 1．受注の概要 当社は、国内における以下の大型案件を受注しております。"]
         ev = [e for e in extract_document(pages, dict(CTX, title="大型案件の受注に関するお知らせ")) if e["kind"] == "alliance"]
+        self.assertEqual(ev, [])
+
+    def test_alliance_one_per_document_when_title_names_it(self):
+        pages = ["株式会社Xの株式取得（子会社化）に関するお知らせ 当社は、取締役会において、X社の株式を取得し子会社化することを決議いたしました。"
+                 "当社は、X社の株式を取得し子会社化することが企業価値の向上に資すると判断しました。"]
+        ev = [e for e in extract_document(pages, dict(CTX, title="株式会社Xの株式取得（子会社化）に関するお知らせ")) if e["kind"] == "alliance"]
         self.assertEqual(len(ev), 1)
 
     def test_buyback_one_per_document_target_is_period(self):
@@ -620,6 +627,99 @@ class TestV9(unittest.TestCase):
             self.assertEqual(len(evs), 1)
             self.assertEqual(evs[0]["url"], "https://example.invalid/notice.pdf")
             self.assertEqual(evs[0]["title"], "自己株式取得に係る事項の決定に関するお知らせ")   # 題名とURLがずれない
+
+
+class TestV10(unittest.TestCase):
+    TS = "2027年3月期 第2四半期 決算短信〔日本基準〕(連結)"
+
+    def k(self, s, kind, **kw):
+        return [e for e in extract_page(s, 1, dict(CTX, **kw)) if e["kind"] == kind]
+
+    def test_revision_recap_of_past_publication_dropped(self):
+        s = "当社は、2026年10月26日付で公表した通期の業績予想を下方修正しました。"
+        self.assertEqual(self.k(s, "revision_down", title=self.TS), [])
+        # 修正の通知そのものは、前回予想の公表日を書いていても拾う
+        s2 = "2026年8月7日付で公表した業績予想を下記のとおり上方修正いたします。"
+        self.assertTrue(self.k(s2, "revision_up", title="通期業績予想の修正に関するお知らせ"))
+        # 今般の修正も書かれていれば残し、要確認にする
+        s3 = "2026年10月26日付で公表した予想を、今般さらに上方修正いたします。"
+        ev = self.k(s3, "revision_up", title=self.TS)
+        self.assertTrue(ev and ev[0]["needs_review"])
+
+    def test_alliance_past_month_recap_dropped(self):
+        self.assertEqual(self.k("7月にA社と資本業務提携契約を締結しました。", "alliance", title=self.TS), [])
+
+    def test_order_title_without_alliance_word_dropped(self):
+        self.assertEqual(self.k("当社は大型案件を受注いたしました。", "alliance", title="大型案件の受注に関するお知らせ"), [])
+        self.assertTrue(self.k("当社はE社と業務提携契約を締結いたしました。", "alliance", title="業務提携及び大型案件の受注に関するお知らせ"))
+
+    def test_joint_venture_quote_is_establishment_sentence(self):
+        s = ("当社は、F社と合弁会社を設立することを決議いたしました。"
+             "3．今後の見通し 当該子会社の設立に伴う2027年8月期の当社業績に与える影響は軽微と見込んでおります。")
+        ev = self.k(s, "alliance", title="合弁会社設立のお知らせ")
+        self.assertEqual(len(ev), 1)
+        self.assertIn("合弁会社を設立", ev[0]["quote"])
+
+    def test_buyback_monthly_report_not_new(self):
+        s = ("自己株式取得のための市場買付けを、下記のとおり実施いたしましたのでお知らせいたします。記 １．買付期間 2026年10月１日から2026年10月31日まで "
+             "２．買付株式数 0株 ３．買付総額 0円 【ご参考】 １．2026年４月30日開催の取締役会での決議内容 ・取得する株式の総数 200,000株（上限） "
+             "・自己株式取得の日程 2026年５月１日から2027年３月31日まで")
+        self.assertEqual(self.k(s, "buyback", title="自己株式の市場買付けに関するお知らせ"), [])
+
+    def test_buyback_real_layout_shares_and_period(self):
+        # 実際の書き方: 「取得し得る株式の総数」、数字の中や単位の前に空白が入る
+        s = ("自己株式の取得に係る事項の決定に関するお知らせ 当社は、取締役会において、自己株式取得に係る事項について決議いたしましたのでお知らせいたします。\n"
+             "２． 取得に係る事項の内容\n(1) 取得対象株式の種類    当社普通株式\n(2) 取得し得る株式の総数   750,000 株（上 限）\n"
+             "(3) 株式の取得価額の総額   50,000,000 円（上限）\n(4) 取得期間         2026 年 11 月 4 日～ 2026年 12 月 31日\n")
+        ev = self.k(s, "buyback", title="自己株式の取得に係る事項の決定に関するお知らせ")
+        self.assertTrue(ev)
+        self.assertIn("上限 750,000株", ev[0]["summary"])
+        self.assertIn("50,000,000円", ev[0]["summary"])
+        self.assertEqual((ev[0]["target"]["start"], ev[0]["target"]["end"]), ("2026-11-04", "2026-12-31"))
+        self.assertFalse(ev[0]["needs_review"])
+
+    def test_buyback_without_limit_is_review(self):
+        ev = self.k("自己株式取得に係る事項を決議いたしました。", "buyback", title="自己株式取得に係る事項の決定に関するお知らせ")
+        self.assertTrue(ev and ev[0]["needs_review"] and not ev[0]["confirmed"])
+
+    def test_weak_events_without_date_are_review(self):
+        for kind, s, title in (("launch", "新製品の発売を計画しています。", "お知らせ"),
+                               ("delay", "発売時期を延期いたします。", "お知らせ"),
+                               ("alliance", "G社と業務提携いたします。", "業務提携に関するお知らせ")):
+            ev = self.k(s, kind, title=title)
+            self.assertTrue(ev, kind)
+            self.assertTrue(ev[0]["needs_review"], kind)
+            self.assertFalse(ev[0]["confirmed"], kind)
+
+    def test_delay_recap_of_past_decision_in_tanshin_dropped(self):
+        s = "2026年7月3日開催の取締役会で決議した本経営統合のスケジュールの変更は、以下のとおりです。"
+        self.assertEqual(self.k(s, "delay", title=self.TS), [])
+
+    def test_merge_buyback_twin_without_shares(self):
+        def ev(i, url, title, bb):
+            return {"id": i, "kind": "buyback", "code": "5703", "announced_at": "2026-11-02 15:00:00", "url": url, "title": title,
+                    "bb": bb, "checked_at": "x", "quote": i, "page": 1, "target_text": "x", "time_text": None}
+        tan = ev("a", "https://example.invalid/t.pdf", "2027年3月期 第2四半期 決算短信", {"period": None, "shares": None, "amount": None})
+        notice = ev("b", "https://example.invalid/n.pdf", "自己株式取得に係る事項の決定に関するお知らせ",
+                    {"period": ("2026年11月4日", "2027年3月31日"), "shares": "600,000", "amount": "15億円"})
+        evs, _, _ = merge_events([], [tan])
+        evs, _, _ = merge_events(evs, [notice])
+        self.assertEqual(len(evs), 1)
+        self.assertEqual(evs[0]["url"], "https://example.invalid/n.pdf")
+
+    def test_forecast_items_core_operating_and_eps(self):
+        from extract import extract_forecast_rows
+        ctx = dict(CTX, title="業績予想の修正に関するお知らせ")
+        t = ("2027年3月期通期連結業績予想数値の修正\n前回発表予想 今回修正予想 増減額 増減率\n"
+             "コア営業利益 100 120 20 20.0\n営業利益 90 110 20 22.2\n当期純利益 50円00銭 60円00銭 10円00銭 20.0\n")
+        rows = extract_forecast_rows(t, 1, ctx)
+        names = [r["item"] for r in rows]
+        self.assertEqual(names.count("コア営業利益"), 1)
+        self.assertEqual(names.count("営業利益"), 1)
+        eps = [r for r in rows if "1株当たり" in r["item"]]
+        self.assertEqual([r["item"] for r in eps], ["1株当たり当期純利益"])   # 円で書かれた値は金額の純利益ではない
+        self.assertEqual(eps[0]["unit"], "円")
+        self.assertIn("円", eps[0]["summary"])
 
 
 class TestRetention(unittest.TestCase):

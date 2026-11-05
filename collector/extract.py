@@ -9,7 +9,7 @@ import datetime as dt
 from dates_jp import parse_target, parse_time, norm
 
 NONE = "記載なし"
-EXT_VERSION = "rule-v9"
+EXT_VERSION = "rule-v10"
 
 # (kind, 表示名, トリガー正規表現)  上から順に判定。1文が複数に当てはまってもよい。
 RULES = [
@@ -20,7 +20,7 @@ RULES = [
     ("launch", "発売・販売開始", r"発売|販売を?開始|販売開始|サービス(?:を)?開始|提供を?開始|上市(?=[^。]{0,6}(?:目指|予定|計画|見込))"),
     ("development", "開発・試験・承認", r"承認申請|承認(?:を)?取得|承認(?:を)?受け|治験|臨床試験|開発(?:を)?開始|試作|実証実験|認証取得"),
     ("production", "工場・設備・量産", r"量産|工場(?:の)?(?:稼働|新設|建設|竣工)|稼働(?:を)?開始|(?<!需要)(?<!の)設備投資(?!需要)(?:を|の実施)|生産(?:能力|を)?(?:開始|増強)"),
-    ("alliance", "提携・受注・海外", r"業務提携|資本提携|提携(?:契約|を|します|いたし)|受注(?:しました|いたしました|決定|内定|契約|のお知らせ)|を受注|海外(?:進出|展開)|海外拠点(?:の)?(?:設立|開設|新設)|子会社(?:の)?(?:設立|化)"),
+    ("alliance", "提携・受注・海外", r"業務提携|資本提携|提携(?:契約|を|します|いたし)|受注(?:しました|いたしました|決定|内定|契約|のお知らせ)|を受注|海外(?:進出|展開)|海外拠点(?:の)?(?:設立|開設|新設)|合弁会社(?:を|の)?設立|子会社(?:の)?(?:設立|化)"),
     ("buyback", "自社株買い", r"自己株式(?:の)?取得に係る事項|自己株式取得枠|取得(?:する)?株式の総数|自己株式(?:の)?取得(?:を)?(?:決議|決定)|自社株買い(?:を)?(?:実施|決議|発表)"),
     ("delay", "延期・中止・条件変更", r"延期|中止(?!する場合|日|及び|事業)|撤回|(?:スケジュール|予定|条件)(?:の)?(?:変更|見直し)|遅れる|遅延|時期(?:については|は)(?=[^。]{0,12}(?:令和\d+年|\d{4}年))"),
 ]
@@ -46,6 +46,14 @@ TANSHIN_TITLE_RE = re.compile(r"決算短信")   # 短信は新規の提携を�
 ALLIANCE_PAST_RE = re.compile(r"(?:子会社化|設立|取得|提携)(?:し|いたし)(?:た|ました|て|、|。|$)|完了|終了|公表したとおり|開示したとおり|提携契約に基づ|前年同期|前期|反動|差益")
 ALLIANCE_POLICY_RE = re.compile(r"考えており|積極的に推進|積極的に取り組|M&A\s*[（(]|方針")   # 一般的な方針の説明
 ALLIANCE_RECAP_WORD_RE = re.compile(r"既存|本提携を通じ|本提携により|パートナーシップ")   # 短信中の再掲・効果の説明
+ALLIANCE_WORD_RE = re.compile(r"提携|子会社化|基本合意|パートナーシップ|合弁|資本参加|資本業務|出資|M&A|買収|業務協力")
+ALLIANCE_EFFECT_RE = re.compile(r"業績に(?:与える|及ぼす)影響|影響は(?:軽微|限定的|ありません)|今後の見通し")
+PAST_VERB_RE = re.compile(r"(?:し|いたし)(?:た|ました)|済み|でした")
+REVISION_RECAP_RE = re.compile(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)\s*(?:付け?)?(?:で|にて|に)?[^。]{0,40}?(?:公表|発表|開示|修正)(?:し|いた)")
+NEWISH_RE = re.compile(r"今般|本日|このたび|この度|今回|再度|さらに|更に")
+DELAY_DECISION_RE = re.compile(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)[^。]{0,25}?(?:決議|開示|公表|発表)")
+BB_REPORT_RE = re.compile(r"買付期間|買付株式数|買付総額|買付け?た自己株式|買付けを?(?:行いません|いたしません|行いませんでした)|取得結果|取得状況|累計")
+BB_OLD_RESOLUTION_RE = re.compile(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)開催の取締役会での決議内容")
 YM_RE = re.compile(r"(\d{4})\s*[年/.]\s*(\d{1,2})")
 SUBSIDIARY_TITLE_RE = re.compile(r"連結子会社.*業績予想|子会社の業績予想")
 # 想定為替は「想定・前提・影響」と数字がそろうものだけ。ETFの換算レート等は除く
@@ -100,8 +108,8 @@ def _mask_quotes(s):
 
 
 PROGRESS_RE = re.compile(r"進捗|状況|結果")
-BB_PERIOD_RE = re.compile(r"取得(?:の)?期間[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)\s*(?:から|～|〜|~|－|-)\s*(\d{4}年\d{1,2}月\d{1,2}日)")
-BB_SHARES_RE = re.compile(r"取得(?:する)?株式の総数[:：]?\s*([\d,]+)\s*株")
+BB_PERIOD_RE = re.compile(r"(?:取得(?:の)?|自己株式取得の)(?:期間|日程)[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)\s*(?:から|～|〜|~|－|-)\s*(\d{4}年\d{1,2}月\d{1,2}日)")
+BB_SHARES_RE = re.compile(r"取得(?:する|し得る|しうる)?株式の総数[:：]?\s*([\d,]+)\s*株")
 BB_AMOUNT_RE = re.compile(r"取得価額の総額[:：]?\s*([\d,\.]+\s*(?:百万円|億円|万円|円))")
 BB_RATIO_RE = re.compile(r"発行済株式総数[^。]{0,30}?の?\s*(\d+(?:\.\d+)?)\s*%")
 
@@ -149,6 +157,26 @@ def _buyback_key(code, d):
     if not d or not (d["period"] or d["shares"]):
         return None
     return event_key(code, "buyback", "bb|%s|%s|%s" % (d["period"], d["shares"], d["amount"]))
+
+
+def _is_past_date(txt, base):
+    t = parse_target(txt, base)
+    return bool(t and t["precision"] == "day" and t["start"] < base.isoformat())
+
+
+def _past_month_only(seg, base):
+    """「7月に…締結した」のように年のない過去の月 + 過去形。発表月より前の月なら過去の再掲。"""
+    if not PAST_VERB_RE.search(seg):
+        return False
+    for m in re.finditer(r"(?<![\d年])(\d{1,2})月(?!\d{1,2}日)(?:に|には|、|頃|上旬|中旬|下旬)", seg):
+        if 1 <= int(m.group(1)) < base.month:
+            return True
+    return False
+
+
+def _old_resolution(flat, base):
+    m = BB_OLD_RESOLUTION_RE.search(flat)
+    return bool(m and _is_past_date(m.group(1), base))
 
 
 def _past_ym_before(seg, base):
@@ -255,12 +283,17 @@ def extract_page(page_text, page_no, ctx):
                 continue
             if k == "buyback" and RECAP_TITLE_RE.search(title):
                 continue   # 決算説明資料などの再掲は出さない
+            if k == "buyback" and (BB_REPORT_RE.search(page_flat) or _old_resolution(page_flat, base)):
+                continue   # 買付の実施報告・過去の決議の再掲は新規の自社株買いではない
             if k == "buyback" and (END_BUYBACK_TITLE_RE.search(title) or re.search(r"取得を終了|終了いたしました", near)):
                 continue
             if k == "alliance" and (re.search(r"ご参照|プレスリリース|開示事項の経過", s_win + title)
                                     or ALLIANCE_PAST_RE.search(near)
                                     or RECAP_TITLE_RE.search(title)
                                     or ALLIANCE_POLICY_RE.search(s_win)
+                                    or ALLIANCE_EFFECT_RE.search(s)
+                                    or (re.search(r"受注", title) and not ALLIANCE_WORD_RE.search(s_win))
+                                    or _past_month_only(s_win, base)
                                     or (TANSHIN_TITLE_RE.search(title)
                                         and (_past_ym_before(s, base) or ALLIANCE_RECAP_WORD_RE.search(s)))
                                     or _past_ym_before(sm[max(0, m.start() - 40): m.end()], base)):
@@ -272,10 +305,25 @@ def extract_page(page_text, page_no, ctx):
             if k == "buyback":
                 if bb_detail[0] is None:
                     bb_detail[0] = buyback_detail(page_flat)
+                    if not bb_detail[0]["shares"] and ctx.get("doc_flat"):
+                        bb_detail[0] = buyback_detail(ctx["doc_flat"])
                 tgt = _buyback_target(bb_detail[0])   # 決議日ではなく取得期間に統一(無ければ日付なし)
                 bb_id = _buyback_key(ctx["code"], bb_detail[0])
             if k == "delay" and re.search(r"時期(?:については|は)", near) and not re.search(r"変更|延期|遅", title + s):
                 continue   # 「時期は○年」だけでは、変更後の日程かどうか分からない
+            recap_review = False
+            if k in ("revision_up", "revision_down", "forecast") and not re.search(r"業績予想|修正|差異", title):
+                mr = REVISION_RECAP_RE.search(sm[max(0, m.start() - 110): m.end()])
+                if mr and _is_past_date(mr.group(1), base):
+                    if not NEWISH_RE.search(s):
+                        continue   # 「○月○日付で公表した…」と過去の公表を振り返る記述
+                    recap_review = True
+            if k == "delay" and (RECAP_TITLE_RE.search(title) or TANSHIN_TITLE_RE.search(title)):
+                prior = "".join(sents[max(0, si - 2): si + 1])
+                md = DELAY_DECISION_RE.search(prior)
+                if md and _is_past_date(md.group(1), base):
+                    continue   # 過去に決議・開示した日程変更の再掲
+                recap_review = True
             if k in ("revision_up", "revision_down") and ADJUST_RE.search(s_win):
                 continue   # 前年比較などの調整表の説明で、業績予想の修正ではない
             if k in ("revision_up", "revision_down") and re.search(r"業界|市場", s_win) \
@@ -292,11 +340,19 @@ def extract_page(page_text, page_no, ctx):
             if k == "delay" and tgt is None and re.search(r"未定", s_win + "".join(sents[si + 1: si + 3])):
                 review_extra = True   # 変更後の日程が「未定」: 日付なしで要確認
                 summary = _quote(s_win, 70) + "（変更後の時期は未定）"
+            if recap_review:
+                review_extra = True
+            if k in ("delay", "launch", "alliance", "buyback") and tgt is None:
+                review_extra = True   # 日付がなく根拠が弱いものは確定扱いにしない
             if neigh_note:
                 review_extra = True   # 次の文の日付は一部の地点・案件のみの可能性があるため採用しない
                 summary = _quote(s_win, 60) + neigh_note
-            if k == "buyback" and bb_detail[0] and bb_detail[0]["parts"]:
-                summary = "自己株式の取得（" + "／".join(bb_detail[0]["parts"]) + "）"
+            if k == "buyback" and bb_detail[0] is not None:
+                parts = list(bb_detail[0]["parts"])
+                if not bb_detail[0]["shares"]:
+                    parts.append("上限株数 本文から読み取れず")
+                    review_extra = True
+                summary = "自己株式の取得（" + "／".join(parts) + "）"
             ev = {
                 "kind": k,
                 "kind_label": n,
@@ -318,13 +374,15 @@ def extract_page(page_text, page_no, ctx):
                 "confirmed": bool(tgt and tgt["precision"] == "day" and not tgt["needs_review"]),
                 "needs_review": bool((tgt and tgt["needs_review"]) or review_extra),
             }
+            if k == "buyback" and bb_detail[0] is not None:
+                ev["bb"] = {x: bb_detail[0][x] for x in ("period", "shares", "amount")}
             ev["id"] = event_key(ctx["code"], k, s_win) if not bb_id else bb_id
             events.append(ev)
     return events
 
 
 RNG = r"[△▲\-]?\d[\d,]*(?:\.\d+)?"
-ITEM_RE = re.compile(r"売上高|売上収益|営業収益|営業利益|経常利益|親会社株主に帰属する(?:当期|中間|四半期)純利益|親会社の所有者に帰属する(?:当期|中間|四半期)利益|"
+ITEM_RE = re.compile(r"コア営業利益|売上高|売上収益|営業収益|営業利益|経常利益|親会社株主に帰属する(?:当期|中間|四半期)純利益|親会社の所有者に帰属する(?:当期|中間|四半期)利益|"
                      r"1株当たり(?:当期|中間|四半期)純利益|1株当たり(?:当期|中間|四半期)利益|基本的1株当たり(?:当期|中間|四半期)利益|"
                      r"(?:当期|中間|四半期)純利益|(?:当期|中間|四半期)利益|1株当たり配当金|年間配当金")
 # 数値1個 = 「14円00銭」「99円」「△304」「45,500～46,000」のどれか
@@ -406,15 +464,19 @@ def _unit_of(*texts):
 
 def _row(ctx, page_no, item, prev, new, line, verified, basis=None, period=NONE, diff_text=None, note=None, unit=None):
     """prev/new は表示用の文字列。数値化できるときだけ差を計算する。"""
+    if re.fullmatch(r"(?:当期|中間|四半期)(?:純)?利益", item) and prev.endswith(("円", "銭")):
+        item = "1株当たり" + item   # 円・銭で書かれた値は1株当たりの数値(金額の純利益ではない)
+    eps = "1株当たり" in item
     pv, nv = _num_of(prev), _num_of(new)
     diff = None if pv is None or nv is None else round(nv - pv, 6)
-    if item.startswith("1株当たり") or prev.endswith(("円", "銭")):
-        unit = None
-    u = unit or ""
+    if eps or prev.endswith(("円", "銭")):
+        unit = "円" if eps else None
+    u = "" if (eps and prev.endswith(("円", "銭"))) else (unit or "")
+    du = "円" if eps else u
     if diff is not None:
-        dtxt = "（差 %+g%s）" % (diff, u)
+        dtxt = "（差 %+g%s）" % (diff, du)
     elif diff_text:
-        dtxt = "（差 %s%s）" % (diff_text, u)
+        dtxt = "（差 %s%s）" % (diff_text, du)
     else:
         dtxt = ""
     return {
@@ -615,6 +677,7 @@ def extract_document(pages, ctx):
     """pages: [str,...] (1ページ目が先頭)。重複は id で除去。"""
     seen, out = set(), []
     sub = bool(SUBSIDIARY_TITLE_RE.search(ctx.get("title", "")))
+    ctx = dict(ctx, doc_flat="".join("".join(sentences(p)) for p in pages[:6]))
     for i, p in enumerate(pages, 1):
         for ev in extract_page(p, i, ctx) + extract_forecast_rows(p, i, ctx):
             if ev["id"] in seen:
@@ -663,12 +726,31 @@ def _primary_title(title):
     return not (RECAP_TITLE_RE.search(t) or TANSHIN_TITLE_RE.search(t))
 
 
+def _buyback_twin(events, ev):
+    for o in events:
+        if o["kind"] != "buyback" or o["code"] != ev["code"]:
+            continue
+        a, b = o.get("bb") or {}, ev.get("bb") or {}
+        same_day = (o["announced_at"] or "")[:10] == (ev["announced_at"] or "")[:10]
+        if a.get("period") and b.get("period") and a["period"] == b["period"] and a.get("shares") == b.get("shares"):
+            return o
+        if same_day and a.get("shares") and a.get("shares") == b.get("shares"):
+            return o
+        if same_day and not (a.get("shares") and b.get("shares")):
+            return o   # 同じ日の同じ会社の自社株買いで、片方に株数が読めていなければ同じ決議とみなす
+    return None
+
+
 def merge_events(existing, new):
     """同じidは重複登録せず、内容が変わった場合のみ履歴に残す。"""
     by_id = {e["id"]: e for e in existing}
     added = updated = 0
     for ev in new:
         old = by_id.get(ev["id"])
+        if not old and ev["kind"] == "buyback":
+            old = _buyback_twin(by_id.values(), ev)   # 別資料(短信とお知らせ)に書かれた同じ決議
+            if old:
+                ev["id"] = old["id"]
         if not old:
             ev["history"] = []
             by_id[ev["id"]] = ev
