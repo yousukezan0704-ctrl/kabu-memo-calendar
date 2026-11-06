@@ -31,14 +31,33 @@ def main():
     git("pull", "--rebase", "-q")
     dst = os.path.join(LOCAL, "data")
     os.makedirs(dst, exist_ok=True)
+    # 検証してから送る: 構造の問題があれば送らず、精度未確認の種類は保留にして外す
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import validate_data
+    problems = validate_data.check(SRC, dst)
+    if problems:
+        print("検証に失敗しました。送信しません:")
+        for p in problems:
+            print(" -", p)
+        return 1
+    stage = os.path.join(os.environ.get("TEMP", LOCAL), "kmc_stage")
+    shutil.rmtree(stage, ignore_errors=True)
+    shutil.copytree(SRC, stage, ignore=shutil.ignore_patterns("*.md"))
+    held = validate_data.hold(stage)
+    print("保留(精度未確認): %d 件" % held)
+    SRC_USE = stage
     n = 0
-    for f in FILES:
-        p = os.path.join(SRC, f)
+    for f in FILES + ["held.json"]:
+        p = os.path.join(SRC_USE, f)
         if os.path.isfile(p):
             shutil.copy2(p, os.path.join(dst, f))
             n += 1
+    seen = os.path.join(ROOT, "state", "seen.json")
+    if os.path.isfile(seen):  # クラウド収集が続きから動けるよう、取得済みの記録も置く
+        os.makedirs(os.path.join(LOCAL, "state"), exist_ok=True)
+        shutil.copy2(seen, os.path.join(LOCAL, "state", "seen.json"))
     for d in DIRS:
-        sd = os.path.join(SRC, d)
+        sd = os.path.join(SRC_USE, d)
         if os.path.isdir(sd):
             os.makedirs(os.path.join(dst, d), exist_ok=True)
             for f in os.listdir(sd):

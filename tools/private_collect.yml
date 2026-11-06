@@ -1,0 +1,60 @@
+# 非公開データ用リポジトリ(kabu-memo-private-data)の .github/workflows/collect.yml に置く雛形。
+# ・今は「手動実行のみ」。自動(schedule)は、精度の検証が終わるまで有効にしない。
+# ・秘密情報は使わない。自動で付く GITHUB_TOKEN だけで、このリポジトリに書き込む。
+# ・収集コードは公開リポジトリから取得する(読み取りのみ)。データは公開サイトに出さない。
+# ・検証(tools/validate_data.py)に落ちたら、何も反映しない。精度未確認の種類は保留にする。
+name: collect
+on:
+  workflow_dispatch: {}
+  # 検証が終わったら、次の2行のコメントを外す(平日 17:30 / 20:30 JST)
+  # schedule:
+  #   - cron: "30 8,11 * * 1-5"
+permissions:
+  contents: write
+concurrency:
+  group: collect
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: priv }
+      - uses: actions/checkout@v4
+        with: { repository: yousukezan0704-ctrl/kabu-memo-calendar, path: code }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r code/requirements.txt
+      - name: tests
+        run: python -m unittest discover -s code/collector/tests -p "test_*.py"
+        env: { PYTHONPATH: code/collector }
+      - name: restore data
+        run: |
+          mkdir -p code/docs/data code/state
+          cp -r priv/data/. code/docs/data/ || true
+          cp -r priv/state/. code/state/ || true
+      - name: collect
+        run: python code/collector/collect.py --days 3 --budget 600
+      - name: validate and stage
+        run: |
+          python code/tools/validate_data.py code/docs/data priv/data
+          python - <<'EOF'
+          import sys, shutil
+          sys.path.insert(0, "code/tools")
+          import validate_data
+          shutil.rmtree("stage", ignore_errors=True)
+          shutil.copytree("code/docs/data", "stage")
+          print("held:", validate_data.hold("stage"))
+          EOF
+          cp -r stage/. priv/data/
+          mkdir -p priv/state && cp -r code/state/. priv/state/
+      - name: commit
+        working-directory: priv
+        run: |
+          git config user.name "kabu-memo-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data state
+          git diff --cached --quiet || git commit -m "data (cloud) $(date -u +%F' '%R)"
+          git pull --rebase -q || true
+          git push
