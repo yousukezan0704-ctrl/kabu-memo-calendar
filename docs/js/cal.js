@@ -23,6 +23,22 @@
     return '<span class="badge b-warn">時期のみ</span>' + (it.review ? ' <span class="badge b-ng">要確認</span>' : "");
   };
 
+  /* 確認状況: 日付が確定していない・要確認のものは「確定」「確認済み」にしない */
+  K.statusBadge = function (it) {
+    if (it.src !== "ir") return "";
+    if (it.checkedByMe) return "";
+    var ok = it.confirmed && !it.review && it.date;
+    if (it.kind === "earnings_actual" && !it.review) ok = true;
+    return ok ? '<span class="badge b-ok st">確認済み</span>' : '<span class="badge b-ng st">要確認</span>';
+  };
+  /* 情報源の短い表記（TDnetの資料はURLで判定） */
+  K.sourceLabel = function (it) {
+    if (it.src === "user") return "自分で入力";
+    if (it.src === "memo") return "自分のメモ";
+    if (it.sample) return "サンプル（架空）";
+    return /tdnet/i.test(it.url || "") ? "TDnet（会社の適時開示）" : "会社公表の資料";
+  };
+
   function md(s) { return (s || "").slice(5, 10).replace("-", "/"); }
 
   /* 予定1件のカード（コンパクト）。
@@ -37,12 +53,13 @@
     h += '<div class="body">' + E(it.title) + "</div>";
     h += '<div class="l3">';
     if (it.src === "ir") {
-      h += '<span class="muted">発表 ' + E(md(it.announced_at)) + " ／ 対象 " + E(it.raw || "記載なし") + (it.date ? " → " + E(K.fmtDay(it.date)) : "") + "</span> ";
+      h += '<span class="muted">発表 ' + E(md(it.announced_at)) + " ／ 対象 " + E(it.raw || "未取得") + (it.date ? " → " + E(K.fmtDay(it.date)) : "") + "</span> ";
       if (it.kind === "earnings" || it.kind === "earnings_actual") h += '<span class="muted">／ 時刻 ' + E(K.timeText(it)) + "</span> ";
     } else if (it.time || it.kind === "earnings") {
       h += '<span class="muted">時刻 ' + E(K.timeText(it)) + "</span> ";
     }
     h += (it.kind === "forecast_item" ? "" : K.certainty(it) + " ") + K.originBadge(it.origin);
+    h += " " + K.statusBadge(it);
     if (it.sample) h += ' <span class="badge b-sample">サンプル</span>';
     if (it.src === "ir" && K.catOf(it)) h += ' <span class="badge b-cat">' + E(K.catOf(it)) + "</span>";
     if (it.src === "ir" && K.RISKY_KINDS[it.kind]) h += ' <span class="badge b-warn">自動抽出・要確認</span>';
@@ -53,7 +70,9 @@
     if (opt.pre) h += opt.pre;
     if (it.src === "ir") {
       var f = '<dl class="kv">';
-      f += "<dt>発表</dt><dd>" + E((it.announced_at || "").slice(0, 16)) + "</dd>";
+      f += "<dt>情報源</dt><dd>" + E(K.sourceLabel(it)) + "</dd>";
+      f += "<dt>発表日</dt><dd>" + E((it.announced_at || "").slice(0, 16) || "未取得") + "</dd>";
+      f += "<dt>確認状況</dt><dd>" + (it.checkedByMe ? "自分で確認済み" : (it.confirmed && !it.review && it.date) || it.kind === "earnings_actual" ? "確認済み（会社の公表資料から抽出）" : "要確認（自動抽出のため、元資料で確かめてください）") + "</dd>";
       if (it.bucket && it.bucket.start) f += "<dt>時期の解釈</dt><dd>" + E(it.bucket.label) + "</dd>";
       f += "<dt>時刻</dt><dd>" + E(K.timeText(it)) + "</dd>";
       if (/^(revision|forecast|fx)/.test(it.kind)) f += "<dt>業績影響時期</dt><dd>" + E(it.impact || "記載なし") + "</dd>";

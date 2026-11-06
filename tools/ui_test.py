@@ -98,6 +98,65 @@ def new_features(pg, tag, vp):
     check(tag + "[履歴] refNext: 訂正を除き最も近い昨年同期を選ぶ", pg.evaluate("(items) => { var r = KMC.refNext(items); return r && r.h.period_type; }", HIST["items"]) == "第2四半期")
     check(tag + "[履歴] refNext: 発表日が今日より後・1年後が過去のものは除く", pg.evaluate("(td) => KMC.refNext([{pubdate: KMC.addDays(td, 5) + ' 15:00:00'}, {pubdate: KMC.addDays(td, -400) + ' 15:00:00'}])", pg.evaluate("KMC.today()")) is None)
 
+    # ===== iPhone向けの見た目・下固定ナビ =====
+    pg.evaluate("KMC.ui.tab = 'cal'; KMC.render()"); pg.wait_for_timeout(100)
+    nav = pg.evaluate("""() => { var n = document.getElementById('tabs'), r = n.getBoundingClientRect(), cs = getComputedStyle(n);
+      return {pos: cs.position, bottom: r.bottom, top: r.top, h: r.height, vh: window.innerHeight, n: n.querySelectorAll('.tab').length,
+              labels: [...n.querySelectorAll('.tab')].map(b => b.textContent.trim()), minH: Math.min(...[...n.querySelectorAll('.tab')].map(b => b.getBoundingClientRect().height))}; }""")
+    check(tag + "[UI] ナビは画面下に固定", nav["pos"] == "fixed" and abs(nav["bottom"] - nav["vh"]) < 1.5, nav)
+    check(tag + "[UI] ナビは5つ(カレンダー・重要IR・注目・銘柄・メモ設定)", nav["n"] == 5 and "カレンダー" in nav["labels"][0] and "重要IR" in nav["labels"][1] and "注目" in nav["labels"][2] and "銘柄" in nav["labels"][3] and "メモ" in nav["labels"][4], nav["labels"])
+    check(tag + "[UI] ナビの高さは親指で押せる48px以上", nav["minH"] >= 48, nav["minH"])
+    css = pg.evaluate("fetch('style.css').then(r => r.text())")
+    check(tag + "[UI] ノッチ・ホームバー対応(safe-area)", "env(safe-area-inset-bottom)" in css and "env(safe-area-inset-top)" in css)
+    head = pg.evaluate("[...document.querySelectorAll('head meta, head link')].map(e => e.outerHTML).join(' ')")
+    check(tag + "[UI] ホーム画面起動の設定(全画面・ステータスバー・アイコン)", 'apple-mobile-web-app-capable' in head and 'apple-mobile-web-app-status-bar-style' in head and 'apple-touch-icon' in head and 'viewport-fit=cover' in head)
+    check(tag + "[UI] 最初に開くのはカレンダー", pg.evaluate("document.querySelector('#tabs .tab.on').textContent").find("カレンダー") >= 0)
+    pg.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)"); pg.wait_for_timeout(100)
+    fb = pg.evaluate("document.querySelector('.foot').getBoundingClientRect().bottom <= document.getElementById('tabs').getBoundingClientRect().top + 1")
+    check(tag + "[UI] 最下部の内容がナビに隠れない", fb)
+    pg.evaluate("window.scrollTo(0, 0)")
+    # ナビの移動
+    pg.click("#tabs .tab[data-v=watch]"); pg.wait_for_timeout(150)
+    check(tag + "[UI] 「注目」ナビで注目の一覧", pg.locator("#tabs .tab.on").inner_text().find("注目") >= 0 and pg.locator(".subtabs button.on").inner_text() == "注目")
+    pg.click("#tabs .tab[data-v=search]"); pg.wait_for_timeout(150)
+    check(tag + "[UI] 「銘柄」ナビで銘柄の一覧(検索欄)", pg.locator("#s-q").count() == 1 and pg.locator("#tabs .tab.on").inner_text().find("銘柄") >= 0)
+    pg.click("#tabs .tab[data-v=memo]"); pg.wait_for_timeout(150)
+    check(tag + "[UI] 「メモ・設定」ナビ", "非公開データの接続" in pg.inner_text("main") and no_hscroll(pg))
+    pg.click("#tabs .tab[data-v=cal]"); pg.wait_for_timeout(150)
+    check(tag + "[UI] 本文は17px以上・カードは角丸", pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 17 and pg.evaluate("parseFloat(getComputedStyle(document.querySelector('.fold')).borderTopLeftRadius)") >= 10)
+    # ダークモード（既存を壊さない）
+    pg.emulate_media(color_scheme="dark"); pg.wait_for_timeout(150)
+    bg = pg.evaluate("getComputedStyle(document.body).backgroundColor"); nbg = pg.evaluate("getComputedStyle(document.getElementById('tabs')).backgroundColor")
+    rgb = lambda c: [int(x) for x in c[c.index('(') + 1:c.index(')')].split(',')[:3]]
+    check(tag + "[UI] ダークモードで背景が暗く、横スクロールなし", sum(rgb(bg)) < 150 and sum(rgb(nbg)) < 200 and no_hscroll(pg), (bg, nbg))
+    pg.evaluate("KMC.ui.tab = 'ir'; KMC.render()"); pg.wait_for_timeout(100)
+    check(tag + "[UI] ダークモードでIR画面も横スクロールなし", no_hscroll(pg))
+    pg.emulate_media(color_scheme="light"); pg.wait_for_timeout(100)
+    # IR: 種別・情報源・発表日・確認状況
+    pg.evaluate("""() => { var s = KMC.data.sample.events, t = KMC.today(), E0 = s.filter(e => e.kind === 'earnings')[0];
+      s.push(Object.assign({}, E0, {id: 'ui-ok', code: 'U001', name: '確認済みUI社', kind: 'revision_up', kind_label: '上方修正', announced_at: t + ' 09:00:00', target: null, target_text: '記載なし', needs_review: false, summary: 'UI確認用の上方修正'}));
+      s.push(Object.assign({}, E0, {id: 'ui-ng', code: 'U002', name: '要確認UI社', kind: 'buyback', kind_label: '自社株買い', announced_at: t + ' 09:00:00', target: null, target_text: '記載なし', needs_review: true, summary: 'UI確認用の自社株買い'}));
+      KMC.ui.tab = 'ir'; KMC.irUi.sub = 'all'; KMC.irUi.limit = 400; KMC.filter.text = 'UI社'; KMC.render(); }""")
+    pg.wait_for_timeout(200)
+    c_ok = pg.locator("article.card:has-text('確認済みUI社')"); c_ng = pg.locator("article.card:has-text('要確認UI社')")
+    check(tag + "[UI] 種別を分類表示(上方修正・自社株買い)", c_ok.locator(".chip").first.inner_text() == "上方修正" and c_ng.locator(".chip").first.inner_text() == "自社株買い")
+    check(tag + "[UI] 日付が確定した公表資料は「確認済み」", c_ok.locator(".badge.st").count() == 1 and "確認済み" in c_ok.locator(".badge.st").inner_text())
+    check(tag + "[UI] needs_review のものは「確認済み」にしない(要確認)", "要確認" in c_ng.locator(".badge.st").inner_text() and "確認済み" not in c_ng.locator(".badge.st").inner_text())
+    c_ok.locator("summary:has-text('根拠を見る')").click(); pg.wait_for_timeout(100)
+    dd = c_ok.inner_text()
+    check(tag + "[UI] 詳細に情報源・発表日・確認状況", "情報源" in dd and "発表日" in dd and "確認状況" in dd)
+    n_bad = pg.evaluate("[...document.querySelectorAll('article.card.unconf .badge.st')].filter(b => b.textContent.indexOf('確認済み') >= 0).length")
+    check(tag + "[UI] 未確定(破線)のカードに「確認済み」は出ない", n_bad == 0, n_bad)
+    pg.evaluate("KMC.filter.text = ''; KMC.irUi.limit = 12; KMC.render()")
+    # 案内文（未接続・認証・オフライン）
+    pg.evaluate("KMC.data.status = null; KMC.data.loadErrors = ['取得状況: 未取得（404）']; KMC.render()")
+    t_ = pg.inner_text("main")
+    check(tag + "[UI] 未接続の案内は手順(①②③)で短く", "①" in t_ and "②" in t_ and "③" in t_ and "非公開データの接続" in t_)
+    pg.evaluate("KMC.data.loadErrors = ['取得状況: 通信できません（オフラインか、電波が弱い状態です）']; KMC.render()")
+    check(tag + "[UI] オフライン時の案内", "電波の良い場所" in pg.inner_text("main"))
+    pg.evaluate("KMC.loadData().then(() => KMC.render())"); pg.wait_for_timeout(500)
+    pg.evaluate("KMC.ui.tab = 'cal'; KMC.irUi.limit = 12; KMC.render()")
+
     # ===== (C) 設定の既定値 =====
     pg.evaluate("KMC.state.settings = {showSample: true, notifyChecked: '未確認', notifyNote: ''}; KMC.save()")   # 古い保存形式(notifyなし)
     check(tag + "通知の既定は4項目ともON", pg.evaluate("(c => c.before && c.today && c.ir && c.memo)(KMC.notifyCfg())"))
@@ -499,7 +558,7 @@ with sync_playwright() as p:
         if vp["width"] < 500:
             hs = pg.evaluate("[...document.querySelectorAll('.irsub button, .tab, main button')].filter(b=>b.offsetParent).map(b=>b.getBoundingClientRect().height)")
             check(tag + "ボタンの高さ44px以上", min(hs) >= 43.5, min(hs))
-            check(tag + "本文の文字16px以上", pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 16)
+            check(tag + "本文の文字16px以上", pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 17)
         # 新フィールド(note/verify_basis/section/diff_text/impact_period)の表示
         pg.evaluate("""() => { var s = KMC.data.sample.events;
           s.push(Object.assign({}, s.filter(e => e.kind === 'forecast_item')[0], {id: 'sample-nf', item: '幅テスト項目', prev: '10〜12', new: '11〜13', diff: null,
@@ -586,7 +645,7 @@ with sync_playwright() as p:
         pg.set_input_files("#restore-file", bad); pg.wait_for_timeout(300)
         check(tag + "壊れたバックアップを拒否", "テスト会社" in pg.inner_text("main"))
         # 株価CSV
-        pg.click(".tab:has-text('銘柄・テーマ')"); pg.click(".subtabs button:has-text('銘柄')"); pg.fill("#s-code", "7203"); pg.click("button:has-text('この銘柄を開く')")
+        pg.click(".tab[data-v='search']"); pg.click(".subtabs button:has-text('銘柄')"); pg.fill("#s-code", "7203"); pg.click("button:has-text('この銘柄を開く')")
         check(tag + "株価未取得表示", "未取得" in pg.inner_text("main"))
         rows = ["日付,始値,高値,安値,終値,出来高"]
         import datetime as dt

@@ -28,7 +28,7 @@
       if (!r.ok) throw fail("http", "取得できません（HTTP " + r.status + "）");
       if (remote) K.srcState.auth = false;
       return r.json().catch(function () { throw fail("http", "データの形が正しくありません"); });
-    }, function () { throw fail("net", "通信できません（ネットワークを確認してください）"); });
+    }, function () { throw fail("net", "通信できません（オフラインか、電波が弱い状態です）"); });
   };
   function getJson(path) { return K.fetchData(path); }
 

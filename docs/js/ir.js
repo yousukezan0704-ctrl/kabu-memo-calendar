@@ -1,6 +1,6 @@
 (function (K) {
   var E = K.esc;
-  K.irUi = K.irUi || { limit: 20, reviewOnly: false, showFailed: false };
+  K.irUi = K.irUi || { limit: 12, reviewOnly: false, showFailed: false };
 
   /* "2026-11-03T21:01:55+09:00" -> "21:01"（今日でなければ "11/2 21:01"） */
   function hm(v) {
@@ -142,11 +142,16 @@
   function stamp(v) { return v ? String(v).replace("T", " ").slice(0, 16) : "不明"; }
   K.statusAlert = function () {
     var s = K.data.status;
-    if (K.srcState && K.srcState.auth) return '<p class="errbox">⚠ ' + E(K.AUTH_MSG) + "（「メモ」→「非公開データの接続」）</p>";
+    if (K.srcState && K.srcState.auth) {
+      return '<p class="errbox">⚠ ' + E(K.AUTH_MSG) + '。<br>① 下の「メモ・設定」を開く ② 「非公開データの接続」を開く ③ 新しいトークンを貼って「保存して接続テスト」を押す</p>';
+    }
     if (!s) {
       if (!K.data.loadErrors.length) return "";
-      return K.srcGet() ? '<p class="errbox">⚠ 自動取得の状況ファイルを読めませんでした（' + E(K.data.loadErrors[0].replace(/^[^:]*: /, "")) + "）。「メモ」→「非公開データの接続」で接続テストをしてください。</p>"
-        : '<p class="errbox">⚠ IRの収集データは非公開リポジトリにあります。「メモ」→「非公開データの接続」で設定すると表示されます（PCで open_app.bat から開いている場合は設定不要）。</p>';
+      if (K.data.loadErrors.some(function (x) { return x.indexOf("通信できません") >= 0; })) {
+        return '<p class="errbox">⚠ 通信できません。オフラインか、電波が弱い状態です。電波の良い場所で、このアプリを開き直してください。</p>';
+      }
+      if (K.srcGet()) return '<p class="errbox">⚠ データを読めませんでした（' + E(K.data.loadErrors[0].replace(/^[^:]*: /, "")) + '）。「メモ・設定」→「非公開データの接続」で「保存して接続テスト」を押してください。</p>';
+      return '<p class="errbox">⚠ IRのデータは非公開です。見るには、はじめに1回だけ設定します。<br>① 下の「メモ・設定」を開く ② 「非公開データの接続」を開く ③ トークンを貼って「保存して接続テスト」を押す<small class="muted">（パソコンで open_app.bat から開いた場合は設定不要です）</small></p>';
     }
     var lr = s.last_run || null, h = "";
     var ms = s.generated_at ? new Date(s.generated_at).getTime() : NaN, age = (Date.now() - ms) / 86400000;

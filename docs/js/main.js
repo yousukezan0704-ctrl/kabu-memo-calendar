@@ -1,13 +1,19 @@
 /* 画面の切り替えと、ボタン操作のまとめ役 */
 (function (K) {
   var E = K.esc, $ = function (id) { return document.getElementById(id); };
-  var TABS = [["cal", "カレンダー"], ["ir", "重要IR"], ["stocks", "銘柄・テーマ"], ["memo", "メモ"]];
+  /* 画面下のナビ（親指で押す）。[id, 文字, 絵文字]。watch/search は「銘柄・テーマ」画面の注目／銘柄のサブタブへ移る */
+  var TABS = [["cal", "カレンダー", "📅"], ["ir", "重要IR", "📣"], ["watch", "注目", "⭐"], ["search", "銘柄", "🔍"], ["memo", "メモ・設定", "📝"]];
+  function activeTab() {
+    if (K.ui.tab !== "stocks") return K.ui.tab;
+    return K.sUi.sub === "watch" && !K.sUi.code ? "watch" : "search";
+  }
 
   function render(keepFocusId) {
     /* 描き直す前に、いま開いている折りたたみを記録する（toggleイベントの遅れで閉じてしまうのを防ぐ） */
     Array.prototype.forEach.call($("main").querySelectorAll("details[data-key]"), function (d) { K.openState[d.dataset.key] = d.open; });
     var nav = TABS.map(function (t) {
-      return '<button class="tab' + (K.ui.tab === t[0] ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '">' + t[1] + "</button>";
+      var on = activeTab() === t[0];
+      return '<button class="tab' + (on ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '"' + (on ? ' aria-current="page"' : "") + '><span class="ti" aria-hidden="true">' + t[2] + "</span><span class=\"tn\">" + t[1] + "</span></button>";
     }).join("");
     $("tabs").innerHTML = nav;
     var main = $("main"), h = "";
@@ -29,7 +35,11 @@
   }
   K.render = render;
 
-  function go(tab) { K.ui.tab = tab; render(); window.scrollTo(0, 0); }
+  function go(tab) {
+    if (tab === "watch" || tab === "search") { K.ui.tab = "stocks"; K.sUi.sub = tab === "watch" ? "watch" : "stocks"; K.sUi.code = ""; }
+    else K.ui.tab = tab;
+    render(); window.scrollTo(0, 0);
+  }
 
   function openMemo(id) { K.mUi.id = id; go("memo"); }
 

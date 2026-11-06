@@ -150,12 +150,14 @@
   K.srcUi = K.srcUi || { msg: "", ok: null };
   function srcPanel() {
     var cfg = K.srcGet(), r = K.srcUi;
-    var h = '<p class="muted">TDnet由来のIRデータ（予定・財務・履歴）は、公開サイトではなく<b>非公開のGitHubリポジトリ</b>に置いてあります。ここで接続すると、iPhoneでもファイル転送なしで見られます。PCで open_app.bat から開いている場合は設定不要です。</p>' +
+    var h = '<p class="muted">IRのデータ（予定・財務・履歴）は<b>非公開のGitHubリポジトリ</b>に置いてあります。外出先のiPhoneでも、1回設定すれば見られます。</p>' +
+      '<ol class="steps"><li>下の「トークン」欄に、GitHubで作ったトークンを貼る</li><li>「保存して接続テスト」を押す</li><li>「接続できました」と出れば完了。「カレンダー」に戻る</li></ol>' +
       '<p class="warn"><b>トークンの作り方（GitHub → Settings → Developer settings → Fine-grained tokens）</b><br>・対象は<b>この1リポジトリだけ</b>を選ぶ<br>・権限は<b>Contents: Read-only のみ</b><br>・<b>有効期限</b>を付ける<br>トークンは他人に見せないでください。この端末のブラウザにだけ保存され、バックアップや書き出しには含まれません。</p>' +
       '<label>リポジトリ名（所有者/名前）<input id="src-repo" autocomplete="off" value="' + E(cfg ? cfg.repo : K.DEFAULT_REPO) + '"></label>' +
       '<label>トークン<input id="src-token" type="password" autocomplete="off" placeholder="' + (cfg ? "設定済み ••••（変える場合だけ入力）" : "github_pat_ から始まる文字列") + '"></label>' +
       '<p class="muted">状態: ' + (cfg ? "<b>設定済み ••••</b>" : "未設定（この端末では公開サイトの相対パスだけを読みます）") + "</p>" +
       '<div class="row wrap"><button data-act="srctest">保存して接続テスト</button>' + (cfg ? '<button class="danger" data-act="srcclear">接続を解除（この端末のトークンを消す）</button>' : "") + "</div>";
+    h += '<p class="muted small">パソコンで open_app.bat から開いた場合は、この設定は不要です。</p>';
     if (r.msg) h += '<p id="src-result" class="' + (r.ok ? "okbox" : "errbox") + '">' + E(r.msg) + "</p>";
     return h;
   }
