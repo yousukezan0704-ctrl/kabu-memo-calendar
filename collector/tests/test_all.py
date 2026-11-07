@@ -568,7 +568,7 @@ class TestV8(unittest.TestCase):
         self.assertEqual([e for e in self.kinds(s, title="自己株式取得に係る事項の進捗状況に関するお知らせ") if e["kind"] == "buyback"], [])
 
     def test_version(self):
-        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v10")
+        self.assertEqual(self.kinds("新製品Aを2027年2月15日に発売する予定です。")[0]["extractor"], "rule-v11")
 
 
 class TestV9(unittest.TestCase):
@@ -720,6 +720,126 @@ class TestV10(unittest.TestCase):
         self.assertEqual([r["item"] for r in eps], ["1株当たり当期純利益"])   # 円で書かれた値は金額の純利益ではない
         self.assertEqual(eps[0]["unit"], "円")
         self.assertIn("円", eps[0]["summary"])
+
+
+class TestV11(unittest.TestCase):
+    TS = "2027年3月期 第2四半期 決算短信〔日本基準〕(連結)"
+    DECK = "2026年度第2四半期決算説明資料"
+
+    def k(self, s, kind, **kw):
+        return [e for e in extract_page(s, 1, dict(CTX, **kw)) if e["kind"] == kind]
+
+    # ---- 提携
+    def test_alliance_recap_without_new_marker_dropped(self):
+        s = "当社は、A社を連結子会社化することにより、重要顧客を基盤とする安定収益を取り込み、同社との連携をさらに強化します。"
+        self.assertEqual(self.k(s, "alliance", title=self.TS), [])
+        s = "業務提携先との協業により、新たなビジネスプランを検討しています。"
+        self.assertEqual(self.k(s, "alliance", title="2026年9月期 決算のお知らせ"), [])
+
+    def test_alliance_past_dated_resolution_dropped(self):
+        s = "2026年7月31日開催の取締役会において、A社の株式を取得し子会社化することを決議しました。"
+        self.assertEqual(self.k(s, "alliance", title=self.TS), [])
+
+    def test_alliance_new_resolution_kept(self):
+        s = "当社は、2026年11月3日開催の取締役会において、株式会社Bと資本業務提携契約を締結することを決議いたしました。"
+        ev = self.k(s, "alliance", title="株式会社Bとの資本業務提携に関するお知らせ")
+        self.assertEqual(len(ev), 1)
+        # 相手先が読み取れない新規開示は要確認
+        ev = self.k("当社は、本日、業務提携契約を締結いたしました。", "alliance", title="業務提携に関するお知らせ")
+        self.assertTrue(ev and ev[0]["needs_review"])
+
+    # ---- 自社株買い
+    def test_buyback_disposal_to_trust_not_buyback(self):
+        s = ("信託の受託者が当社株式を追加取得するための金銭を追加信託すること、また株式報酬として自己株式の処分を行うことについて決議いたしました。"
+             "取得期間 2026年11月20日から2026年11月30日 取得株式の総数 101,800株 取得価額の総額 308,963,000円")
+        self.assertEqual(self.k(s, "buyback", title="業績連動型株式報酬制度の継続に伴う追加出資及び自己株式の処分に関するお知らせ"), [])
+
+    def test_buyback_split_lines_and_table_layout(self):
+        # 実際の書式: 項目名が行をまたぎ、文字の間に空白が入る(東ソー型)
+        s = ("当社は、2026年11月５日開催の取締役会において、自己株式取得に係る事項について決議しましたので、お知らせいたします。\n"
+             "２．取得に係る事項の内容\n（１） 取得対象株式の種類  普通株式\n（２） 取得し 得 る \n株式の総数  \n12,000,000 株（上限）\n"
+             "（発行済株式総数（自己株式を除く）に対する割合 3.90 ％）\n（３） 株式の取得価額の  \n総額  250 億円（上限）\n"
+             "（４） 取得期間  2026 年11 月６日～2027 年３月31 日\n")
+        ev = self.k(s, "buyback", title="自己株式取得に係る事項の決定に関するお知らせ", pubdate="2026-11-05 15:00:00")
+        self.assertTrue(ev)
+        self.assertIn("上限 12,000,000株", ev[0]["summary"])
+        self.assertIn("250億円", ev[0]["summary"])
+        self.assertEqual(ev[0]["target"]["end"], "2027-03-31")
+        self.assertFalse(ev[0]["needs_review"])
+
+    # ---- 修正イベントの抑止
+    def test_revision_in_deck_is_review_and_capped(self):
+        ctx = dict(CTX, title=self.DECK)
+        pages = ["エレクトロニクス事業は利益を大きく上方修正。", "通期予想の営業利益を当初予想から上方修正。", "住宅事業は北米の需要を踏まえ上方修正。",
+                 "売上高も上方修正している。"]
+        ev = [e for e in extract_document(pages, ctx) if e["kind"] == "revision_up"]
+        self.assertEqual(len(ev), 2)
+        for e in ev:
+            self.assertTrue(e["needs_review"])
+            self.assertFalse(e["confirmed"])
+
+    def test_revision_notice_not_downgraded(self):
+        ev = self.k("通期の営業利益を上方修正いたします。", "revision_up", title="通期業績予想の修正に関するお知らせ")
+        self.assertTrue(ev)
+        self.assertFalse(ev[0]["needs_review"])
+
+    # ---- 量産・為替
+    def test_production_without_date_is_review(self):
+        ev = self.k("高品質を強みに、複数案件を量産化予定。", "production", title=self.DECK)
+        self.assertTrue(ev and ev[0]["needs_review"])
+
+    def test_fx_garbled_numbers_review_and_clean_summary(self):
+        s = "1.1786714534 経常利益151.91008018028141.87910118038（下期想定為替レート USD=150円） 設備投資110億円"
+        ev = self.k(s, "fx", title=self.TS)
+        self.assertTrue(ev and ev[0]["needs_review"])
+        self.assertEqual(ev[0]["summary"], "想定為替レート: USD=150円")
+
+    def test_delay_industry_general_remark_dropped(self):
+        s = "人材不足による工期の遅延が業界全体の課題となっており、計画の見直しを進めています。"
+        self.assertEqual(self.k(s, "delay", title="2026年度決算説明資料"), [])
+
+    # ---- 配当
+    def div(self, pages, title, pub="2026-11-05 15:00:00"):
+        from extract import extract_dividend_events
+        ctx = dict(CTX, title=title, pubdate=pub)
+        return [e for p in pages for e in extract_dividend_events(p, 1, ctx)]
+
+    def test_dividend_increase_table_with_blank_interim(self):
+        t = ("期末配当予想の修正に関するお知らせ（増配）\n1．期末配当予想の修正\n1 株当たり配当金\n第２四半期末 期末 合 計\n"
+             "前 回 発 表 予 想\n（2026年５月22 日発表） 35 円00 銭 35 円00 銭 70 円00 銭\n今 回 修 正 予 想  40 円00 銭 75 円00 銭\n"
+             "当 期 実 績\n（202 7 年 ３ 月 期 ） 35 円00 銭  \n前 期 実 績\n（202 6 年 ３ 月 期 ） 30 円00 銭 30 円00 銭 60 円00 銭\n")
+        ev = self.div([t], "期末配当予想の修正に関するお知らせ（増配）")
+        self.assertEqual(len(ev), 1)
+        e = ev[0]
+        self.assertEqual((e["kind"], e["prev"], e["new"], e["direction"]), ("dividend", "70円00銭", "75円00銭", "増配"))
+        self.assertTrue(e["verified"])          # 75 = 実績35 + 期末40
+        self.assertFalse(e["confirmed"])
+        self.assertIn("期末 35円00銭→40円00銭", e["summary"])
+        self.assertEqual(e["impact_period"], "2027年3月期")
+
+    def test_dividend_dash_column_and_interim_decision(self):
+        t = ("1．剰余金の配当（中間配当）の内容\n決 定 額 直近の配当予想 前期実績\n基準日 2026年９月30日 同左 2025年９月30日\n"
+             "１株当たり配\n当金 24 円 22 円 20 円\n配当金総額 32,083 百万円 － 27,193 百万円\n"
+             "2．2027年3月期の期末配当予想の修正\n１株当たりの配当金（円）\n基準日 第２四半期末 期末 年間\n前回予想\n（2026年７月31日公表）\n22 円 22 円 44 円\n"
+             "今回予想 － 24 円 48 円\n今期実績 24 円 － －\n")
+        ev = self.div([t], "剰余金の配当（中間配当の増配）および期末配当予想の修正に関するお知らせ")
+        by = {e["item"]: e for e in ev}
+        self.assertEqual((by["年間配当"]["prev"], by["年間配当"]["new"], by["年間配当"]["direction"]), ("44円", "48円", "増配"))
+        self.assertTrue(by["年間配当"]["verified"])
+        self.assertEqual((by["中間配当(決定額)"]["prev"], by["中間配当(決定額)"]["new"]), ("22円", "24円"))
+
+    def test_dividend_decrease_and_unchanged_directions(self):
+        t = "前回予想 30円00銭 30円00銭 60円00銭 今回予想 25円00銭 25円00銭 50円00銭 第2四半期末 期末 合計"
+        t = "配当予想の修正 第2四半期末 期末 合計 前回予想 30円00銭 30円00銭 60円00銭 今回予想 30円00銭 30円00銭 60円00銭 当期実績 30円00銭"
+        ev = self.div([t], "配当予想の修正に関するお知らせ")
+        self.assertEqual(ev[0]["direction"], "据置")
+        t2 = t.replace("今回予想 30円00銭 30円00銭 60円00銭", "今回予想 25円00銭 25円00銭 50円00銭")
+        self.assertEqual(self.div([t2], "配当予想の修正に関するお知らせ")[0]["direction"], "減配")
+
+    def test_dividend_not_extracted_from_deck_or_tanshin(self):
+        t = "前回予想 30円00銭 30円00銭 60円00銭 今回予想 35円00銭 35円00銭 70円00銭"
+        self.assertEqual(self.div([t], "2026年度決算説明資料"), [])
+        self.assertEqual(self.div([t], "2027年3月期 第2四半期 決算短信〔日本基準〕(連結)"), [])
 
 
 class TestRetention(unittest.TestCase):

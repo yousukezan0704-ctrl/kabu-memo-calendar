@@ -68,6 +68,17 @@ class TestXbrlRevision(unittest.TestCase):
         ev = collect.xbrl_revision_events(self.rec(None), self.v(), "x")
         self.assertEqual(ev[0]["kind"], "forecast")
 
+    def test_drop_dividend_dups(self):
+        ev = [{"id": "a", "kind": "dividend", "url": "u"},
+              {"id": "b", "kind": "forecast_item", "url": "u", "item": "1株当たり配当金", "extractor": "rule-v11"},
+              {"id": "c", "kind": "forecast_item", "url": "u", "item": "売上高", "extractor": "rule-v11"},
+              {"id": "d", "kind": "forecast_item", "url": "u", "item": "1株当たり配当(期末)", "extractor": "xbrl"},
+              {"id": "e", "kind": "forecast_item", "url": "z", "item": "1株当たり配当金", "extractor": "rule-v11"}]
+        self.assertEqual([e["id"] for e in collect.drop_dividend_dups(ev)], ["a", "c", "d", "e"])
+
+    def test_text_dividend_is_replaced_by_xbrl(self):
+        self.assertIn("dividend", collect._TEXT_REV_KINDS)
+
     def test_other_periods_and_dividend_rows(self):
         rec = self.rec("up")
         rec["other_periods"] = [{"scope": "連結", "period": "第2四半期累計", "direction": "up", "items": [

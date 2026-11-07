@@ -63,6 +63,7 @@ window.KMC = window.KMC || {};
     production:    { label: "量産・設備", color: "#9a4a14" },
     alliance:      { label: "提携・受注", color: "#2b6a9e" },
     buyback:       { label: "自社株買い", color: "#4a5a6a" },
+    dividend:      { label: "配当",       color: "#0b6e6e" },
     delay:         { label: "延期・変更", color: "#b3261e" },
     mine:          { label: "自分の確認", color: "#c2410c" },
     other:         { label: "その他",     color: "#555555" }

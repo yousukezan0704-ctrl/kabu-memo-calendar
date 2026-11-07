@@ -9,7 +9,7 @@ import datetime as dt
 from dates_jp import parse_target, parse_time, norm
 
 NONE = "記載なし"
-EXT_VERSION = "rule-v10"
+EXT_VERSION = "rule-v11"
 
 # (kind, 表示名, トリガー正規表現)  上から順に判定。1文が複数に当てはまってもよい。
 RULES = [
@@ -32,7 +32,7 @@ PAST_DONE_RE = re.compile(r"竣工|完成し|開始(?:した|しました|いた
 PROD_CTX_RE = re.compile(r"工場|生産|量産|製造|プラント|ライン(?!ナップ)")
 FACILITY_RE = re.compile(r"施設|店舗|事業所")
 ADJUST_RE = re.compile(r"考慮|調整|実質ベース|押し下げ|押し上げ|影響を除|比較")
-DELAY_NOISE_RE = re.compile(r"開示が|損害金|リスク|可能性|場合|おそれ|恐れ|不確実|警戒|懸念|下回|上回|影響|事業環境|予測|動向|研究開発")
+DELAY_NOISE_RE = re.compile(r"業界全体|課題|人材不足|開示が|損害金|リスク|可能性|場合|おそれ|恐れ|不確実|警戒|懸念|下回|上回|影響|事業環境|予測|動向|研究開発")
 DELAY_CTX_RE = re.compile(r"時期|予定|スケジュール|計画|発売|完工|稼働|開始|開発|工期|上市|竣工|成立日|期日")
 # 資料の種類で除く（月次の速報・リスク情報・事業計画及び成長可能性の資料）
 NOISE_TITLE_RE = re.compile(r"速報|月次|\d+月度|KPI")
@@ -54,6 +54,16 @@ NEWISH_RE = re.compile(r"今般|本日|このたび|この度|今回|再度|さ�
 DELAY_DECISION_RE = re.compile(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)[^。]{0,25}?(?:決議|開示|公表|発表)")
 BB_REPORT_RE = re.compile(r"買付期間|買付株式数|買付総額|買付け?た自己株式|買付けを?(?:行いません|いたしません|行いませんでした)|取得結果|取得状況|累計")
 BB_OLD_RESOLUTION_RE = re.compile(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)開催の取締役会での決議内容")
+# 提携: 「今回の決議・締結」を示す語がある文だけ拾う(再掲・一般説明・単なる言及を除く)
+ALLIANCE_NEW_RE = re.compile(r"今般|本日|このたび|この度|決議|締結(?:し|いた)|合意(?:し|いた)|基本合意|公開買付|TOB|"
+                             r"(?:提携|設立|子会社化|買収|取得)(?:します|いたします|することを|することについて|する旨)|ことと(?:し|いた)")
+ALLIANCE_PARTNER_RE = re.compile(r"株式会社|㈱|Co\.|Inc|Ltd|Corp|GmbH|LLC|[A-Za-z]{3,}|社(?:と|の|を|に|は)")
+NOTICE_REV_TITLE_RE = re.compile(r"業績予想|配当予想|予想値|通期予想|差異|業績の修正")
+BB_DISPOSAL_TITLE_RE = re.compile(r"自己株式(?:の)?処分|株式交付|株式報酬|信託")
+BB_ACQ_TITLE_RE = re.compile(r"自己株式(?:の)?取得に係る事項|自己株式の取得$|自己株式取得")
+FX_PAIR_RE = re.compile(r"(?:USD|EUR|JPY|CNY|THB|米ドル|ドル)\s*[=＝/:：]?\s*\d+(?:\.\d+)?\s*円?")
+GARBLED_NUM_RE = re.compile(r"\d\.\d{4,}|\d{9,}")
+PLANT_DONE_RE = re.compile(r"完成|完工|竣工|建物|棟")
 YM_RE = re.compile(r"(\d{4})\s*[年/.]\s*(\d{1,2})")
 SUBSIDIARY_TITLE_RE = re.compile(r"連結子会社.*業績予想|子会社の業績予想")
 # 想定為替は「想定・前提・影響」と数字がそろうものだけ。ETFの換算レート等は除く
@@ -61,7 +71,7 @@ FX_CORE = re.compile(r"想定(?:為替)?レート|為替(?:レート)?(?:の)?�
 FX_AVG_RE = re.compile(r"平均為替|期中平均|実績レート|実績平均")
 FX_NUM_RE = re.compile(r"\d+(?:\.\d+)?\s*円|\$\s*\d|ドル|(?:USD|EUR|JPY|CNY|THB)\s*[:：]?\s*\d")
 KIND_LABEL = {k: n for k, n, _ in RULES}
-KIND_LABEL.update({"fx": "想定為替・為替影響", "forecast_item": "予想数値の変更"})
+KIND_LABEL.update({"fx": "想定為替・為替影響", "forecast_item": "予想数値の変更", "dividend": "配当の変更"})
 
 FORECAST_ITEMS = ["売上高", "営業利益", "経常利益", "親会社株主に帰属する当期純利益", "当期純利益",
                   "1株当たり当期純利益", "1株当たり配当金", "期末配当", "年間配当", "配当"]
@@ -109,14 +119,14 @@ def _mask_quotes(s):
 
 PROGRESS_RE = re.compile(r"進捗|状況|結果")
 BB_PERIOD_RE = re.compile(r"(?:取得(?:の)?|自己株式取得の)(?:期間|日程)[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)\s*(?:から|～|〜|~|－|-)\s*(\d{4}年\d{1,2}月\d{1,2}日)")
-BB_SHARES_RE = re.compile(r"取得(?:する|し得る|しうる)?株式の総数[:：]?\s*([\d,]+)\s*株")
-BB_AMOUNT_RE = re.compile(r"取得価額の総額[:：]?\s*([\d,\.]+\s*(?:百万円|億円|万円|円))")
+BB_SHARES_RE = re.compile(r"取得(?:する|し得る|しうる)?株式(?:の総数|数)(?:の上限)?[:：]?(?:上限)?([\d,]+)株")
+BB_AMOUNT_RE = re.compile(r"取得価額の総額(?:の上限)?[:：]?(?:上限)?([\d,\.]+(?:百万円|億円|万円|円))")
 BB_RATIO_RE = re.compile(r"発行済株式総数[^。]{0,30}?の?\s*(\d+(?:\.\d+)?)\s*%")
 
 
 def buyback_detail(flat):
     """自己株式取得の 取得期間・上限(株数/金額) を、書かれているものだけ返す。"""
-    t = norm(flat)
+    t = re.sub(r"\s+", "", norm(flat))   # 行をまたぐ・空白の入る書式(「取得し 得 る / 株式の総数 / 12,000,000 株」)に対応
     parts, d = [], {"period": None, "shares": None, "amount": None}
     m = BB_PERIOD_RE.search(t)
     if m:
@@ -128,7 +138,7 @@ def buyback_detail(flat):
         parts.append("上限 %s株" % m.group(1))
     m = BB_AMOUNT_RE.search(t)
     if m:
-        d["amount"] = re.sub(r"\s+", "", m.group(1))
+        d["amount"] = m.group(1)
         parts.append("上限金額 %s" % d["amount"])
     d["parts"] = parts
     return d
@@ -157,6 +167,15 @@ def _buyback_key(code, d):
     if not d or not (d["period"] or d["shares"]):
         return None
     return event_key(code, "buyback", "bb|%s|%s|%s" % (d["period"], d["shares"], d["amount"]))
+
+
+def _alliance_new(s, title, page_no, base):
+    """今回の決議・締結を示す文か。過去の日付つきの決議・締結の再掲は新規ではない。"""
+    if ALLIANCE_NEW_RE.search(s):
+        md = re.search(r"((?:\d{4}年)?\d{1,2}月\d{1,2}日)[^。]{0,30}?(?:決議|締結|合意)", s)
+        return not (md and _is_past_date(md.group(1), base))
+    # 題名が提携・子会社化などの通知本体なら、1ページ目の本文は新規の開示として扱う
+    return page_no == 1 and _primary_title(title) and bool(ALLIANCE_TITLE_RE.search(title))
 
 
 def _is_past_date(txt, base):
@@ -283,6 +302,10 @@ def extract_page(page_text, page_no, ctx):
                 continue
             if k == "buyback" and RECAP_TITLE_RE.search(title):
                 continue   # 決算説明資料などの再掲は出さない
+            if k == "buyback" and BB_DISPOSAL_TITLE_RE.search(title) and not BB_ACQ_TITLE_RE.search(title):
+                continue   # 株式報酬信託などへの自己株式の「処分」は自社株買いではない
+            if k == "buyback" and re.search(r"自己株式(?:の)?処分", near) and not re.search(r"自己株式(?:の)?取得", near):
+                continue
             if k == "buyback" and (BB_REPORT_RE.search(page_flat) or _old_resolution(page_flat, base)):
                 continue   # 買付の実施報告・過去の決議の再掲は新規の自社株買いではない
             if k == "buyback" and (END_BUYBACK_TITLE_RE.search(title) or re.search(r"取得を終了|終了いたしました", near)):
@@ -294,6 +317,7 @@ def extract_page(page_text, page_no, ctx):
                                     or ALLIANCE_EFFECT_RE.search(s)
                                     or (re.search(r"受注", title) and not ALLIANCE_WORD_RE.search(s_win))
                                     or _past_month_only(s_win, base)
+                                    or not _alliance_new(s, title, page_no, base)
                                     or (TANSHIN_TITLE_RE.search(title)
                                         and (_past_ym_before(s, base) or ALLIANCE_RECAP_WORD_RE.search(s)))
                                     or _past_ym_before(sm[max(0, m.start() - 40): m.end()], base)):
@@ -335,6 +359,18 @@ def extract_page(page_text, page_no, ctx):
                     continue
             review_extra = False
             summary = _quote(s_win, 90)
+            if k == "alliance" and not ALLIANCE_PARTNER_RE.search(s + title):
+                review_extra = True   # 相手先が読み取れない
+            if k in ("revision_up", "revision_down", "forecast") and not _is_rev_notice(title):
+                review_extra = True   # 修正通知本体ではなく、説明資料・短信などの記述から抽出
+            if k == "production" and tgt is not None and PLANT_DONE_RE.search(near):
+                review_extra = True   # 日付が稼働開始ではなく建物の完成の可能性
+            if k == "fx":
+                if GARBLED_NUM_RE.search(s_win):
+                    review_extra = True   # 表の崩れた数字の羅列
+                pairs = FX_PAIR_RE.findall(sm[max(0, m.start() - 60): m.end() + 80])
+                if pairs:
+                    summary = "想定為替レート: " + "、".join(re.sub(r"\s+", "", x) for x in pairs[:3])
             if k == "alliance" and TANSHIN_TITLE_RE.search(title):
                 review_extra = True   # 短信内の提携・受注は再掲の可能性があるため要確認
             if k == "delay" and tgt is None and re.search(r"未定", s_win + "".join(sents[si + 1: si + 3])):
@@ -342,7 +378,7 @@ def extract_page(page_text, page_no, ctx):
                 summary = _quote(s_win, 70) + "（変更後の時期は未定）"
             if recap_review:
                 review_extra = True
-            if k in ("delay", "launch", "alliance", "buyback") and tgt is None:
+            if k in ("delay", "launch", "alliance", "buyback", "production", "development") and tgt is None:
                 review_extra = True   # 日付がなく根拠が弱いものは確定扱いにしない
             if neigh_note:
                 review_extra = True   # 次の文の日付は一部の地点・案件のみの可能性があるため採用しない
@@ -645,6 +681,100 @@ def extract_forecast_rows(page_text, page_no, ctx):
     return rows[:20]
 
 
+DIV_TITLE_RE = re.compile(r"配当予想|期末配当|増配|減配|配当の修正|剰余金の配当|配当金")
+_DASH = r"[－―\-ー]"
+_DVAL = r"\d[\d,]*(?:\.\d+)?円(?:\d{1,2}銭)?"
+_DTAIL = r"((?:" + _DVAL + "|" + _DASH + r"){1,4})"
+_DTOK = re.compile(_DVAL + "|" + _DASH)
+DIV_NEW_ROW = r"(?:今回(?:修正)?予想|修正後(?:予想)?|今回発表予想|修正予想)"
+
+
+def _div_dir(prev, new):
+    a, b = _num_of(prev), _num_of(new)
+    if a is None or b is None:
+        return None
+    return "増配" if b > a else ("減配" if b < a else "据置")
+
+
+def _div_event(ctx, page_no, item, prev, new, quote, verified, basis, period, summary):
+    a, b = _num_of(prev), _num_of(new)
+    return {
+        "kind": "dividend", "kind_label": KIND_LABEL["dividend"],
+        "code": ctx["code"], "name": ctx["name"], "announced_at": ctx["pubdate"],
+        "target": None, "target_text": NONE, "time_text": None, "impact_period": period,
+        "summary": summary, "item": item, "unit": None, "prev": prev, "new": new,
+        "diff": None if a is None or b is None else round(b - a, 6), "values": [prev, new],
+        "direction": _div_dir(prev, new),
+        "verified": verified, "verify_basis": basis if verified else None, "note": None,
+        "quote": _quote(quote), "page": page_no, "url": ctx["url"], "title": ctx["title"],
+        "checked_at": ctx["checked_at"], "origin": "official", "extractor": EXT_VERSION,
+        "confirmed": False, "needs_review": not verified,
+        "id": event_key(ctx["code"], "dividend", item + prev + new + ctx["pubdate"][:10]),
+    }
+
+
+def extract_dividend_events(page_text, page_no, ctx):
+    """配当の通知(題名に配当予想・期末配当・増配など)の表から、1株配当の前→後と増配/減配/据置を取り出す。
+    数値は表だけから読み、文章からは推測しない。合計 = 中間 + 期末 が表の数値で成り立つときだけ verified。"""
+    title = ctx.get("title", "")
+    if not DIV_TITLE_RE.search(title) or RECAP_TITLE_RE.search(title) or TANSHIN_TITLE_RE.search(title):
+        return []
+    t = re.sub(r"\s+", "", norm(page_text))
+    pers = re.findall(r"(\d{4})年(\d{1,2})月期", title + t)
+    t = re.sub(r"[（(]\d{4}年\d{1,2}月\d{1,2}日(?:公表|発表)[）)]", "", t)
+    t = re.sub(r"[（(][^）)]{0,16}期[）)]", "", t)
+    period = "%d年%d月期" % max((int(y), int(m)) for y, m in pers) if pers else NONE   # 最も新しい期が今回の対象
+    out = []
+    # (1) 年間の配当予想の修正: 前回予想 / 今回修正予想 の行
+    mp = re.search(r"前回(?:発表)?予想" + _DTAIL, t)
+    mn = re.search(DIV_NEW_ROW + _DTAIL, t[mp.end():]) if mp else None
+    if mp and mn:
+        pt = _DTOK.findall(mp.group(1))
+        nt = _DTOK.findall(mn.group(1))
+        header = t[max(0, mp.start() - 70): mp.start()]
+        labs = re.findall(r"第[1-4]四半期末|中間|期末|合計|年間", header)
+        ends = [i for i, x in enumerate(labs) if x in ("合計", "年間")]
+        if ends:
+            labs = labs[: ends[-1] + 1]
+        if labs and len(pt) <= len(labs) and len(nt) <= len(labs):
+            pc = dict(zip(labs[-len(pt):], pt))   # 値が少ないときは右(期末・合計)に寄せる
+            nc = dict(zip(labs[-len(nt):], nt))
+            tk = next((k for k in ("合計", "年間") if k in pc and k in nc), None) or ("期末" if "期末" in pc and "期末" in nc else None)
+            if tk and _num_of(pc[tk]) is not None and _num_of(nc[tk]) is not None:
+                # 検算: 今回の 合計 = 中間(今回の中間欄、無ければ当期実績) + 期末
+                verified, basis = False, None
+                ma = re.search(r"(?:当期|今期)実績" + _DTAIL, t)
+                interim = nc.get(labs[0]) if labs[0] not in ("期末", "合計", "年間") and nc.get(labs[0], "-") not in ("-", "－", "―", "ー") else None
+                if interim is None and ma:
+                    interim = (_DTOK.findall(ma.group(1)) or [None])[0]
+                if tk in ("合計", "年間") and "期末" in nc and interim and _num_of(interim) is not None and _num_of(nc["期末"]) is not None:
+                    if abs(_num_of(interim) + _num_of(nc["期末"]) - _num_of(nc[tk])) < 1e-6:
+                        verified, basis = True, "今回予想の合計が中間(または当期実績)+期末と一致"
+                parts = []
+                if "期末" in pc and "期末" in nc and tk != "期末":
+                    parts.append("期末 %s→%s" % (pc["期末"], nc["期末"]))
+                lab = "年間" if tk in ("合計", "年間") else "期末"
+                dirn = _div_dir(pc[tk], nc[tk])
+                summary = "配当予想の修正[%s]: %s %s → %s（%s）%s" % (
+                    period, lab, pc[tk], nc[tk], dirn or "判定不能", "／" + "／".join(parts) if parts else "")
+                out.append(_div_event(ctx, page_no, lab + "配当", pc[tk], nc[tk], t[mp.start(): mp.start() + 120], verified, basis, period, summary))
+    # (2) 中間配当などの決定額 / 直近の配当予想 / 前期実績 の表
+    for mi in re.finditer(r"1株当たり配当金" + _DTAIL, t):
+        cols = [m.lastgroup for m in COL_RE.finditer(t[max(0, mi.start() - 140): mi.start()])]
+        toks = _DTOK.findall(mi.group(1))
+        if "new" in cols and "prev" in cols and len(toks) >= len(cols):
+            vals = dict(zip(cols, toks))
+            a, b = vals["prev"], vals["new"]
+            if _num_of(a) is not None and _num_of(b) is not None:
+                dirn = _div_dir(a, b)
+                summary = "中間配当の決定[%s]: 直近の予想 %s → 決定額 %s（%s）%s" % (
+                    period, a, b, dirn or "判定不能", "／前期実績 %s" % vals["last"] if vals.get("last") and _num_of(vals["last"]) is not None else "")
+                out.append(_div_event(ctx, page_no, "中間配当(決定額)", a, b, t[mi.start(): mi.start() + 100], True,
+                                      "列の見出し(決定額/直近の配当予想)で確認", period, summary))
+            break
+    return out
+
+
 ALLIANCE_TITLE_RE = re.compile(r"受注|子会社化|提携|合弁|設立|基本合意|パートナー|株式取得|株式の取得|M&A")
 
 
@@ -657,7 +787,12 @@ def _dedupe_same_doc(evs, title):
     """同じ資料内の同じ種類・同じ内容を1件にまとめる。自社株買いは1資料1件。
     提携は、題名自体が受注・子会社化などの資料なら1資料1件、それ以外は本文が8字以上重なるものを同一とみなす。"""
     res = []
+    rev_count = {}
     for e in evs:
+        if e["kind"] in ("revision_up", "revision_down", "forecast") and not _is_rev_notice(title):
+            rev_count[e["kind"]] = rev_count.get(e["kind"], 0) + 1
+            if rev_count[e["kind"]] > 2:
+                continue   # 説明資料などは同じ種別を最大2件に統合(1資料から何十件も出さない)
         dup = None
         for r in res:
             if r["kind"] != e["kind"]:
@@ -679,7 +814,7 @@ def extract_document(pages, ctx):
     sub = bool(SUBSIDIARY_TITLE_RE.search(ctx.get("title", "")))
     ctx = dict(ctx, doc_flat="".join("".join(sentences(p)) for p in pages[:6]))
     for i, p in enumerate(pages, 1):
-        for ev in extract_page(p, i, ctx) + extract_forecast_rows(p, i, ctx):
+        for ev in extract_page(p, i, ctx) + extract_forecast_rows(p, i, ctx) + extract_dividend_events(p, i, ctx):
             if ev["id"] in seen:
                 continue
             seen.add(ev["id"])
@@ -719,6 +854,10 @@ def extract_document(pages, ctx):
 
 def is_correction(title):
     return bool(re.search(r"訂正|修正版|一部変更|変更のお知らせ.*(?:訂正|差替)|差替", title or ""))
+
+
+def _is_rev_notice(title):
+    return bool(NOTICE_REV_TITLE_RE.search(title or "")) and _primary_title(title)
 
 
 def _primary_title(title):

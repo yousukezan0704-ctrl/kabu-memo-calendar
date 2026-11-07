@@ -40,8 +40,8 @@ def main():
         for p in problems:
             print(" -", p)
         return 1
-    stage = os.path.join(os.environ.get("TEMP", LOCAL), "kmc_stage")
-    shutil.rmtree(stage, ignore_errors=True)
+    import tempfile
+    stage = os.path.join(tempfile.mkdtemp(prefix="kmc_stage_"), "data")  # 毎回あたらしい場所(前回の残りに左右されない)
     shutil.copytree(SRC, stage, ignore=shutil.ignore_patterns("*.md"))
     held = validate_data.hold(stage)
     print("保留(精度未確認): %d 件" % held)

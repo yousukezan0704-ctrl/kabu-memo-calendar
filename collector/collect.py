@@ -162,10 +162,10 @@ def make_image_event(v, checked_at):
 _RV_NAMES = {"sales": ("売上高", "百万円"), "operating_income": ("営業利益", "百万円"),
              "ordinary_income": ("経常利益", "百万円"), "net_income": ("親会社株主に帰属する当期純利益", "百万円"),
              "eps": ("1株当たり当期純利益", "円")}
-RV_VER = "xrv-2"   # 修正XBRLの処理を変えたら上げる(再処理のトリガー)
+RV_VER = "xrv-3"   # 修正XBRLの処理を変えたら上げる(再処理のトリガー)
 RV_KEY = RV_VER + "/" + EXT_VERSION   # 文章の再抽出(EXT_VERSION更新)のあとも、XBRLで置き換え直す
 _RV_KIND = {"up": ("revision_up", "上方修正"), "down": ("revision_down", "下方修正")}
-_TEXT_REV_KINDS = ("revision_up", "revision_down", "forecast", "forecast_item")
+_TEXT_REV_KINDS = ("revision_up", "revision_down", "forecast", "forecast_item", "dividend")  # 配当の文章側も、同じ通知にXBRLがあれば置き換える(二重表示を防ぐ)
 
 
 def _fmt_num(x, eps=False):
@@ -231,6 +231,15 @@ def xbrl_revision_events(rec, v, checked_at):
                         note="第2四半期末と期末の金額の桁が大きく違います。株式分割などの基準の違いかもしれません。元資料で確認してください" if odd else None,
                         quote="配当 %s→%s" % (_fmt_num(d["prev"], True), _fmt_num(d["new"], True))))
     return out
+
+
+def drop_dividend_dups(events):
+    """同じ通知に、専用の配当イベント(dividend)と、文章由来の「1株当たり配当金」行(forecast_item)が並ぶときは、
+    後者を外す(同じ変更の二重表示を防ぐ。配当イベントの方が期間・増減の判定を持つ)。XBRL由来の行は対象外。"""
+    has = {e.get("url") for e in events if e.get("kind") == "dividend"}
+    return [e for e in events
+            if not (e.get("kind") == "forecast_item" and e.get("url") in has and e.get("extractor") != "xbrl"
+                    and "配当" in (e.get("item") or ""))]
 
 
 def pdf_pages(data):
@@ -494,6 +503,7 @@ def run():
                    for v in sorted(seen.values(), key=lambda v: v["pubdate"], reverse=True)
                    if v["status"] in ("done", "failed", "image") or score(v, wl) >= 20]
     save(STATE, seen)
+    events = drop_dividend_dups(events)
     save(os.path.join(DATA, "events.json"), {"generated_at": checked_at, "events": events})
     save(os.path.join(DATA, "ir_index.json"), {"generated_at": checked_at, "items": index_items[:3000]})
     save(os.path.join(DATA, "status.json"), status)
