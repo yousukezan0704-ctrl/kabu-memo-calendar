@@ -142,16 +142,16 @@
   function stamp(v) { return v ? String(v).replace("T", " ").slice(0, 16) : "不明"; }
   K.statusAlert = function () {
     var s = K.data.status;
+    var adv = ' <a href="#" data-act="goadv">上級者向け：データの接続</a>';
     if (K.srcState && K.srcState.auth) {
-      return '<p class="errbox">⚠ ' + E(K.AUTH_MSG) + '。<br>① 下の「メモ・設定」を開く ② 「非公開データの接続」を開く ③ 新しいトークンを貼って「保存して接続テスト」を押す</p>';
+      return '<p class="errbox">⚠ データを読み込めませんでした（認証エラー）。しばらくしてから開き直してください。<small class="muted">接続を使っている場合は' + adv + "で再設定できます。</small></p>";
     }
     if (!s) {
       if (!K.data.loadErrors.length) return "";
       if (K.data.loadErrors.some(function (x) { return x.indexOf("通信できません") >= 0; })) {
-        return '<p class="errbox">⚠ 通信できません。オフラインか、電波が弱い状態です。電波の良い場所で、このアプリを開き直してください。</p>';
+        return '<p class="errbox">⚠ 通信できません。電波の良い場所で、このアプリを開き直してください。</p>';
       }
-      if (K.srcGet()) return '<p class="errbox">⚠ データを読めませんでした（' + E(K.data.loadErrors[0].replace(/^[^:]*: /, "")) + '）。「メモ・設定」→「非公開データの接続」で「保存して接続テスト」を押してください。</p>';
-      return '<p class="errbox">⚠ IRのデータは非公開です。見るには、はじめに1回だけ設定します。<br>① 下の「メモ・設定」を開く ② 「非公開データの接続」を開く ③ トークンを貼って「保存して接続テスト」を押す<small class="muted">（パソコンで open_app.bat から開いた場合は設定不要です）</small></p>';
+      return '<p class="errbox">⚠ データはまだ公開されていません。公開されるまでお待ちください。<small class="muted">（' + adv.trim() + "）</small></p>";
     }
     var lr = s.last_run || null, h = "";
     var ms = s.generated_at ? new Date(s.generated_at).getTime() : NaN, age = (Date.now() - ms) / 86400000;

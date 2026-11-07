@@ -121,7 +121,10 @@ def new_features(pg, tag, vp):
     pg.click("#tabs .tab[data-v=search]"); pg.wait_for_timeout(150)
     check(tag + "[UI] 「銘柄」ナビで銘柄の一覧(検索欄)", pg.locator("#s-q").count() == 1 and pg.locator("#tabs .tab.on").inner_text().find("銘柄") >= 0)
     pg.click("#tabs .tab[data-v=memo]"); pg.wait_for_timeout(150)
-    check(tag + "[UI] 「メモ・設定」ナビ", "非公開データの接続" in pg.inner_text("main") and no_hscroll(pg))
+    check(tag + "[UI] 「メモ・設定」ナビ", "上級者向け：データの接続" in pg.inner_text("main") and no_hscroll(pg))
+    mt = pg.inner_text("main")
+    check(tag + "[UI] トークン欄は初期画面に出ない(上級者向けは閉じている)", pg.locator("#src-token").is_hidden() and pg.locator("details[data-key=tool-src]").evaluate("e => !e.open") and "トークン" not in mt)
+    check(tag + "[UI] 上級者向けは設定画面の最下部", pg.evaluate("(() => { var f = [...document.querySelectorAll('main details.fold')]; return f[f.length - 1].dataset.key; })()") == "tool-src")
     pg.click("#tabs .tab[data-v=cal]"); pg.wait_for_timeout(150)
     check(tag + "[UI] 本文は17px以上・カードは角丸", pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 17 and pg.evaluate("parseFloat(getComputedStyle(document.querySelector('.fold')).borderTopLeftRadius)") >= 10)
     # ダークモード（既存を壊さない）
@@ -151,7 +154,11 @@ def new_features(pg, tag, vp):
     # 案内文（未接続・認証・オフライン）
     pg.evaluate("KMC.data.status = null; KMC.data.loadErrors = ['取得状況: 未取得（404）']; KMC.render()")
     t_ = pg.inner_text("main")
-    check(tag + "[UI] 未接続の案内は手順(①②③)で短く", "①" in t_ and "②" in t_ and "③" in t_ and "非公開データの接続" in t_)
+    check(tag + "[UI] 未接続の案内は「まだ公開されていません」(トークン入力へ誘導しない)", "データはまだ公開されていません" in t_ and "トークン" not in t_ and "①" not in t_ and pg.locator("#src-token").count() == 0)
+    check(tag + "[UI] 手順は上級者向けへのリンク1行だけ", pg.locator("main .errbox a[data-act=goadv]").count() == 1)
+    pg.click("main .errbox a[data-act=goadv]"); pg.wait_for_timeout(200)
+    check(tag + "[UI] リンクで設定の上級者向けが開く", pg.locator("#src-token").is_visible())
+    pg.evaluate("KMC.ui.tab = 'ir'; KMC.render()")
     pg.evaluate("KMC.data.loadErrors = ['取得状況: 通信できません（オフラインか、電波が弱い状態です）']; KMC.render()")
     check(tag + "[UI] オフライン時の案内", "電波の良い場所" in pg.inner_text("main"))
     pg.evaluate("KMC.loadData().then(() => KMC.render())"); pg.wait_for_timeout(500)
@@ -416,8 +423,8 @@ def new_features(pg, tag, vp):
     pg.route("https://api.github.com/**", api_handler)
     pg.unroute("**/data/financials/9999.json*"); pg.unroute("**/data/history/9999.json*")   # 以降はAPI経由だけで確かめる
     pg.evaluate("KMC.state.favorites = []; KMC.ui.tab = 'memo'; KMC.mUi.id = ''; KMC.render()"); pg.wait_for_timeout(200)
-    check(tag + "[接続] 設定欄がある", pg.locator("summary:has-text('非公開データの接続')").count() == 1)
-    openfold(pg, "非公開データの接続"); pg.wait_for_timeout(100)
+    check(tag + "[接続] 設定欄がある", pg.locator("summary:has-text('上級者向け：データの接続')").count() == 1)
+    openfold(pg, "上級者向け"); pg.wait_for_timeout(100)
     tt = pg.inner_text("details[data-key=tool-src]")
     check(tag + "[接続] 作り方の注意書き(Contents: Read-only・1リポジトリ・有効期限・他人に見せない)", "Contents: Read-only" in tt and "1リポジトリ" in tt and "有効期限" in tt and "他人に見せない" in tt and "この端末" in tt, tt[:300])
     check(tag + "[接続] 既定のリポジトリ名・トークン欄はpassword", pg.input_value("#src-repo") == "yousukezan0704-ctrl/kabu-memo-private-data" and pg.get_attribute("#src-token", "type") == "password")
@@ -460,7 +467,7 @@ def new_features(pg, tag, vp):
         check(tag + "[接続] %d の文面にトークンを出さない" % code_, "TESTTOKEN" not in res and "TESTTOKEN" not in pg.content())
     check(tag + "[接続] 認証エラーは404(未取得)と区別される", "未取得" not in res)
     pg.evaluate("KMC.ui.tab = 'ir'; KMC.render()"); pg.wait_for_timeout(100)
-    check(tag + "[接続] 重要IR画面にも再設定の案内", "メモ画面で再設定してください" in pg.inner_text("main"))
+    check(tag + "[接続] 重要IR画面は認証エラーを短く案内(上級者向けへのリンク)", "認証エラー" in pg.inner_text("main") and pg.locator("main a[data-act=goadv]").count() >= 1 and "TESTTOKEN" not in pg.inner_text("main"))
     pg.evaluate("KMC.fin = {}; KMC.ui.tab = 'stocks'; KMC.sUi.code = '9999'; KMC.render()")
     mode_all_401 = True
     pg.unroute("https://api.github.com/**")
@@ -469,7 +476,7 @@ def new_features(pg, tag, vp):
     check(tag + "[接続] 銘柄詳細でも認証エラーを区別して表示", "トークンが無効か期限切れ" in pg.inner_text("main") and "財務データ未取得" not in pg.inner_text("main"))
     # 解除
     pg.evaluate("KMC.ui.tab = 'memo'; KMC.sUi.code = ''; KMC.render()"); pg.wait_for_timeout(100)
-    openfold(pg, "非公開データの接続")
+    openfold(pg, "上級者向け")
     pg.once("dialog", lambda d: d.accept())
     pg.click("button:has-text('接続を解除')"); pg.wait_for_timeout(800)
     check(tag + "[接続] 解除でトークンが消える", pg.evaluate("localStorage.getItem('kmc.src')") is None and pg.evaluate("KMC.srcGet()") is None)

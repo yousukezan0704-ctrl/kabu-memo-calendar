@@ -121,6 +121,11 @@
       K.srcClear(); K.srcUi = { msg: "接続を解除しました（トークンをこの端末から消しました）", ok: true };
       K.reloadAll();
     },
+    goadv: function () {
+      K.openState["tool-src"] = true; K.ui.tab = "memo"; K.mUi.id = ""; render();
+      var d = document.querySelector("details[data-key=tool-src]");
+      if (d) d.scrollIntoView({ block: "center" });
+    },
     irseen: function () { K.setNotify("seenAt", K.nowStamp()); K.toast("既読にしました"); render(); },
     sback: function () { K.sUi.code = ""; render(); },
     ssub: function (t) { K.sUi.sub = t.dataset.v; render(); },

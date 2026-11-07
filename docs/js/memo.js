@@ -150,7 +150,7 @@
   K.srcUi = K.srcUi || { msg: "", ok: null };
   function srcPanel() {
     var cfg = K.srcGet(), r = K.srcUi;
-    var h = '<p class="muted">IRのデータ（予定・財務・履歴）は<b>非公開のGitHubリポジトリ</b>に置いてあります。外出先のiPhoneでも、1回設定すれば見られます。</p>' +
+    var h = '<p class="muted">普段は設定する必要はありません。IRのデータ（予定・財務・履歴）が<b>非公開のGitHubリポジトリ</b>にある場合だけ、ここで接続します。</p>' +
       '<ol class="steps"><li>下の「トークン」欄に、GitHubで作ったトークンを貼る</li><li>「保存して接続テスト」を押す</li><li>「接続できました」と出れば完了。「カレンダー」に戻る</li></ol>' +
       '<p class="warn"><b>トークンの作り方（GitHub → Settings → Developer settings → Fine-grained tokens）</b><br>・対象は<b>この1リポジトリだけ</b>を選ぶ<br>・権限は<b>Contents: Read-only のみ</b><br>・<b>有効期限</b>を付ける<br>トークンは他人に見せないでください。この端末のブラウザにだけ保存され、バックアップや書き出しには含まれません。</p>' +
       '<label>リポジトリ名（所有者/名前）<input id="src-repo" autocomplete="off" value="' + E(cfg ? cfg.repo : K.DEFAULT_REPO) + '"></label>' +
@@ -178,11 +178,11 @@
       '<label>実機での確認結果（自分で記録）<select id="n-ck">' + ["未確認", "確認OK（アプリを閉じても届いた）", "確認NG（届かなかった）"].map(function (o) {
         return '<option' + (s.notifyChecked === o ? " selected" : "") + ">" + o + "</option>";
       }).join("") + '</select></label><input id="n-note" placeholder="メモ（機種・iOSのバージョンなど）" value="' + E(s.notifyNote) + '">', false, "pf");
-    h += K.det("tool-src", "非公開データの接続（IRの収集データ）", srcPanel(), false, "pf");
     h += K.det("tool-backup", "バックアップと復元", '<p class="muted">データはこの端末のブラウザの中にだけあります。端末の故障や設定削除に備えて、ときどき書き出してください。最後の書き出し: ' + E(s.lastBackup || "まだありません") + "</p>" +
       '<div class="row wrap"><button data-act="backup">バックアップを書き出す</button><label class="btnlike">バックアップから復元<input id="restore-file" type="file" accept=".json,application/json" hidden></label>' +
       '<button data-act="undorestore">復元を取り消す</button></div>', false, "pf");
     h += K.det("tool-set", "表示設定", '<label class="chk"><input id="set-sample" type="checkbox"' + (s.showSample ? " checked" : "") + "> サンプル（架空のデータ）を表示する</label>", false, "pf");
+    h += K.det("tool-src", "上級者向け：データの接続", srcPanel(), false, "pf");
     return h;
   }
 
